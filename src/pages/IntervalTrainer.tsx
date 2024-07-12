@@ -1,22 +1,19 @@
-import { Box, Button, Center, Checkbox, Divider, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Grid, GridItem, Icon, List, ListIcon, ListItem, Tab, TabList, TabPanel, TabPanels, Tabs, Text, ToastId, useColorModeValue, useToast } from "@chakra-ui/react";
+import { Box, Button, Center,
+Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Grid, GridItem, Icon, List, ListIcon, ListItem, Text, ToastId, useColorModeValue, useToast } from "@chakra-ui/react";
 import { Sheet } from "./Sheet";
 import { ConfigSettings, Message, MessageType, Note, ReturnMidiNumber, App as application } from "../lib/sheet/entry.mjs";
 import { Note as SinthNote, Sinth } from "../lib/sinth/main.mjs";
 import { useEffect, useRef, useState } from "react";
-import { ControlPanel } from "../components/ControlPanel";
-import { GenerateNewIntervals, GetMidiFromLine } from "../generators/IntervalGenerator";
+import { GenerateNewIntervals } from "../generators/IntervalGenerator";
 import { HiMiniArrowRight } from "react-icons/hi2";
 import { MdBarChart, MdCancel, MdCheckCircle } from "react-icons/md";
-import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { IntervalSettings } from "./intervaltrainer/Settings";
-import { IoCutSharp, IoMusicalNotes, IoMusicalNotesOutline, IoPlayCircleOutline } from "react-icons/io5";
-import { LuMousePointer, LuMousePointer2 } from "react-icons/lu";
+import {IoMusicalNotes, IoPlayCircleOutline } from "react-icons/io5";
+import {  LuMousePointer2 } from "react-icons/lu";
 import { IoIosSettings, IoIosVolumeHigh } from "react-icons/io";
-import { darkTheme, normalTheme } from "../utils/Theme";
+import {  normalTheme } from "../utils/Theme";
 import { AiOutlineDelete } from "react-icons/ai";
-import { FaArrowTrendDown, FaArrowTrendUp, FaCirclePlus } from "react-icons/fa6";
-import { FaMinusCircle } from "react-icons/fa";
-import { TbSortAscending, TbSortAscending2 } from "react-icons/tb";
+import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6";
 
 type SessionRecord = {
   correct: boolean;
@@ -88,16 +85,12 @@ function IntervalTrainer() {
 
   const [score, setScore] = useState<application | null>(null);
   const [inputting, setInputting] = useState<boolean>(false);
-  const [volume, setVolume] = useState<number>(50);
-  const [changeVolume, setChangeVolume] = useState<boolean>(false);
   const [notes, setNotes] = useState<SinthNote[]>([]);
   const [interval, setInterval] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [sessionRecord, setSessionRecord] = useState<SessionRecord[]>([]);
-  const [sideLeftWidth, setSideLeftWidth] = useState<string>("0px");
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
-  const [onPlay, setOnPlay] = useState<boolean>(true);
 
   const settings = useRef<IntSettings>({
     Unison: true,
@@ -258,7 +251,7 @@ function IntervalTrainer() {
   const callback = (msg: Message) => {
     switch (msg.messageData.MessageType) {
       case MessageType.Selection:
-        setSelectedNote(v => msg.messageData.Message.obj as Note);
+        setSelectedNote(msg.messageData.Message.obj as Note);
         if (settings.current.PlaySelect) {
           playSelectedNote(msg.messageData.Message.obj as Note);
         }
@@ -267,7 +260,7 @@ function IntervalTrainer() {
         onAddNote(msg.messageData.Message.obj as Note);
         break;
       default:
-        setSelectedNote(v => null);
+        setSelectedNote(null);
     }
   }
 
@@ -421,7 +414,7 @@ function IntervalTrainer() {
           onClick={() => {
             if (aScore.current) {
               aScore.current.NoteInput = true;
-              setInputting(v => true);
+              setInputting(true);
             }}
           }
         >Input</Button>
@@ -433,7 +426,7 @@ function IntervalTrainer() {
           onClick={() => {
             if (aScore.current) {
               aScore.current.NoteInput = false;
-              setInputting(v => false);
+              setInputting(false);
             }}
           }
         >Select</Button>
@@ -527,10 +520,6 @@ function IntervalTrainer() {
       </Flex>
 
       </Box>
-      </GridItem>
-
-      <GridItem area={'sleft'} boxShadow='md' bgColor={'gray.100'} hidden={sideLeftWidth === "0px"}>
-
       </GridItem>
 
       <GridItem area={'sright'} bgColor={'gray.300'}>
@@ -635,7 +624,7 @@ function IntervalTrainer() {
               <Flex w='100%' h='auto' direction={'column'}>
               <Flex w='100%' h='auto' wrap={'wrap'} fontSize={'0.7em'} textAlign={'left'} p={3} justify={'space-between'}>
                 {
-                   answers.map((a, i) => {
+                   answers.map((a) => {
                     return (
                       <Box bgColor={'#16191F'} w='48%' mt={1} mb={1} p={2}>
                       <Flex w='100%' justify={'space-between'} pr={1}><Text as={'b'}>{a}</Text><Box> { getRecordOfInterval(a).Correct } / { getRecordOfInterval(a).Attempts }  </Box>
@@ -648,7 +637,7 @@ function IntervalTrainer() {
               <Text as={'h2'}> This Session </Text>
               <List w='100%' maxH={'40%'} overflowY={'auto'} textAlign={'left'} fontSize={'0.8em'}>
               {
-                sessionRecord.map((e: SessionRecord, i: number, array: SessionRecord[]) => {
+                sessionRecord.map((_: SessionRecord, i: number, array: SessionRecord[]) => {
                   const elem: SessionRecord = array[array.length - 1 - i];
                   return (
                     <ListItem p={1} bgColor={i % 2 === 0 ? '#16191F' : '#16191F'}w='100%' key={i}>

@@ -1,17 +1,9 @@
-import { Box, Button, Center, Flex, Icon, Input, InputGroup, InputRightElement, Spacer, Text, useColorMode, useColorModeValue } from "@chakra-ui/react";
-import { HiSearch, HiUser } from "react-icons/hi";
-import { HiMusicalNote } from "react-icons/hi2";
+import { Box, Center, Flex, Icon, useColorModeValue } from "@chakra-ui/react";
+import { HiUser } from "react-icons/hi";
 
-interface HeaderProps {
-  image: string;
-}
-function Header(props: HeaderProps) {
-  const bgColour = useColorModeValue('gray.900', 'blackAlpha.700');
+function Header() {
   const colour = useColorModeValue('gray.900', 'gray.300')
   const highlightColour = useColorModeValue('pink.500', 'blue.500')
-
-  const inputBgColour = useColorModeValue('linear(to-l, #164066, #0d1f42)', 'black');
-  const inputBgColourInverse = useColorModeValue('linear(to-r, #164066, #0d1f42)', 'black');
 
   return (
     <Box w='100%' px={3} color={colour} zIndex={1000} boxShadow='md' className='header' pos={'relative'} bgColor={'#212121'}>

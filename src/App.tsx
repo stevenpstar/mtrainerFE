@@ -1,18 +1,11 @@
 import './App.css'
-import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Grid, GridItem, Icon, IconButton, Tooltip, VStack, useColorModeValue } from '@chakra-ui/react';
-import { Link, Outlet } from 'react-router-dom';
+import { Box, Button, Center, Drawer, DrawerBody, DrawerContent, DrawerOverlay, Flex, Grid, GridItem, Icon, IconButton, useColorModeValue } from '@chakra-ui/react';
+import { Outlet } from 'react-router-dom';
 import { RiMenuUnfoldFill } from 'react-icons/ri';
 import { useState } from 'react';
-import { MdClose } from 'react-icons/md';
-import { IoMdClose } from 'react-icons/io';
 import { FaChevronLeft } from 'react-icons/fa';
 
 function App() {
-
-const bgGrad = useColorModeValue('linear(to-t, #313131 0%, #353535 100%)',
-  'linear(to-t, black, #121212)');
-  const navColour = useColorModeValue('linear(to-b, black, #363636)','linear(to-b, black, #363636)');
-//  const inputBgColour = useColorModeValue('linear(to-b, #0e1114, #16191f)', 'black');
   const inputBgColour = useColorModeValue('linear(to-b, #f08080, #ffd6a5)', 'black');
   const navGradient = useColorModeValue('linear(to-b, #16191F, #262B36)', 'black');
 

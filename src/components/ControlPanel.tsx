@@ -1,11 +1,9 @@
-import { Box, Button, Center, HStack, Icon, IconButton, Menu, MenuButton, MenuItem, MenuList, Slider, SliderFilledTrack, SliderThumb, SliderTrack } from "@chakra-ui/react";
+import { Box, HStack, Icon, IconButton, Slider, SliderFilledTrack, SliderThumb, SliderTrack } from "@chakra-ui/react";
 import { App as application } from "../lib/sheet/entry.mjs";
 import { Note as SinthNote } from "../lib/sinth/main.mjs";
-import { IoIosMusicalNote, IoIosMusicalNotes, IoIosPlay, IoIosSettings, IoIosVolumeHigh } from "react-icons/io";
+import { IoIosMusicalNotes, IoIosPlay, IoIosSettings, IoIosVolumeHigh } from "react-icons/io";
 import { GiArrowCursor } from "react-icons/gi";
 import { useState } from "react";
-import { ChevronDownIcon } from "@chakra-ui/icons";
-import { GenerateNewIntervals } from "../generators/IntervalGenerator";
 import { RxCross2 } from "react-icons/rx";
 
 interface ControlPanelProps {

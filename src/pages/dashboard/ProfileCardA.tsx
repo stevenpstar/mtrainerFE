@@ -1,9 +1,8 @@
 import { Box, Center, Flex, Grid, GridItem, Icon, Text, VStack, useColorModeValue } from "@chakra-ui/react"
-import {HiAcademicCap, HiBookOpen, HiChartBar, HiChartPie, HiUser} from "react-icons/hi"
+import {HiAcademicCap, HiBookOpen, HiChartBar, HiUser} from "react-icons/hi"
 
 function ProfileCardA() {
   const iconButtonColour = useColorModeValue('gray.800', 'white');
-  const highlightColour = useColorModeValue('pink.500', 'pink.500')
   const navColour = useColorModeValue('linear(to-b, #164066, #0d1f42)','linear(to-b, #164066, #0d1f42)');
 
   return (

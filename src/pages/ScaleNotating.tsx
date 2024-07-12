@@ -1,13 +1,11 @@
 import { Box, Button, Center, Flex, Icon, Text, ToastId, useToast } from "@chakra-ui/react";
-import { IoAddCircleOutline, IoMusicalNote, IoMusicalNotes, IoMusicalNotesOutline, IoPlayCircleOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoAddCircleOutline, IoMusicalNotes, IoPlayCircleOutline } from "react-icons/io5";
 import { ConfigSettings, Message, MessageType, Note, ReturnMidiNumber, App as application } from '../lib/sheet/entry.mjs';
 import { useEffect, useRef, useState } from "react";
 import { Sheet } from "./Sheet";
-import { CompareTranscription, GenerateHiddenRhythm, LoadEmptySheet } from "./rhythmreading/RGenerator";
+import { LoadEmptySheet } from "./rhythmreading/RGenerator";
 import { LuMousePointer } from "react-icons/lu";
-import { AiOutlineDelete } from "react-icons/ai";
-import { darkTheme, normalTheme } from "../utils/Theme";
-import { MdMusicOff, MdOutlineMusicOff } from "react-icons/md";
+import { normalTheme } from "../utils/Theme";
 import { Sinth, Note as SinthNote} from "../lib/sinth/main.mjs";
 import { HiMiniArrowRight } from "react-icons/hi2";
 import { CheckScaleAnswer, GenerateScale, GenerateSinthNotes } from "../generators/ScaleGenerator";
@@ -25,9 +23,6 @@ function ScaleNotate() {
 
   const [score, setScore] = useState<application | null>(null);
   const [inputting, setInputting] = useState<boolean>(true);
-  const [noteValue, setNoteValue] = useState<number>(0.25);
-  const [restInput, setRestInput] = useState<boolean>(false);
-  const [notes, setNotes] = useState<SinthNote[]>([]);
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [scaleString, setScaleString] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
@@ -64,14 +59,14 @@ function ScaleNotate() {
   const callback = (msg: Message) => {
     switch (msg.messageData.MessageType) {
       case MessageType.Selection:
-        setSelectedNote(v => msg.messageData.Message.obj as Note);
+        setSelectedNote(msg.messageData.Message.obj as Note);
           playSelectedNote(msg.messageData.Message.obj as Note);
         break;
       case MessageType.AddNote:
         onAddNote(msg.messageData.Message.obj as Note);
         break;
       default:
-        setSelectedNote(v => null);
+        setSelectedNote(null);
     }
   }
 
@@ -108,7 +103,7 @@ function ScaleNotate() {
       aScore.current = score;
       if (aScore.current) {
         LoadEmptySheet(aScore.current, 4);
-        setScaleString(scaleString => GenerateScale(aScore.current));
+        setScaleString(GenerateScale(aScore.current));
       }
     }
   }, [score])
@@ -179,7 +174,7 @@ function ScaleNotate() {
           onClick={() => {
             if (aScore.current) {
               aScore.current.NoteInput = true;
-              setInputting(v => true);
+              setInputting(true);
             }}
           }
         >Input</Button>
@@ -191,7 +186,7 @@ function ScaleNotate() {
           onClick={() => {
             if (aScore.current) {
               aScore.current.NoteInput = false;
-              setInputting(v => false);
+              setInputting(false);
             }}
           }
         >Select</Button>
@@ -208,10 +203,13 @@ function ScaleNotate() {
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => {
-            if (aScore.current)
+            if (!aScore.current) {
+              return;
+            }
+            else {
               LoadEmptySheet(aScore.current, 4);
-              setScaleString(scaleString => GenerateScale(aScore.current));
-          }}
+              setScaleString(GenerateScale(aScore.current));
+          }}}
         >New Scale</Button>
         </Flex>
         </Box>

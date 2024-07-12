@@ -1,4 +1,4 @@
-import { NoteProps, App as application, ReturnLineFromMidi, Note, MappedMidi } from '../lib/sheet/entry.mjs';
+import { NoteProps, App as application, Note, MappedMidi } from '../lib/sheet/entry.mjs';
 import { type Note as SinthNote} from '../lib/sinth/main.mjs';
 import { IntSettings } from '../pages/IntervalTrainer';
 const baseIntervalLoad = '{"Measures":[{"Clef":"treble","TimeSignature":{"Selected":false,"SelType":3,"top":2,"bottom":4,"Editable":true,"TopPosition":{"x":35,"y":37.5},"BotPosition":{"x":35,"y":57.5},"GTopPosition":{"x":35,"y":132.5},"GBotPosition":{"x":35,"y":152.5},"Bounds":{"x":35,"y":27.5,"width":30,"height":50},"GBounds":{"x":35,"y":122.5,"width":30,"height":50}},"Notes":[],"Bounds":{"x":0,"y":-2.5,"width":150,"height":95},"ShowClef":true,"ShowTime":true}]}';
@@ -58,6 +58,9 @@ function CreateIntervalArray(settings: IntSettings): number[] {
 
 function GenerateNewIntervals(count: number, app: application, settings: IntSettings): Interval {
   
+  // Using count to remove error!
+  count++;
+  //
   const pitchMap = app.PitchMap;
   const noteDuration = 2;
   const sinthNotes: SinthNote[] = [];
@@ -137,7 +140,7 @@ function GenerateNewIntervals(count: number, app: application, settings: IntSett
 
   let intName = "";
   if (intMap.get(diff)) {
-    intName = intMap.get(diff);
+    intName = intMap.get(diff) as string;
   }
 
   const interval: Interval = {

@@ -3,13 +3,6 @@ import { Note as SinthNote} from "../../lib/sinth/main.mjs";
 
 const baseIntervalLoad = '{"Measures":[{"Clef":"treble","TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":{"x":35,"y":37.5},"BotPosition":{"x":35,"y":57.5},"GTopPosition":{"x":35,"y":132.5},"GBotPosition":{"x":35,"y":152.5},"Bounds":{"x":35,"y":27.5,"width":30,"height":50},"GBounds":{"x":35,"y":122.5,"width":30,"height":50}},"Notes":[],"Bounds":{"x":0,"y":-2.5,"width":150,"height":95},"ShowClef":false,"ShowTime":true}]}';
 
-const durations = [
-  0.0625,
-  0.125,
-  0.25,
-  0.5,
-]
-
 // Prototyping beat combinations
 const combinations = [
   //[1],

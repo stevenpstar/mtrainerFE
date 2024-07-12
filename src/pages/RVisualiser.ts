@@ -1,6 +1,6 @@
 class RVis {
   Play: boolean = false;
-  timeOut: ReturnType<typeof setTimeout>;
+  timeOut: ReturnType<typeof setTimeout> = 0;
   timeOutTime: number = 25.0;
   Beats: number[] = [];
 
@@ -41,7 +41,7 @@ class RVis {
     source.connect(analyser);
     analyser.fftSize = 2048;
     const bufferSize = analyser.frequencyBinCount;
-    let dataArray = new Float32Array(bufferSize);
+    const dataArray = new Float32Array(bufferSize);
 
     const startTime = new Date().getTime();
     let lastBeatTime = new Date().getTime();

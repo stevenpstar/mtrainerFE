@@ -81,22 +81,6 @@ function IntervalSettings(props: IntSettingProps) {
     props.UpdateSettings(savedSettings);
   }
 
-  const answers: string[] = [
-    "Unison",
-    "min2",
-    "Maj2",
-    "min3",
-    "Maj3",
-    "P4",
-    "Aug4/Dim5",
-    "P5",
-    "min6",
-    "Maj6",
-    "min7",
-    "Maj7",
-    "Oct"
-  ]
-
   if (loading) {
     return ( <div></div> )
   }
@@ -131,9 +115,9 @@ function IntervalSettings(props: IntSettingProps) {
       </Box>
       <Box>
         <Flex direction={'column'} justify={'flex-start'} gap={6}>
-          <Switch defaultChecked={notate} size={'sm'} onChange={() => setNotate(v => !notate)}>Notate Answer</Switch>
-          <Switch defaultChecked={playSelect} size={'sm'} onChange={() => setPlaySelect(v => !playSelect)}>Play Note on Select</Switch>
-          <Switch defaultChecked={playInput} size={'sm'} onChange={() => setPlayInput(v => !playInput)}>Play Note on Input</Switch>
+          <Switch defaultChecked={notate} size={'sm'} onChange={() => setNotate(notate => !notate)}>Notate Answer</Switch>
+          <Switch defaultChecked={playSelect} size={'sm'} onChange={() => setPlaySelect(playSelect => !playSelect)}>Play Note on Select</Switch>
+          <Switch defaultChecked={playInput} size={'sm'} onChange={() => setPlayInput(playInput => !playInput)}>Play Note on Input</Switch>
         </Flex>
       </Box>
       <Box>

@@ -1,9 +1,7 @@
-import { Box, Center, Grid, GridItem, GridProps, Heading, Icon, List, ListIcon, ListItem, useColorModeValue } from "@chakra-ui/react"
+import { Box, Center, Grid, GridItem, Heading, Icon, List, ListIcon, ListItem } from "@chakra-ui/react"
 import Markdown from "react-markdown"
-import { useEffect, useRef, useState } from "react";
-import { Sheet } from "./Sheet";
+import { useState } from "react";
 import { IoEllipseOutline, IoEllipseSharp } from "react-icons/io5";
-import { IoMdArrowDropleft, IoMdArrowRoundBack, IoMdArrowRoundForward } from "react-icons/io";
 import { GoChevronLeft, GoChevronRight } from "react-icons/go";
 
 const test = `
@@ -81,7 +79,6 @@ function Lesson() {
         <Markdown>
           {genericContent}
         </Markdown>
-        <Sheet w='100%' h='300px' f='' showControls={true}/>
         <Markdown>
           {genericContent}
         </Markdown>

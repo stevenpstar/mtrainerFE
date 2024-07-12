@@ -9,11 +9,10 @@ interface ProtectedProps {
 function ProtectedComponent(props: ProtectedProps) {
   const [auth, setAuth] = useState(false);
   const [hasChecked, setHasChecked] = useState(false);
-  const [noProtection, setNoProtected] = useState(true);
   useEffect(() => {
     CheckAuth(setAuth, setHasChecked)
   }, [])
-  if (!hasChecked && !noProtection) {
+  if (!hasChecked) {
     return (
     <Box h='100%' w='100%'>
       <Center>
@@ -27,7 +26,7 @@ function ProtectedComponent(props: ProtectedProps) {
     </Box>
     )
   }
-  else if (!auth && hasChecked && !noProtection) {
+  else if (!auth && hasChecked) {
     return <Navigate to="/login" />
   } else {
     return ( <Box h='100%' w='100%'>{props.children}</Box> )

@@ -1,21 +1,15 @@
-import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Icon, IconButton, Input } from "@chakra-ui/react";
+import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Icon, IconButton } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { RVis } from "./RVisualiser";
 import { Sheet } from "./Sheet";
 import { ConfigSettings, App as application } from "../lib/sheet/entry.mjs";
 import { GenerateRhythm } from "./rhythmreading/RGenerator";
-import { Note as SinthNote, Sinth } from "../lib/sinth/main.mjs";
-import { IoAddCircleOutline, IoPlayCircleOutline, IoSettings, IoSettingsOutline, IoStopCircleOutline } from "react-icons/io5";
-import { darkTheme, normalTheme } from "../utils/Theme";
+import { Sinth } from "../lib/sinth/main.mjs";
+import { IoAddCircleOutline, IoPlayCircleOutline, IoStopCircleOutline } from "react-icons/io5";
+import { normalTheme } from "../utils/Theme";
 import { IoIosSettings } from "react-icons/io";
 import { HiMicrophone } from "react-icons/hi";
 import { FaKeyboard, FaMouse } from "react-icons/fa";
-
-type Hits = {
-  Beat: number;
-  Score: string;
-  Distance: number;
-}
 
 enum InputType {
   MICROPHONE = 0,
@@ -26,34 +20,6 @@ enum InputType {
 
 function RhythmReading () {
 
-  const fourBeatsCount: SinthNote[] = [
-    {
-      Beat: 1,
-      Duration: 1,
-      MidiNote: 69,
-    },
-    {
-      Beat: 2,
-      Duration: 1,
-      MidiNote: 69,
-    },
-    {
-      Beat: 3,
-      Duration: 1,
-      MidiNote: 69,
-    },
-    {
-      Beat: 4,
-      Duration: 1,
-      MidiNote: 69,
-    },
-    {
-      Beat: 5,
-      Duration: 1,
-      MidiNote: 50,
-    },
-  ]
-
   const [score, setScore] = useState<application | null>(null);
   const [perfectCount, setPerfectCount] = useState<number>(0);
   const [goodCount, setGoodCount] = useState<number>(0);
@@ -63,7 +29,6 @@ function RhythmReading () {
   // the rhythm test can take + a buffer of 1 beat
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const bCanvasRef = useRef<HTMLCanvasElement>(null);
   const mediaRecorder = useRef<MediaRecorder | null>(null);
   const mStream = useRef<MediaStream | null>(null);
   const RDetector = useRef<RVis>(new RVis());
@@ -80,15 +45,12 @@ function RhythmReading () {
 
   const getBeats = (beats: number[]) => {
     // reset counts
-    setPerfectCount(perfectCount => 0);
-    setGoodCount(goodCount => 0);
-    setCloseCount(closeCount => 0);
-    setMissCount(missCount => 0);
-    console.log("beats: ", beats);
-    console.log("beatArray: ", beatArray.current);
+    setPerfectCount(0);
+    setGoodCount(0);
+    setCloseCount(0);
+    setMissCount(0);
     beats.forEach((b: number, i: number) => {
       if (i >= beatArray.current.length) {
-        console.log("i is bigga");
         return;
       }
       rScore(b, beatArray.current[i]);
@@ -101,7 +63,6 @@ function RhythmReading () {
     const good = 100;
     const closeO = 150;
     const dist = Math.abs(time - desiredTime);
-    console.log("??");
   
     if (dist <= perfect) {
       setPerfectCount(perfectCount => perfectCount + 1);
@@ -205,7 +166,7 @@ function RhythmReading () {
     }
   }, [score])
 
-  const handleKeyDown = (e) => {
+  const handleKeyDown = () => {
     if (detectHit.current && inputType.current === InputType.KEYBOARD) {
       // TODO: 2400 is metronome buffer, needs to differe depending on tempo
       RDetector.current.Beats.push(new Date().getTime() - startTime.current - 2400);
@@ -213,7 +174,7 @@ function RhythmReading () {
     }
   }
 
-  const handleMouseDown = (e) => {
+  const handleMouseDown = () => {
     if (detectHit.current && inputType.current === InputType.MOUSE) {
   // TODO: 2400 is metronome buffer, needs to differe depending on tempo
       RDetector.current.Beats.push(new Date().getTime() - startTime.current - 2400);

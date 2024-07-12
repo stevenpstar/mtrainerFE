@@ -63,7 +63,6 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    { localStorage.setItem('chakra-ui-color-mode', 'light') }
     <GoogleOAuthProvider clientId="579128989771-goqn01qifeiqi3014etchrhspp177u2c.apps.googleusercontent.com">
       <ChakraProvider theme={theme}>
       <ColorModeScript initialColorMode={'light'} />

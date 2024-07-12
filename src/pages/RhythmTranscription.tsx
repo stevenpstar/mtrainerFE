@@ -1,13 +1,13 @@
 import { Box, Button, Center, Flex, Icon, ToastId, useToast } from "@chakra-ui/react";
-import { IoAddCircleOutline, IoMusicalNote, IoMusicalNotes, IoMusicalNotesOutline, IoPlayCircleOutline, IoSettingsOutline } from "react-icons/io5";
+import { IoAddCircleOutline, IoMusicalNote, IoMusicalNotes, IoPlayCircleOutline } from "react-icons/io5";
 import { ConfigSettings, App as application } from '../lib/sheet/entry.mjs';
 import { useEffect, useRef, useState } from "react";
 import { Sheet } from "./Sheet";
 import { CompareTranscription, GenerateHiddenRhythm, LoadEmptySheet } from "./rhythmreading/RGenerator";
-import { LuMousePointer, LuMousePointer2 } from "react-icons/lu";
+import { LuMousePointer2 } from "react-icons/lu";
 import { AiOutlineDelete } from "react-icons/ai";
-import { darkTheme, normalTheme } from "../utils/Theme";
-import { MdMusicOff, MdOutlineMusicOff } from "react-icons/md";
+import { normalTheme } from "../utils/Theme";
+import { MdOutlineMusicOff } from "react-icons/md";
 import { Sinth, Note as SinthNote} from "../lib/sinth/main.mjs";
 import { HiMiniArrowRight } from "react-icons/hi2";
 import { IoIosSettings } from "react-icons/io";
@@ -25,7 +25,7 @@ function RhythmTranscription() {
   const [notes, setNotes] = useState<SinthNote[]>([]);
 
   const GenerateRhythm = (score: application) => {
-    setNotes(v => GenerateHiddenRhythm(score));
+    setNotes(GenerateHiddenRhythm(score));
   }
 
   const rSettings: ConfigSettings = {
@@ -106,7 +106,7 @@ function RhythmTranscription() {
           onClick={() => {
             if (score) {
               score.NoteInput = true;
-              setInputting(v => true);
+              setInputting(true);
             }}
           }
         >Input</Button>
@@ -118,7 +118,7 @@ function RhythmTranscription() {
           onClick={() => {
             if (score) {
               score.NoteInput = false;
-              setInputting(v => false);
+              setInputting(false);
             }}
           }
         >Select</Button>
@@ -165,7 +165,7 @@ function RhythmTranscription() {
           onClick={() => {
             if (score) {
               score.SetNoteValue(0.125);
-              setNoteValue(v => 0.125);
+              setNoteValue(0.125);
             }}
           }
         >1/8</Button>
@@ -177,7 +177,7 @@ function RhythmTranscription() {
           onClick={() => {
             if (score) {
               score.SetNoteValue(0.25);
-              setNoteValue(v => 0.25);
+              setNoteValue(0.25);
             }}
           }
         >1/4</Button>
@@ -188,7 +188,7 @@ function RhythmTranscription() {
           onClick={() => {
             if (score) {
               score.SetNoteValue(0.5);
-              setNoteValue(v => 0.5);
+              setNoteValue(0.5);
             }}
           }
         >1/2</Button>
@@ -200,7 +200,7 @@ function RhythmTranscription() {
           onClick={() => {
             if (score) {
               score.RestInput = !score.RestInput;
-              setRestInput(v => score.RestInput);
+              setRestInput(score.RestInput);
             }}
           }
         >REST</Button>

@@ -1,4 +1,4 @@
-import { As, Box, Icon, Tooltip, useColorModeValue } from "@chakra-ui/react";
+import { As, Box, Icon, Tooltip } from "@chakra-ui/react";
 
 interface IconButtonProps {
   label: string;
@@ -7,7 +7,6 @@ interface IconButtonProps {
   size: number;
 }
 function IconButton(props: IconButtonProps) {
-  const iconButtonColour = useColorModeValue('gray.200', 'white');
   return (
     <Box
       as='button'

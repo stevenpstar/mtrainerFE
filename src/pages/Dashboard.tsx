@@ -1,9 +1,7 @@
-import { Box, Center, Divider, Grid, GridItem, useColorModeValue } from "@chakra-ui/react"
+import { Box, Center, Grid, GridItem } from "@chakra-ui/react"
 import { ProfileCardA } from "./dashboard/ProfileCardA"
 
 function Dashboard() {
-  const bgColour = useColorModeValue('gray.100', 'blackAlpha.800');
-  const sectionColour = useColorModeValue('gray.300', '#12484c');
   return (
   <Center h='100%' w='100%' p={12}>
     <Box h='100%' w='100%' minH={'400px'}>

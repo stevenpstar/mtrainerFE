@@ -1,11 +1,10 @@
-import { Note, NoteProps, ReturnMidiNumber, App as application } from "../lib/sheet/entry.mjs";
+import { NoteProps, ReturnMidiNumber, App as application } from "../lib/sheet/entry.mjs";
 import { Note as SinthNote } from "../lib/sinth/main.mjs";
 import { LoadEmptySheet } from "../pages/rhythmreading/RGenerator";
 
 const SemiTone = 1;
 const Tone = 2;
 
-const baseScoreLoad = '{"Measures":[{"Clef":"treble","TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":{"x":35,"y":37.5},"BotPosition":{"x":35,"y":57.5},"GTopPosition":{"x":35,"y":132.5},"GBotPosition":{"x":35,"y":152.5},"Bounds":{"x":35,"y":27.5,"width":30,"height":50},"GBounds":{"x":35,"y":122.5,"width":30,"height":50}},"Notes":[],"Bounds":{"x":0,"y":-2.5,"width":150,"height":95},"ShowClef":false,"ShowTime":true}]}';
 
 const Scales = new Map<string, number[]>([
   [ "Major Scale", [Tone, Tone, SemiTone, Tone, Tone, Tone, SemiTone, -SemiTone, -Tone, -Tone, -Tone, -SemiTone, -Tone, -Tone]],
@@ -31,7 +30,6 @@ function CheckScaleAnswer(scale: string, score: application | null): boolean {
   }
 
   let currentNote = 60;
-  let currentBeat = 1;
   if (scale !== "Major Scale") {
     currentNote = 57;
   }
@@ -39,7 +37,7 @@ function CheckScaleAnswer(scale: string, score: application | null): boolean {
   const scaleInts = Scales.get(scale);
   if (!scale) { 
     console.error("No scale match");
-    return [];
+    return false;
   }
 
   const correctNotes: number[] = [];
@@ -66,7 +64,7 @@ function CheckScaleAnswer(scale: string, score: application | null): boolean {
 
   if (correctNotes.length !== inputNotes.length) { answer = false; }
   else {
-    correctNotes.forEach((n: number, i: index) => {
+    correctNotes.forEach((n: number, i: number) => {
       if (inputNotes[i] !== n) {
         answer = false;
         return;
@@ -119,7 +117,6 @@ function GenerateScale(score: application): string {
   const scaleArray = CreateScaleArray();
   const chosenScale = scaleArray[Math.floor(Math.random() * scaleArray.length)];
   const startingBeat = 1;
-  const endingBeat = 15;
   let startingNote: number = 69;
   // start and end note lines
   let sNoteLine: number = 69;
@@ -177,18 +174,18 @@ function GenerateScale(score: application): string {
 
   if (score.Sheet.Measures.length < 2) {
     console.error("Not enough Measures not generated");
-    return;
+    return "";
   } else if (score.Sheet.Measures.length > 3) {
       const firstMeasure = score.Sheet.Measures[0];
       if (firstMeasure.Divisions.length === 0) {
         console.error("No divisions generated");
-        return;
+        return "";
       }
 
       const lastMeasure = score.Sheet.Measures[3];
       if (lastMeasure.Divisions.length === 0) {
         console.error("No divisions generated");
-        return;
+        return "";
       }
 
       // peak
