@@ -1,0 +1,41 @@
+@font-face {
+  font-family: 'Bravura';
+  font-style: 'normal';
+  font-weight: 'normal';
+  src: local('Bravura'), url('../src/Assets/Fonts/Bravura.otf') format('opentype');
+}
+          
+html, body {
+  width: 100%;
+  height: 100%;
+}
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+.lesson-content hr {
+  margin: 1em 0 1em 0;
+}
+
+.canvasOverlay {
+  position: relative;
+  top: -700px;
+}
+
+.canvasRelative {
+  position: relative;
+  top: 0px;
+}
+
+.musicFont {
+  font-family: 'Bravura', serif;
+  font-size: 32px !important;
+}
+
+.highlightColour {
+  color: #caffbf;
+}
