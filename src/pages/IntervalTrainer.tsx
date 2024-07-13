@@ -124,8 +124,8 @@ function IntervalTrainer() {
   const aSample = useRef<AudioBuffer | null>(null);
   const aScore = useRef<application | null>(null);
 
-  const correct = new Audio("../src/assets/correct.mp3");
-  const incorrect = new Audio("../src/assets/incorrect.mp3");
+  const correct = new Audio("/correct.mp3");
+  const incorrect = new Audio("/incorrect.mp3");
 
   const getButtonColour = (intString: string) => {
     let colour = "gray.300";
@@ -216,7 +216,7 @@ function IntervalTrainer() {
 
   useEffect(() => {
     const aContext: AudioContext = new AudioContext();
-    fetch("../src/assets/A4vH.flac")
+    fetch("/A4vH.flac")
     .then (resp => resp.arrayBuffer())
     .then (aBuffer => aContext.decodeAudioData(aBuffer))
     .then (s => aSample.current = s);

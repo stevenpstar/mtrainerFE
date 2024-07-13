@@ -90,7 +90,7 @@ function ScaleNotate() {
 
   useEffect(() => {
     const aContext: AudioContext = new AudioContext();
-    fetch("../src/assets/A4vH.flac")
+    fetch("/A4vH.flac")
     .then (resp => resp.arrayBuffer())
     .then (aBuffer => aContext.decodeAudioData(aBuffer))
     .then (s => aSample.current = s);
