@@ -13,6 +13,8 @@ import { IntervalTrainer } from './pages/IntervalTrainer.tsx'
 import { RhythmReading } from './pages/RhythmReading.tsx'
 import { RhythmTranscription } from './pages/RhythmTranscription.tsx'
 import { ScaleNotate } from './pages/ScaleNotating.tsx'
+import { Landing } from './Landing.tsx'
+import { Practice } from './pages/Practice.tsx'
 
 const theme = extendTheme({
   config: {
@@ -28,8 +30,16 @@ const theme = extendTheme({
 const router = createBrowserRouter([
   {
     path: "/",
+    element: <Landing />
+  },
+  {
+    path: "/app",
     element: <App />,
     children: [
+      {
+        path: "practice",
+        element: <Practice />
+      },
       {
         path: "dashboard",
         element: <ProtectedComponent><Dashboard /></ProtectedComponent>
@@ -43,19 +53,19 @@ const router = createBrowserRouter([
         element: <Lesson />
       },
       {
-        path: "/practice/intervals",
+        path: "practice/intervals",
         element: <IntervalTrainer />,
       },
       {
-        path: "/practice/rhythm-reading",
+        path: "practice/rhythm-reading",
         element: <RhythmReading />,
       },
       {
-        path: "/practice/rhythm-transcription",
+        path: "practice/rhythm-transcription",
         element: <RhythmTranscription />,
       },
       {
-        path: "/practice/notate-scale",
+        path: "practice/notate-scale",
         element: <ScaleNotate />,
       },
     ]},
