@@ -2,7 +2,7 @@
   font-family: 'Bravura';
   font-style: 'normal';
   font-weight: 'normal';
-  src: local('Bravura'), url('../src/Assets/Fonts/Bravura.otf') format('opentype');
+  src: local('Bravura'), url('/Bravura.otf') format('opentype');
 }
           
 html, body {

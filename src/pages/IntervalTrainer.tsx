@@ -1,5 +1,5 @@
 import { Box, Button, Center,
-Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Grid, GridItem, Icon, List, ListIcon, ListItem, Text, ToastId, useColorModeValue, useToast } from "@chakra-ui/react";
+Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Icon, IconButton, List, ListIcon, ListItem, Show, Text, ToastId, useToast } from "@chakra-ui/react";
 import { Sheet } from "./Sheet";
 import { ConfigSettings, Message, MessageType, Note, ReturnMidiNumber, App as application } from "../lib/sheet/entry.mjs";
 import { Note as SinthNote, Sinth } from "../lib/sinth/main.mjs";
@@ -80,8 +80,38 @@ function IntervalTrainer() {
     Theme: normalTheme,
   }
 
+  const intervalSettingsPC: ConfigSettings = {
+    CameraSettings: {
+      DragEnabled: false,
+      ZoomEnabled: false,
+      Zoom: 2,
+      StartingPosition: { x: 0, y: 0 },
+      CenterMeasures: true,
+      CenterPage: false,
+    },
+    FormatSettings: {
+      MeasureFormatSettings: {
+        Selectable: false,
+        MaxWidth: 200,
+      }
+    },
+    NoteSettings: {
+      InputValue: 0.5,
+    },
+    PageSettings: {
+      RenderPage: true,
+      RenderBackground: false,
+      ContainerWidth: false,
+      UsePages: true,
+      AutoSize: true,
+    },
+    DefaultStaffType: 'single',
+    Theme: normalTheme,
+  }
 
-  const inputBgColour = useColorModeValue('linear(to-b, #0e1114, #16191f)', 'black');
+
+
+//  const inputBgColour = useColorModeValue('linear(to-b, #0e1114, #16191f)', 'black');
 
   const [score, setScore] = useState<application | null>(null);
   const [inputting, setInputting] = useState<boolean>(false);
@@ -117,12 +147,14 @@ function IntervalTrainer() {
 
   const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
   const [recordsOpen, setRecordsOpen] = useState<boolean>(false);
+  const [canvas, _setCanvas] = useState<HTMLCanvasElement | null>(null);
 
   const toast = useToast();
   const toastIdRef = useRef<ToastId>();
 
   const aSample = useRef<AudioBuffer | null>(null);
   const aScore = useRef<application | null>(null);
+  const scoreCanvas = useRef<HTMLCanvasElement | null>(null);
 
   const correct = new Audio("/correct.mp3");
   const incorrect = new Audio("/incorrect.mp3");
@@ -232,6 +264,12 @@ function IntervalTrainer() {
   }, [score])
 
   useEffect(() => {
+    if (canvas) {
+      scoreCanvas.current = canvas;
+    }
+  }, [canvas])
+
+  useEffect(() => {
     if (notes.length > 1 && aSample.current) {
       Sinth.playFull(aSample.current, 120, notes, () => {});
     }
@@ -337,16 +375,7 @@ function IntervalTrainer() {
   const topButtonColour = 'gray.400';
 
   return (
-    <Grid w='100%' h='100%'
-      templateAreas={
-      `
-      "top"
-      "sheet"
-      "answers"
-      `
-      }
-      gridTemplateRows={'40px 500px 1fr'}
-      gridTemplateColumns={`1fr`}>
+  <Box w='100%' h='100%'>
       { selectedNote !== null && 
       <Box>
         <Box bgColor={'#16191F'} position={'absolute'} top={getSelectedNotePosition().top} left={getSelectedNotePosition().left} 
@@ -402,143 +431,145 @@ function IntervalTrainer() {
         </Box>
         </Box>
       }
-      <GridItem area={'top'} bgColor={'#16191f'}>
-      <Box top={'0px'} left={'0px'} pos={'fixed'} h='40px' w='100%' bgColor={'blackAlpha.500'}>
-      <Flex justify={'space-between'} w='100%'>
-      <Box pl={'35px'}>
-      <Flex direction={'row'} justify={'flex-start'}>
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.NoteInput = true;
-              setInputting(true);
-            }}
-          }
-        >Input</Button>
+      <Flex 
+        direction={'column'} 
+        justify={{base: 'space-between', sm: 'space-between', md: 'flex-start'}} 
+        w='100%' 
+        className='check' h='100%' bgColor={'#0D0F12'}>
 
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={LuMousePointer2} color={!inputting ? '#f08080' : topButtonColour} boxSize={6} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.NoteInput = false;
-              setInputting(false);
-            }}
-          }
-        >Select</Button>
+        <Box h='40px' w='100%' bgColor={'blackAlpha.500'}>
+        <Flex justify={'space-between'} w='100%'>
+        <Box>
+        <Flex direction={'row'} justify={'flex-start'}>
 
-      <Button aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (notes.length > 0 && aSample.current) {
-              Sinth.initplay(notes);
-              Sinth.play(aSample.current, 120, () => {});
-            }}
-          }
-        >Play</Button>
+        <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => {
+              if (aScore.current) {
+                aScore.current.NoteInput = true;
+                setInputting(true);
+              }}
+            }
+          ></IconButton>
 
-      <Button aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={FaArrowTrendUp} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (notes.length > 0 && aSample.current) {
-              const ascendingNotes: SinthNote[] = [];
-              notes.sort((a: SinthNote, b: SinthNote) => {
-                return a.MidiNote - b.MidiNote;
-              })
-              for (let b=0;b<notes.length;b++) {
-                ascendingNotes.push({
-                  Beat: b + 1,
-                  Duration: notes[b].Duration,
-                  MidiNote: notes[b].MidiNote
+        <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={LuMousePointer2} color={!inputting ? '#f08080' : topButtonColour} boxSize={6} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => {
+              if (aScore.current) {
+                aScore.current.NoteInput = false;
+                setInputting(false);
+              }}
+            }
+          ></IconButton>
+
+
+        <IconButton aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => {
+              if (notes.length > 0 && aSample.current) {
+                Sinth.initplay(notes);
+                Sinth.play(aSample.current, 120, () => {});
+              }}
+            }
+          ></IconButton>
+
+        <IconButton aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={FaArrowTrendUp} boxSize={5} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => {
+              if (notes.length > 0 && aSample.current) {
+                const ascendingNotes: SinthNote[] = [];
+                notes.sort((a: SinthNote, b: SinthNote) => {
+                  return a.MidiNote - b.MidiNote;
                 })
-              }
-              Sinth.initplay(ascendingNotes);
-              Sinth.play(aSample.current, 120, () => {});
-            }}
-          }
-        >Asc</Button>
+                for (let b=0;b<notes.length;b++) {
+                  ascendingNotes.push({
+                    Beat: b + 1,
+                    Duration: notes[b].Duration,
+                    MidiNote: notes[b].MidiNote
+                  })
+                }
+                Sinth.initplay(ascendingNotes);
+                Sinth.play(aSample.current, 120, () => {});
+              }}
+            }
+          ></IconButton>
 
-       <Button aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={FaArrowTrendDown} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (notes.length > 0 && aSample.current) {
-              const descendingNotes: SinthNote[] = [];
-              notes.sort((a: SinthNote, b: SinthNote) => {
-                return b.MidiNote - a.MidiNote;
-              });
-              for (let b=0;b<notes.length;b++) {
-                descendingNotes.push({
-                  Beat: b + 1,
-                  Duration: notes[b].Duration,
-                  MidiNote: notes[b].MidiNote
+         <IconButton aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={FaArrowTrendDown} boxSize={5} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => {
+              if (notes.length > 0 && aSample.current) {
+                const descendingNotes: SinthNote[] = [];
+                notes.sort((a: SinthNote, b: SinthNote) => {
+                  return b.MidiNote - a.MidiNote;
                 });
-              }
-              Sinth.initplay(descendingNotes);
-              Sinth.play(aSample.current, 120, () => {});
-            }}
-          }
-        >Desc</Button>
-      <Button aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoIosVolumeHigh} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (notes.length > 0 && aSample.current) {
-              Sinth.initplay(notes);
-              Sinth.play(aSample.current, 120, () => {});
-            }}
-          }
-        >Volume</Button>
-      </Flex>
-     </Box>
-      <Flex justify={'center'}>
+                for (let b=0;b<notes.length;b++) {
+                  descendingNotes.push({
+                    Beat: b + 1,
+                    Duration: notes[b].Duration,
+                    MidiNote: notes[b].MidiNote
+                  });
+                }
+                Sinth.initplay(descendingNotes);
+                Sinth.play(aSample.current, 120, () => {});
+              }}
+            }
+          ></IconButton>
+        <IconButton aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={IoIosVolumeHigh} boxSize={5} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => {
+              if (notes.length > 0 && aSample.current) {
+                Sinth.initplay(notes);
+                Sinth.play(aSample.current, 120, () => {});
+              }}
+            }
+          ></IconButton>
+        </Flex>
+       </Box>
+        <Flex justify={'flex-end'}>
+        <IconButton aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={IoIosSettings} boxSize={5} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => setSettingsOpen(true)}></IconButton>
 
-      </Flex>
-      <Flex justify={'flex-end'}>
-      <Button aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoIosSettings} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => setSettingsOpen(true)}>Settings</Button>
-
-    <Button aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={MdBarChart} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => setRecordsOpen(true)}>Stats</Button>
-      </Flex>
-      </Flex>
-
+      <IconButton aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+            icon={<Icon as={MdBarChart} boxSize={5} />}
+            _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+            _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+            onClick={() => setRecordsOpen(true)}></IconButton>
+        </Flex>
+        </Flex>
       </Box>
-      </GridItem>
-
-      <GridItem area={'sright'} bgColor={'gray.300'}>
-      </GridItem>
-
-      <GridItem area={'sheet'} bgColor='#16191f'>
-        <Sheet w='100%' h='500px' f='' setParentScore={setScore} callback={callback} config={intervalSettings}/>
-      </GridItem>
-      <GridItem area={'answers'} bgColor={inputBgColour} >
+      <Box bgColor={'#0e1114'}>
       <Center>
-      <Box h='100%' maxW='700' w='auto'> 
-
-      <Flex justify={'center'}>
-
-
-
+      <Flex justify={'flex-start'} w='600px'>
       </Flex>
-
-      <Flex justify={'center'} gap={1} wrap={'wrap'} mt={4} >
+      </Center>
+      <Center height='auto'>
+      <Show above='md'>
+      <Sheet w='100%' h='500px' f='' setParentScore={setScore} callback={callback} config={intervalSettingsPC} 
+        />
+      </Show>
+      <Show below='md'>
+      <Sheet w='100%' h='300px' f='' setParentScore={setScore} callback={callback} config={intervalSettings} 
+        />
+      </Show>
+        </Center>
+      <Center>
+      <Box h='100%' maxW='700' w='auto' mt={2}> 
+      <Flex justify={'center'} gap={1} wrap={'wrap'}>
         { answers.map((a, i) => 
         <Button 
           size='sm'
@@ -598,7 +629,10 @@ function IntervalTrainer() {
       </Flex>
       </Box>
       </Center>
-      </GridItem>
+      </Box>
+      <Box>
+      </Box>
+      </Flex>
       <Drawer isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} size={'md'}>
         <DrawerOverlay/>
         <DrawerContent bgColor={'#0E1114'} color={'gray.300'}>
@@ -652,8 +686,7 @@ function IntervalTrainer() {
           </DrawerBody>
         </DrawerContent>
       </Drawer>
-
-    </Grid>
+    </Box>
   )
 }
 

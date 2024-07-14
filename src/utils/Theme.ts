@@ -15,7 +15,7 @@ const normalTheme = {
   LineColour: "black",
   BackgroundColour: "black",
   PageColour: "white",
-  PageShadowColour: "#0e121a",
+  PageShadowColour: "#0D0F12",
 }
 
 

@@ -1,12 +1,12 @@
 import './App.css'
-import { Box, Button, Center, Drawer, DrawerBody, DrawerContent, DrawerOverlay, Flex, Grid, GridItem, Icon, IconButton, Text, useColorModeValue } from '@chakra-ui/react';
+import { Box, Button, Center, Drawer, DrawerBody, DrawerContent, DrawerOverlay, Flex, Icon, IconButton, Show, Text, useColorModeValue } from '@chakra-ui/react';
 import { Link, Outlet } from 'react-router-dom';
 import { RiMenuUnfoldFill } from 'react-icons/ri';
 import { useEffect, useState } from 'react';
 import { FaChevronLeft } from 'react-icons/fa';
 
 function App() {
-  const inputBgColour = useColorModeValue('linear(to-b, #f08080, #ffd6a5)', 'black');
+ // const inputBgColour = useColorModeValue('linear(to-b, #f08080, #ffd6a5)', 'black');
   const navGradient = useColorModeValue('linear(to-b, #16191F, #262B36)', 'black');
 
   const [navOpen, setNavOpen] = useState<boolean>(false);
@@ -17,24 +17,16 @@ function App() {
 
   return (
     <Box px={0} w='100%' h='100%' bgColor={'#0e1114'}>
-    <Grid
-      templateAreas={
-      `"nav main" `
-      }
-       gridTemplateRows={'1fr'}
-       gridTemplateColumns={'40px 1fr'}
-       h='100%'
-       w='100%'
-       border={0}
-       px={0}
-       >
-       <GridItem zIndex={1000} area={'nav'} overflow={'hidden'} bgGradient={inputBgColour}>
         <Flex 
         direction={'column'}
-        gap={4}
-        mt='3px'
-        ml='7px'>
-
+        justify={'flex-start'}
+        gap={0}
+        h='100%'
+        w='100%'
+        >
+        <Box w='100%' h={{base: '40px', sm: '40px', md: '40px', lg: '60px'}} bgColor={'black'}>
+        <Show below='md'>
+        <Flex justify={'flex-start'}>
         <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={'#262b36'} 
           leftIcon={<Icon as={RiMenuUnfoldFill} boxSize={6} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
@@ -42,8 +34,10 @@ function App() {
           onClick={() => setNavOpen(true)}
           zIndex={1000}
         ></Button>
-
         </Flex>
+        </Show>
+        </Box>
+
         <Drawer placement={'left'} isOpen={navOpen} onClose={() => setNavOpen(false)} size={'xs'}>
           <DrawerOverlay />
           <DrawerContent p={0} bgGradient={navGradient}>
@@ -91,11 +85,12 @@ function App() {
                 </Box>
                 <Box>
                 </Box>
-                <Box h='100%' w='40px' bgGradient={inputBgColour}>
+                <Box h='100%' w='40px' bgGradient={'transparent'}>
                   <Center>
                   <IconButton 
                     backgroundColor={'transparent'}
                     aria-label='Close Navigation' 
+                    color={'#f08080'}
                     _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
                     _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
                     icon={<Icon as={FaChevronLeft} boxSize={4} />} 
@@ -107,13 +102,10 @@ function App() {
             </DrawerBody>
           </DrawerContent>
         </Drawer>
-      </GridItem>
-       <GridItem area={'main'} className="gridareamain">
-          <Box opacity={opacity} w='100%' h='100%'>
+          <Box className='heeey' opacity={opacity} w='100%' h='100%'>
             <Outlet />
           </Box>
-        </GridItem>
-    </Grid>
+        </Flex>
     </Box>
   )
 }

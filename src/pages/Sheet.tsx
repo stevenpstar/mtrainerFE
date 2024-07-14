@@ -9,6 +9,7 @@ interface SheetProps {
   setParentScore: (score: application) => void;
   callback: (msg: Message) => void;
   config: ConfigSettings;
+  setParentCanvas?: (canvas: HTMLCanvasElement) => void;
 }
 
 function Sheet (props: SheetProps) {
@@ -30,12 +31,15 @@ function Sheet (props: SheetProps) {
               props.callback(msg);
           }, props.config);
         props.setParentScore(app);
+        if (props.setParentCanvas) {
+          console.log("do nothing");//props.setParentCanvas(canvasRef);
+        }
         }
     }
   }, [])
 
   return (
-      <Box ref={canvasWrapper} w='100%' h={props.h} >
+      <Box ref={canvasWrapper} w={props.w} h={props.h} >
       <Box pt={2} pb={2}>
       </Box>
         <Box h='100%' w='100%'>
