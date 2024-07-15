@@ -53,27 +53,28 @@ function Home() {
       </Flex>
       </Center>
     </Box>
-    <Flex direction={'column'} w='100%' gap={12}>
-      <Box minH={'700px'} bgImage={'/hero.jpg'} 
+    <Flex direction={'column'} w='100%' gap={0}>
+      <Box minH={'600px'}  
         bgSize={'cover'} bgPos={['top', 'top', 'top', 'top', 'top', 'left']}>
-        <Flex justify={'flex-start'}>
+        <Flex justify={'center'}>
         <Box mt={20} w='800px'>
-          <Heading mt={14} ml={12} textAlign={'left'} bgGradient={'linear(to-r, white, #f08080)'} bgClip='text' size='3xl' as={'h1'}>
+          <Heading mt={14} ml={12} textAlign={'center'} bgGradient={'linear(to-r, white, #f08080)'} bgClip='text' size='3xl' as={'h1'}>
                Become a better musician by mastering the fundamentals
           </Heading>
-          <Heading size={'sm'} textAlign={'left'} mt={8} ml={12} color={'gray.100'}>
+          <Heading size={'sm'} textAlign={'center'} mt={8} ml={12} color={'gray.100'}>
             For beginners, professionals and everybody in-between.
           </Heading>
         </Box>
         </Flex>
       </Box>
-      <Center ref={featureRef}>
-        <Heading bgGradient={'linear(to-l, #ffd6a5, #f08080)'} bgClip={'text'} size='md'>
+      <Box ref={featureRef} minH='700px' w='100%' bgColor={'#0d0f12'} p={12}>
+      <Center >
+        <Heading bgGradient={'linear(to-l, #ffd6a5, #f08080)'} bgClip={'text'} size='md' mt={4} mb={12}>
           Achieve mastery through daily use of our practice tools.
         </Heading>
       </Center>
       <Center>
-        <Box maxW={'1500px'}>
+        <Box maxW={'1500px'} bgColor={'#0d0f12'}>
         <Flex gap={12} wrap={'wrap'} justify={'space-evenly'}>
           <HomeCard
             heading='Interval Recognition'
@@ -102,7 +103,8 @@ function Home() {
         </Flex>
         </Box>
       </Center>
-      <Box bgColor={'#0d0f12'} ref={howitworksRef}>
+      </Box>
+      <Box bgColor={'#0E1114'} ref={howitworksRef}>
      <Center w='100%' mb={24}>
         <Flex gap={6} direction={'column'} justify={'space-evenly'} w='600px'>
         <Heading bgGradient={'linear(to-r, #ffd6a5, #f08080)'} mt={12} mb={6} bgClip='text' size='md'>
@@ -123,15 +125,16 @@ function Home() {
           />
           <HomeCard
             heading='Track your progress'
-            body='Knowledge is power, find and target weaknesses in your knowledge and skill.'
+            body='Record all of your results and use them for efficient and targeted practice sessions.'
             icon={MdBarChart}
             navTo=""
           />
         </Flex>
       </Center>
       </Box>
+      <Box bgColor={'#0d0f12'}>
      <Center>
-        <Heading bgGradient={'linear(to-l, #ffd6a5, #f08080)'} bgClip={'text'} size='md'>
+        <Heading bgGradient={'linear(to-l, #ffd6a5, #f08080)'} bgClip={'text'} size='md' mb={12} mt={4}>
           Need an example? Here's our Interval Trainer in action!  
         </Heading>
       </Center>
@@ -140,6 +143,7 @@ function Home() {
           <source src='/example.mp4' type='video/mp4' />
         </video>
       </Center>
+      </Box>
     </Flex>
     </Box>
   )

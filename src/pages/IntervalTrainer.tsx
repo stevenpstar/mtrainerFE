@@ -137,7 +137,7 @@ function IntervalTrainer() {
     min7: true,
     Maj7: true,
     Oct: true,
-    NeedNotate: true,
+    NeedNotate: false,
     NotateCount: 1,
     Ascending: true,
     Descending: true,

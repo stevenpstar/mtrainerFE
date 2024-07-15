@@ -97,7 +97,7 @@ function IntervalAnswers(props: IAProps) {
       <Flex direction={'column'} justify={'flex-start'} gap={2}>
          <ITButton
           d={'Octave'}
-          a={'Octave'}
+          a={'Oct'}
           setInterval={setInterval}
           getButtonColour={getButtonColour}
         />
