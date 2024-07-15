@@ -39,6 +39,12 @@ html, body {
   font-size: 32px !important;
 }
 
+.musicFontSmall {
+  font-family: 'Bravura', serif;
+  font-size: 24px !important;
+}
+
+
 .highlightColour {
   color: #caffbf;
 }

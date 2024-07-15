@@ -14,6 +14,7 @@ import { IoIosSettings, IoIosVolumeHigh } from "react-icons/io";
 import {  normalTheme } from "../utils/Theme";
 import { AiOutlineDelete } from "react-icons/ai";
 import { FaArrowTrendDown, FaArrowTrendUp } from "react-icons/fa6";
+import { IntervalAnswers } from "./intervaltrainer/IntervalAnswers";
 
 type SessionRecord = {
   correct: boolean;
@@ -258,10 +259,8 @@ function IntervalTrainer() {
     if (score) {
       aScore.current = score;
       newInterval(score);
-    } else {
-      console.error("NO SCORE?");
-    }
-  }, [score])
+    }  
+    }, [score])
 
   useEffect(() => {
     if (canvas) {
@@ -313,7 +312,7 @@ function IntervalTrainer() {
       return;
     }
       aScore.current?.Sheet.Measures[0].ClearMeasure([note]);
-  }
+   }
 
   const playSelectedNote = (note: Note) => {
     const midi = ReturnMidiNumber("treble", 
@@ -366,8 +365,8 @@ function IntervalTrainer() {
     const msrY = aScore.current.Sheet.Measures[msrIndex].Bounds.y;
     const msrX = aScore.current.Sheet.Measures[msrIndex].Divisions[0].Bounds.x;
 
-    pos.top = (msrY + selectedNote.Bounds.y + camY) * (aScore.current.Camera.Zoom) - 0;
-    pos.left = (msrX + selectedNote.Bounds.x + camX) * (aScore.current.Camera.Zoom) - 120;
+    pos.top = (msrY + selectedNote.Bounds.y + camY) * (aScore.current.Camera.Zoom) + 60;
+    pos.left = (msrX + selectedNote.Bounds.x + camX) * (aScore.current.Camera.Zoom) - 160;
 
     return pos;
   }
@@ -376,56 +375,13 @@ function IntervalTrainer() {
 
   return (
   <Box w='100%' h='100%'>
-      { selectedNote !== null && 
+      { false && 
       <Box>
         <Box bgColor={'#16191F'} position={'absolute'} top={getSelectedNotePosition().top} left={getSelectedNotePosition().left} 
           w={selectedNote !== null ? '300px' : '0px'} opacity={selectedNote !== null ? 1 : 0} h='40px' transition={'0.1s'}
            borderRadius={'5px'} boxShadow={'lg'}>
           <Center>
           <Flex justify={'space-evenly'} w='100%' hidden={!selectedNote}>
-      <Button 
-        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.SetAccidental(-1);
-            }}
-          }
-        ><Box className='musicFont' mr={1}>{'\uE260'}</Box> Flat </Button>
-
-      <Button
-        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.SetAccidental(0);
-            }}
-          }
-        ><Box className='musicFont' mr={1}>{'\uE261'}</Box> Natural</Button>
-
-      <Button
-        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.SetAccidental(1);
-            }}
-          }
-        ><Box className='musicFont' mr={1}>{'\uE262'}</Box> Sharp</Button>
-
-       <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-        leftIcon={<Icon as={AiOutlineDelete} color={'#f08080'} boxSize={5} />}
-        _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-        _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-        onClick={() => {
-          if (aScore.current) {
-            aScore.current.Delete();
-          }}
-        }
-        >Delete</Button>
         </Flex>
         </Center>
         </Box>
@@ -439,8 +395,8 @@ function IntervalTrainer() {
 
         <Box h='40px' w='100%' bgColor={'blackAlpha.500'}>
         <Flex justify={'space-between'} w='100%'>
-        <Box>
-        <Flex direction={'row'} justify={'flex-start'}>
+        <Box w='100%'>
+        <Flex direction={'row'} justify={{base: 'center', sm: 'flex-start', md: 'center'}}>
 
         <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
             icon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
@@ -535,7 +491,53 @@ function IntervalTrainer() {
               }}
             }
           ></IconButton>
-        </Flex>
+
+      <Button 
+        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+          onClick={() => {
+            if (aScore.current) {
+              aScore.current.SetAccidental(-1);
+            }}
+          }
+        ><Box className='musicFont' mr={1}>{'\uE260'}</Box></Button>
+
+      <Button
+        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+          onClick={() => {
+            if (aScore.current) {
+              aScore.current.SetAccidental(0);
+            }}
+          }
+        ><Box className='musicFont' mr={1}>{'\uE261'}</Box></Button>
+
+      <Button
+        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+          onClick={() => {
+            if (aScore.current) {
+              aScore.current.SetAccidental(1);
+            }}
+          }
+        ><Box className='musicFont' mr={1}>{'\uE262'}</Box></Button>
+
+       <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+        leftIcon={<Icon as={AiOutlineDelete} color={'#f08080'} boxSize={5} />}
+        _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+        _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+        onClick={() => {
+          if (aScore.current) {
+            aScore.current.Delete();
+          }}
+        }
+        ></Button>
+
+
+         </Flex>
        </Box>
         <Flex justify={'flex-end'}>
         <IconButton aria-label='play interval' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
@@ -570,16 +572,10 @@ function IntervalTrainer() {
       <Center>
       <Box h='100%' maxW='700' w='auto' mt={2}> 
       <Flex justify={'center'} gap={1} wrap={'wrap'}>
-        { answers.map((a, i) => 
-        <Button 
-          size='sm'
-          variant='ghost'
-          border={0}
-          key={i} 
-          onClick={() => setInterval(a)}
-          _hover={{ backgroundColor: 'transparent', color: 'white', outline: '0', border: '0'}}
-          _focus={{ color: '#ffda60' , backgroundColor: 'transparent', border: '0', outline: '0'}}
-          color={getButtonColour(a)}>{a}</Button>) }
+        <IntervalAnswers 
+          setInterval={setInterval}
+          getButtonColour={getButtonColour}
+        />
       </Flex>
       <Flex justify={'flex-end'} p={2} pt={4}>
         { !submitted &&
@@ -660,7 +656,7 @@ function IntervalTrainer() {
                 {
                    answers.map((a) => {
                     return (
-                      <Box bgColor={'#16191F'} w='48%' mt={1} mb={1} p={2}>
+                      <Box key={a} bgColor={'#16191F'} w='48%' mt={1} mb={1} p={2}>
                       <Flex w='100%' justify={'space-between'} pr={1}><Text as={'b'}>{a}</Text><Box> { getRecordOfInterval(a).Correct } / { getRecordOfInterval(a).Attempts }  </Box>
                         <Box>{ getRecordOfInterval(a).Percentage >= 0 ? getRecordOfInterval(a).Percentage : " N/A"}%</Box> </Flex>
                       </Box>

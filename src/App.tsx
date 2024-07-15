@@ -36,6 +36,23 @@ function App() {
         ></Button>
         </Flex>
         </Show>
+        <Show above='md'>
+
+          <Flex color={'gray.300'} justify={'space-between'} w='100%' h='100%'>
+            <Center h='100%'>
+            <Box ml={4} color='#f08080'><span className='musicFontSmall'>{'\uE050'}</span><Text ml={4} color='#f08080' as='b'>MTrainerFE</Text></Box>
+            </Center>
+            <Box>
+            <Center h='100%'>
+              <Flex justify={'flex-end'} gap={4} mr={4}>
+                <Box><Text as='b'>Courses</Text></Box>
+                <Box><Text as='b'>Practice</Text></Box>
+                <Box><Text as='b'>Account</Text></Box>
+              </Flex>
+              </Center>
+            </Box>
+          </Flex>
+        </Show>
         </Box>
 
         <Drawer placement={'left'} isOpen={navOpen} onClose={() => setNavOpen(false)} size={'xs'}>
