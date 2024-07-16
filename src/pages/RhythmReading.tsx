@@ -135,15 +135,15 @@ function RhythmReading () {
       detectHit.current = true;
       if (beatArray.current.length === 0) { return; }
       RDetector.current.detect(analyser, mStream.current, aContext, canvasRef.current, getBeats, beatArray.current[beatArray.current.length-1] + 600);
-      Sinth.playMetronome(4, 100);
+      Sinth.playMetronome(aContext, 4, 100);
     } else if (inputType.current === InputType.KEYBOARD) {
       detectHit.current = true;
       RDetector.current.Beats = [];
-      Sinth.playMetronome(4, 100);
+      Sinth.playMetronome(aContext, 4, 100);
       RDetector.current.detectTimeEnd(stopDetecting, beatArray.current[beatArray.current.length-1] + 600);
     } else if (inputType.current === InputType.MOUSE) {
       detectHit.current = true;
-      Sinth.playMetronome(4, 100);
+      Sinth.playMetronome(aContext, 4, 100);
       RDetector.current.Beats = [];
       RDetector.current.detectTimeEnd(stopDetecting, beatArray.current[beatArray.current.length-1] + 600);
     }
@@ -195,16 +195,17 @@ function RhythmReading () {
   const topButtonColour = 'gray.200';
 
   return (<Box w={'100%'}>
-    <Box top={'0px'} left={'0px'} pos={'fixed'} h='40px' w='100%'>
-      <Flex justify={'space-between'} gap={4}>
+    <Box h='40px' w='100%'>
+      <Flex w='100%' justify={'space-between'} gap={4}>
+      <Box></Box>
       <Box>
-      <Flex ml={'45px'} justify={'flex-start'}>
+      <Flex justify={'center'}>
         <Button aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
           leftIcon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => startRecording()}
-        >Begin</Button>
+        >Begin Test</Button>
         <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
           leftIcon={<Icon as={IoStopCircleOutline} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
@@ -221,18 +222,16 @@ function RhythmReading () {
               GenerateRhythm(score);
           }}
         >New Rhythm</Button>
-        </Flex>
-        </Box>
+      </Flex>
+      </Box>
 
-        <Flex justify={'center'}>
-        </Flex>
         <Flex justify={'flex-end'}>
         <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
           leftIcon={<Icon as={IoIosSettings} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => setSettingsOpen(true)}
-        >Settings</Button>
+        ></Button>
         </Flex>
 
        </Flex>
@@ -242,14 +241,14 @@ function RhythmReading () {
           <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={() => {}} config={rSettings}/>
         </Center>
         <Flex gap={4} mt={6} w='100%' justify={'center'}>
-          <Box borderRadius={'5px'} bgColor={'#a2d2ff'} 
-            color={'gray.700'} fontWeight={600} fontSize={'0.9em'} p={2}>PERFECT: {perfectCount}</Box>
-          <Box borderRadius={'5px'} bgColor={'#caffbf'} 
-            color={'gray.700'} fontWeight={600} fontSize={'0.9em'} p={2}>GOOD: {goodCount}</Box>
-          <Box borderRadius={'5px'} bgColor={'#ffd6a5'} 
-            color={'gray.700'} fontWeight={600} fontSize={'0.9em'} p={2}>CLOSE: {closeCount}</Box>
-          <Box borderRadius={'5px'} bgColor={'#f08080'} 
-            color={'gray.700'} fontWeight={600} fontSize={'0.9em'} p={2}>MISS: {missCount}</Box>
+          <Box borderRadius={'5px'} color={'#a2d2ff'} 
+             fontWeight={600} fontSize={'0.9em'} p={2}>PERFECT: {perfectCount}</Box>
+          <Box borderRadius={'5px'} color={'#caffbf'} 
+             fontWeight={600} fontSize={'0.9em'} p={2}>GOOD: {goodCount}</Box>
+          <Box borderRadius={'5px'} color={'#ffd6a5'} 
+             fontWeight={600} fontSize={'0.9em'} p={2}>CLOSE: {closeCount}</Box>
+          <Box borderRadius={'5px'} color={'#f08080'} 
+             fontWeight={600} fontSize={'0.9em'} p={2}>MISS: {missCount}</Box>
         </Flex>
       </Box>
       { true &&

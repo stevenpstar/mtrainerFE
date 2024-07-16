@@ -156,6 +156,7 @@ function IntervalTrainer() {
   const aSample = useRef<AudioBuffer | null>(null);
   const aScore = useRef<application | null>(null);
   const scoreCanvas = useRef<HTMLCanvasElement | null>(null);
+  const aContext = useRef<AudioContext>(new AudioContext());
 
   const correct = new Audio("/correct.mp3");
   const incorrect = new Audio("/incorrect.mp3");
@@ -248,10 +249,9 @@ function IntervalTrainer() {
   ]
 
   useEffect(() => {
-    const aContext: AudioContext = new AudioContext();
     fetch("/A4vH.flac")
     .then (resp => resp.arrayBuffer())
-    .then (aBuffer => aContext.decodeAudioData(aBuffer))
+    .then (aBuffer => aContext.current.decodeAudioData(aBuffer))
     .then (s => aSample.current = s);
   }, [])
 
@@ -270,7 +270,7 @@ function IntervalTrainer() {
 
   useEffect(() => {
     if (notes.length > 1 && aSample.current) {
-      Sinth.playFull(aSample.current, 120, notes, () => {});
+      Sinth.playFull(aContext.current, aSample.current, 120, notes, () => {});
     }
   }, [notes])
 
@@ -323,7 +323,7 @@ function IntervalTrainer() {
       MidiNote: midi,
     }
     if (aSample.current) {
-      Sinth.playFull(aSample.current, 120, [sNote], () => {});
+      Sinth.playFull(aContext.current, aSample.current, 120, [sNote], () => {});
     }
   }
 
@@ -391,7 +391,7 @@ function IntervalTrainer() {
         direction={'column'} 
         justify={{base: 'space-between', sm: 'space-between', md: 'flex-start'}} 
         w='100%' 
-        className='check' h='100%' bgColor={'#0D0F12'}>
+        h='100%' bgColor={'#0D0F12'}>
 
         <Box h='40px' w='100%' bgColor={'blackAlpha.500'}>
         <Flex justify={'space-between'} w='100%'>
@@ -430,7 +430,7 @@ function IntervalTrainer() {
             onClick={() => {
               if (notes.length > 0 && aSample.current) {
                 Sinth.initplay(notes);
-                Sinth.play(aSample.current, 120, () => {});
+                Sinth.play(aContext.current, aSample.current, 120, () => {});
               }}
             }
           ></IconButton>
@@ -453,7 +453,7 @@ function IntervalTrainer() {
                   })
                 }
                 Sinth.initplay(ascendingNotes);
-                Sinth.play(aSample.current, 120, () => {});
+                Sinth.play(aContext.current, aSample.current, 120, () => {});
               }}
             }
           ></IconButton>
@@ -476,7 +476,7 @@ function IntervalTrainer() {
                   });
                 }
                 Sinth.initplay(descendingNotes);
-                Sinth.play(aSample.current, 120, () => {});
+                Sinth.play(aContext.current, aSample.current, 120, () => {});
               }}
             }
           ></IconButton>
@@ -487,7 +487,7 @@ function IntervalTrainer() {
             onClick={() => {
               if (notes.length > 0 && aSample.current) {
                 Sinth.initplay(notes);
-                Sinth.play(aSample.current, 120, () => {});
+                Sinth.play(aContext.current, aSample.current, 120, () => {});
               }}
             }
           ></IconButton>

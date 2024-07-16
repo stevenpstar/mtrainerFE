@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, Icon, ToastId, useToast } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Icon, IconButton, ToastId, useToast } from "@chakra-ui/react";
 import { IoAddCircleOutline, IoMusicalNote, IoMusicalNotes, IoPlayCircleOutline } from "react-icons/io5";
 import { ConfigSettings, App as application } from '../lib/sheet/entry.mjs';
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +15,7 @@ import { IoIosSettings } from "react-icons/io";
 function RhythmTranscription() {
 
   const aSample = useRef<AudioBuffer | null>(null);
+  const aContext = useRef<AudioContext>(new AudioContext());
   const toast = useToast();
   const toastIdRef = useRef<ToastId>();
 
@@ -58,10 +59,9 @@ function RhythmTranscription() {
   }
 
   useEffect(() => {
-    const aContext: AudioContext = new AudioContext();
     fetch("/A4vH.flac")
     .then (resp => resp.arrayBuffer())
-    .then (aBuffer => aContext.decodeAudioData(aBuffer))
+    .then (aBuffer => aContext.current.decodeAudioData(aBuffer))
     .then (s => aSample.current = s);
   }, [])
 
@@ -75,8 +75,8 @@ function RhythmTranscription() {
 
   const PlayRhythm = () => {
     if (notes.length > 0 && aSample.current) {
-      Sinth.playMetronome(4, 80);
-      Sinth.playFull(aSample.current, 80, notes, () => {});
+      Sinth.playMetronome(aContext.current, 4, 80);
+      Sinth.playFull(aContext.current, aSample.current, 80, notes, () => {});
     }
   }
 
@@ -95,12 +95,13 @@ function RhythmTranscription() {
 
   return (
   <Box w={'100%'}>
-    <Box top={'0px'} left={'0px'} pos={'fixed'} h='40px' w='100%'>
+    <Box h='40px' w='100%'>
       <Flex justify={'space-between'} gap={4}>
-      <Box pl={'35px'}>
+      <Box></Box>
+      <Box>
       <Flex justify={'flex-start'}>
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
+      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          icon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => {
@@ -109,10 +110,10 @@ function RhythmTranscription() {
               setInputting(true);
             }}
           }
-        >Input</Button>
+        ></IconButton>
 
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={LuMousePointer2} color={!inputting ? '#f08080' : topButtonColour} boxSize={5} />}
+      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          icon={<Icon as={LuMousePointer2} color={!inputting ? '#f08080' : topButtonColour} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => {
@@ -121,32 +122,33 @@ function RhythmTranscription() {
               setInputting(false);
             }}
           }
-        >Select</Button>
+        ></IconButton>
 
-        <Button aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
+        <IconButton aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          icon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => PlayRhythm()}
-        >Play</Button>
+        ></IconButton>
 
-        <Button aria-label='new rhythm' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+        <Button aria-label='new rhythm' border={'0px solid transparent'} variant='ghost' size='sm' 
           leftIcon={<Icon as={IoAddCircleOutline} boxSize={5} />}
+          color={'#caffbf'}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => {
             if (score)
               GenerateRhythm(score);
           }}
-        >New</Button>
+        >New Rhythm</Button>
         </Flex>
         </Box>
 
-        <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoIosSettings} boxSize={5} />}
+        <IconButton aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          icon={<Icon as={IoIosSettings} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-        >Settings</Button>
+        ></IconButton>
 
        </Flex>
     </Box>

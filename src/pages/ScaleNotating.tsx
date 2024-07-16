@@ -1,4 +1,4 @@
-import { Box, Button, Center, Flex, Icon, Text, ToastId, useToast } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Icon, IconButton, Text, ToastId, useToast } from "@chakra-ui/react";
 import { IoAddCircleOutline, IoMusicalNotes, IoPlayCircleOutline } from "react-icons/io5";
 import { ConfigSettings, Message, MessageType, Note, ReturnMidiNumber, App as application } from '../lib/sheet/entry.mjs';
 import { useEffect, useRef, useState } from "react";
@@ -10,12 +10,13 @@ import { Sinth, Note as SinthNote} from "../lib/sinth/main.mjs";
 import { HiMiniArrowRight } from "react-icons/hi2";
 import { CheckScaleAnswer, GenerateScale, GenerateSinthNotes } from "../generators/ScaleGenerator";
 import { IoIosSettings } from "react-icons/io";
-import { FloatingControl } from "../components/FloatingControl";
 import { HiChevronRight } from "react-icons/hi";
+import { AiOutlineDelete } from "react-icons/ai";
 
 function ScaleNotate() {
 
   const aSample = useRef<AudioBuffer | null>(null);
+  const aContext = useRef<AudioContext>(new AudioContext());
   const aScore = useRef<application | null>(null);
 
   const toast = useToast();
@@ -23,7 +24,6 @@ function ScaleNotate() {
 
   const [score, setScore] = useState<application | null>(null);
   const [inputting, setInputting] = useState<boolean>(true);
-  const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [scaleString, setScaleString] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
 
@@ -59,14 +59,12 @@ function ScaleNotate() {
   const callback = (msg: Message) => {
     switch (msg.messageData.MessageType) {
       case MessageType.Selection:
-        setSelectedNote(msg.messageData.Message.obj as Note);
           playSelectedNote(msg.messageData.Message.obj as Note);
         break;
       case MessageType.AddNote:
         onAddNote(msg.messageData.Message.obj as Note);
         break;
       default:
-        setSelectedNote(null);
     }
   }
 
@@ -83,16 +81,15 @@ function ScaleNotate() {
       MidiNote: midi,
     }
     if (aSample.current) {
-      Sinth.playFull(aSample.current, 120, [sNote], () => {});
+      Sinth.playFull(aContext.current, aSample.current, 120, [sNote], () => {});
     }
   }
 
 
   useEffect(() => {
-    const aContext: AudioContext = new AudioContext();
     fetch("/A4vH.flac")
     .then (resp => resp.arrayBuffer())
-    .then (aBuffer => aContext.decodeAudioData(aBuffer))
+    .then (aBuffer => aContext.current.decodeAudioData(aBuffer))
     .then (s => aSample.current = s);
   }, [])
 
@@ -114,7 +111,7 @@ function ScaleNotate() {
    const sNotes = GenerateSinthNotes(scaleString);
    if (sNotes.length > 0 && aSample.current) {
     Sinth.initplay(sNotes);
-    Sinth.playFull(aSample.current, 100, sNotes, () => {});
+    Sinth.playFull(aContext.current, aSample.current, 100, sNotes, () => {});
    }
 }
 
@@ -126,49 +123,20 @@ function ScaleNotate() {
     return false;
   }
 
-// TODO: Move this elsewhere
-  const getSelectedNotePosition = (msrIndex: number = 0): {top: number, left: number} => {
-    const pos: { top: number, left: number } = {
-      top: 0,
-      left: 0,
-    };
-    if (aScore.current === null) { return {top: -100, left: -100}; }
-    if (selectedNote === null) { return {top: -100, left: -100}; }
-
-    //measure is always 0 for now
-    const camX = aScore.current.Camera.x;
-    const camY = aScore.current.Camera.y;
-    const msrY = aScore.current.Sheet.Measures[msrIndex].Bounds.y;
-    const msrX = aScore.current.Sheet.Measures[msrIndex].Divisions[0].Bounds.x;
-
-    pos.top = (msrY + selectedNote.Bounds.y + camY) * (aScore.current.Camera.Zoom) - 20;
-    pos.left = (msrX + selectedNote.Bounds.x + camX) * (aScore.current.Camera.Zoom) - 40;
-
-    if (pos.left > window.innerWidth - 300) {
-      pos.left = window.innerWidth - 300;
-    }
-
-    return pos;
-  }
-
-
   return (
   <Box w={'100%'}>
-    { selectedNote !== null &&
-      <FloatingControl
-        score={aScore.current}
-        top={getSelectedNotePosition().top}
-        left={getSelectedNotePosition().left}
-        textColour={topButtonColour}
-      />
-    }
-    <Box top={'0px'} left={'0px'} pos={'fixed'} h='40px' w='100%' bgColor={'blackAlpha.500'}>
-      <Flex justify={'space-between'} gap={4}>
-
-      <Box ml={'35px'}>
-      <Flex justify={'flex-start'}>
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
+    <Flex 
+      direction={'column'}
+      justify={{base: 'space-between', sm: 'space-between', md: 'flex-start'}}
+      w='100%'
+      h='100%' bgColor={'#0D0F12'}>
+    <Box h='40px' w='100%' bgColor={'blackAlpha.500'}>
+      <Flex justify={'space-between'} gap={4} >
+      <Box></Box>
+      <Box>
+      <Flex justify={'center'}>
+      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          icon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => {
@@ -177,10 +145,10 @@ function ScaleNotate() {
               setInputting(true);
             }}
           }
-        >Input</Button>
+        ></IconButton>
 
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={LuMousePointer} color={!inputting ? '#f08080' : topButtonColour} boxSize={5} />}
+      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          icon={<Icon as={LuMousePointer} color={!inputting ? '#f08080' : topButtonColour} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => {
@@ -189,16 +157,16 @@ function ScaleNotate() {
               setInputting(false);
             }}
           }
-        >Select</Button>
+        ></IconButton>
 
-        <Button aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
+        <IconButton aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          icon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
           onClick={() => PlayRhythm()}
-        >Play</Button>
+        ></IconButton>
 
-        <Button aria-label='new rhythm' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+        <Button aria-label='new rhythm' border={'0px solid transparent'} variant='ghost' size='sm' color={'#caffbf'} 
           leftIcon={<Icon as={IoAddCircleOutline} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
@@ -211,33 +179,79 @@ function ScaleNotate() {
               setScaleString(GenerateScale(aScore.current));
           }}}
         >New Scale</Button>
+
+      <Button 
+        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+          onClick={() => {
+            if (aScore.current) {
+              aScore.current.SetAccidental(-1);
+            }}
+          }
+        ><Box className='musicFont' mr={1}>{'\uE260'}</Box></Button>
+
+      <Button
+        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+          onClick={() => {
+            if (aScore.current) {
+              aScore.current.SetAccidental(0);
+            }}
+          }
+        ><Box className='musicFont' mr={1}>{'\uE261'}</Box></Button>
+
+      <Button
+        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+          onClick={() => {
+            if (aScore.current) {
+              aScore.current.SetAccidental(1);
+            }}
+          }
+        ><Box className='musicFont' mr={1}>{'\uE262'}</Box></Button>
+
+       <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
+        leftIcon={<Icon as={AiOutlineDelete} color={'#f08080'} boxSize={5} />}
+        _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
+        _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+        onClick={() => {
+          if (aScore.current) {
+            aScore.current.Delete();
+          }}
+        }
+        ></Button>
+
         </Flex>
         </Box>
-        <Box></Box>
 
         <Flex justify={'flex-end'}>
         <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
           leftIcon={<Icon as={IoIosSettings} boxSize={5} />}
           _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
           _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-        >Settings</Button>
+        ></Button>
         </Flex>
        </Flex>
     </Box>
-      <Box w={'100%'} >
-        <Center top={'0px'} h='550px' bgColor={'#16191f'}>
+      <Box w={'100%'} bgColor={'#0e1114'} >
+        <Center top={'0px'} h='550px'>
           <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={callback} config={scaleSettings}/>
         </Center>
       </Box>
-    <Box left={'0px'} pos={'fixed'} h='40px' w='100%'>
+    <Box h='100px' p={2} w='100%' bgColor={'#0D0F12'}>
+    <Box h='40px' w='100%'>
       <Center>
       <Flex justify={'center'} gap={4}>
        </Flex>
        </Center>
        <Center>
-       <Box><Text color={'gray.300'} fontSize='lg'>
+     <Box><Text color={'gray.300'} fontSize='lg'>
        <Icon as={HiChevronRight} color={'#caffbf'} position={'relative'} top='1px' boxSize={4}/>
-       Notate the <span className='highlightColour'>{scaleString}</span> </Text></Box>
+       Notate the <span className='highlightColour'>{scaleString}</span> </Text>
+      </Box>
        </Center>
        <Center>
        <Flex justify={'flex-end'} w='50%'>
@@ -276,8 +290,9 @@ function ScaleNotate() {
       }
        </Flex>
        </Center>
+      </Box>
     </Box>
-
+  </Flex>
   </Box>)
 }
 

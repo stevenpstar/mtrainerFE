@@ -119,7 +119,7 @@ function App() {
             </DrawerBody>
           </DrawerContent>
         </Drawer>
-          <Box className='heeey' opacity={opacity} w='100%' h='100%'>
+          <Box className='heeey' opacity={opacity} bgColor={'#0D0F12'} w='100%' h='100%'>
             <Outlet />
           </Box>
         </Flex>
