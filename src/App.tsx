@@ -16,7 +16,7 @@ function App() {
     }, [])
 
   return (
-    <Box px={0} w='100%' h='100%' bgColor={'#0e1114'}>
+    <Box px={0} w='100%' className='h-full' bgColor={'#0e1114'}>
         <Flex 
         direction={'column'}
         justify={'flex-start'}
@@ -24,7 +24,7 @@ function App() {
         h='100%'
         w='100%'
         >
-        <Box w='100%' h={{base: '40px', sm: '40px', md: '40px', lg: '60px'}} bgColor={'black'}>
+        <Box w='100%' hidden={true} h={{base: '40px', sm: '40px', md: '40px', lg: '40px'}} className='bg-zinc-900'>
         <Show below='md'>
         <Flex justify={'flex-start'}>
         <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={'#262b36'} 
@@ -38,16 +38,16 @@ function App() {
         </Show>
         <Show above='md'>
 
-          <Flex color={'gray.300'} justify={'space-between'} w='100%' h='100%'>
-            <Center h='100%'>
-            <Box ml={4} color='#f08080'><span className='musicFontSmall'>{'\uE050'}</span><Text ml={4} color='#f08080' as='b'>MTrainerFE</Text></Box>
+          <Flex color={'gray.300'} className='h-0' hidden={true} justify={'space-between'} w='100%'>
+            <Center h='50%'>
+              <Box ml={4}><Text>MTrainerFE</Text></Box>
             </Center>
             <Box>
-            <Center h='100%'>
+            <Center h='50%'>
               <Flex justify={'flex-end'} gap={4} mr={4}>
-                <Box><Text as='b'>Courses</Text></Box>
-                <Box><Text as='b'>Practice</Text></Box>
-                <Box><Text as='b'>Account</Text></Box>
+                <Box><Text>Courses</Text></Box>
+                <Box><Text>Practice</Text></Box>
+                <Box><Text>Account</Text></Box>
               </Flex>
               </Center>
             </Box>
@@ -119,7 +119,7 @@ function App() {
             </DrawerBody>
           </DrawerContent>
         </Drawer>
-          <Box className='heeey' opacity={opacity} bgColor={'#0D0F12'} w='100%' h='100%'>
+          <Box className='bg-zinc-50 grow heey' opacity={opacity} w='100%'>
             <Outlet />
           </Box>
         </Flex>

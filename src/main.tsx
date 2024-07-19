@@ -15,6 +15,7 @@ import { RhythmTranscription } from './pages/RhythmTranscription.tsx'
 import { ScaleNotate } from './pages/ScaleNotating.tsx'
 import { Landing } from './Landing.tsx'
 import { Practice } from './pages/Practice.tsx'
+import { ChordTrainer } from './pages/ChordTrainer/ChordTrainer.tsx'
 
 const theme = extendTheme({
   config: {
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
       {
         path: "practice/notate-scale",
         element: <ScaleNotate />,
+      },
+      {
+        path: "practice/chords",
+        element: <ChordTrainer />,
       },
     ]},
   ])
