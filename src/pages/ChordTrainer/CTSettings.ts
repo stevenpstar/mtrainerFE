@@ -3,7 +3,7 @@ import { normalTheme } from "@/utils/Theme";
 
   export const CTSettings: ConfigSettings = {
     CameraSettings: {
-      DragEnabled: true,
+      DragEnabled: false,
       ZoomEnabled: false,
       Zoom: 2,
       StartingPosition: { x: 0, y: 0 },

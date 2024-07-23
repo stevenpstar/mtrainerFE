@@ -16,6 +16,7 @@ import { ScaleNotate } from './pages/ScaleNotating.tsx'
 import { Landing } from './Landing.tsx'
 import { Practice } from './pages/Practice.tsx'
 import { ChordTrainer } from './pages/ChordTrainer/ChordTrainer.tsx'
+import { Toaster } from './components/ui/toaster.tsx'
 
 const theme = extendTheme({
   config: {
@@ -83,6 +84,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <ColorModeScript initialColorMode={'light'} />
       <RouterProvider router={router}>
       </RouterProvider>
+      <Toaster />
       </ChakraProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>,

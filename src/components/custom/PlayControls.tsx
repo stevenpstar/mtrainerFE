@@ -1,11 +1,16 @@
 import { PlayIcon, SpeakerModerateIcon, StopIcon } from "@radix-ui/react-icons"
 import { Button } from "../ui/button"
 
-function PlayControls() {
+interface PCprops {
+  play: () => void
+}
+
+function PlayControls(props: PCprops) {
   return (
     <div className='flex items-center justify-center gap-1'>
        <Button variant='ghost' size='icon'
         className='h-9 rounded-none hover:text-blue-400 hover:bg-zinc-800'
+        onClick={props.play}
        >
         <PlayIcon/>
        </Button>

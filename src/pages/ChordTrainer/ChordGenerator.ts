@@ -1,20 +1,43 @@
-import { Note, NoteProps, ReturnLineFromMidi, App as Score } from '../../lib/sheet/entry.mjs'
+import { Note, NoteProps, App as Score } from '../../lib/sheet/entry.mjs'
 import { LoadEmptySheet } from '../rhythmreading/RGenerator'
 import { Note as SinthNote } from '../../lib/sinth/main.mjs';
+
+type ChordData = {
+  SNotes: SinthNote[];
+  ChordStr: string;
+}
+
+// Key definitions
+
+const MAJOR = new Map<string, string[]>(
+  [
+    ["#", ["G", "D", "A", "E", "B", "F#"]],
+    ["b", ["Gb", "Db", "Ab", "Eb", "Bb", "F"]],
+  ]
+)
+
+const MINOR = new Map<string, string[]>(
+  [
+    ["#", ["E", "B", "F#", "C#", "G#", "D#"]],
+    ["b", ["Gb", "Db", "Ab", "Eb", "Bb", "F"]],
+  ]
+)
 
 // Define chords
 
 const CHORDS = new Map<string, Array<number[]>>(
   [
-    ["MAJOR", [[0, 4, 7]]],
-    ["MINOR", [[0, 3, 7]]],
+    ["MAJOR", [[0, 4, 7], [-5, 0, 4], [-8, -5, 0]]],
+    ["MINOR", [[0, 3, 7], [-5, 0, 3], [-9, -5, 0]]],
   ]
 )
 
 // Temporary, will be a part of settings that are passed to generate chord function eventually
 const chord_array = [ "MAJOR", "MINOR" ];
 
-function GenerateChord(score: Score): SinthNote[] {
+function GenerateChord(score: Score | null): ChordData {
+  const cData: ChordData = { SNotes: [], ChordStr: "" }
+  if (!score) { return cData }
   // Clear the sheet before each chord is generated
   LoadEmptySheet(score, 1);
   const notes: SinthNote[] = [];
@@ -24,13 +47,18 @@ function GenerateChord(score: Score): SinthNote[] {
   const midiNote = Math.floor(Math.random() * (noteRangeHigh - noteRangeLow + 1)) + noteRangeLow;
   const chordQuality = chord_array[Math.floor(Math.random() * chord_array.length)];
   const voicingArray = CHORDS.get(chordQuality);
+  // If we need to change a sharp note to a flat note (to fit a key)
+  const accidentalString: string = SharpsOrFlats(midiNote, chordQuality, score);
+  const trueRoot = GetTrueRoot(midiNote, accidentalString, score);
   if (!voicingArray) {
     console.error("Chord not found in map");
-    return notes;
+    return cData;
   }
-  const inversion = voicingArray[Math.floor(Math.random() * voicingArray.length)];
+  const inversionIndx = Math.floor(Math.random() * voicingArray.length);
+  const inversion = voicingArray[inversionIndx];
+  const invString = GetInversionString(inversionIndx);
+  cData.ChordStr = trueRoot + ' ' + chordQuality + ' ' + invString;
   inversion.forEach(midiFromRoot => {
-    console.log("midiFromRoot: ", midiFromRoot);
     const sNote: SinthNote = {
       Beat: 1, // this will change when chord progressions are implemented
       Duration: 2,
@@ -39,20 +67,79 @@ function GenerateChord(score: Score): SinthNote[] {
     notes.push(sNote);
   })
   notes.forEach(n => {
-    AddNote(score, 1, 2, n.MidiNote);
+    AddNote(score, 1, 0.5, n.MidiNote, midiNote, accidentalString);
   })
-  console.log(notes);
-  return notes;
+  cData.SNotes = notes;
+  return cData;
 }
 
-function AddNote(score: Score, beat: number, duration: number, midiNumber: number): void {
-//  const line = ReturnLineFromMidi("treble", midiNumber, 0); 
+function GetInversionString(invIndex: number): string {
+  let invString = '';
+  switch (invIndex) {
+    case 1:
+      invString = '1st Inv.';
+      break;
+    case 2:
+      invString = '2nd Inv.';
+      break;
+    case 3:
+      invString = '3rd Inv.';
+      break;
+    case 0:
+    default:
+  }
+  return invString;
+}
+
+function GetTrueRoot(rootMidi: number, accString: string, score: Score): string {
+  const rNote = score.PitchMap.get(rootMidi);
+  let rootString = '';
+  if (rNote === undefined) {
+    console.error("Note doesn't exist in pitch map");
+    return "Error: Note doesn't exist in pitch map";
+  }
+  if (rNote.Accidental === 0) { 
+    // We do not want the 4 in A4 for example, just A
+    rootString = rNote.NoteString[0];
+  } else if (rNote.Accidental === 1 && accString === '#') {
+    rootString = rNote.NoteString[0] + rNote.NoteString[1];
+  } else {
+    // We need to get a higher midi note and manually add the flat 
+    // accidental to the root string
+    const nextMidi = rootMidi + 1;
+    const nNote = score.PitchMap.get(nextMidi);
+    if (nNote === undefined) {
+      console.error("Next note doesn't exist in pitch map");
+      return "Error: Next note doesn't exist in pitch map";
+    }
+    // Because the accidental is only either 1 or 0, this next note will
+    // have no accidental. Meaning we can grab the first character of the
+    // NoteString array and append the flat accidental
+    rootString = nNote.NoteString[0] + 'b';
+  }
+  return rootString;
+}
+
+function AddNote(score: Score, 
+                 beat: number,
+                 duration: number,
+                 midiNumber: number,
+                 root: number,
+                 accidentalString: string): void {
   const pm = score.PitchMap.get(midiNumber);
-  if (!pm) {
+  const rootNote = score.PitchMap.get(root);
+  if (!pm || !rootNote) {
     console.error("Pitchmap midi number not found: ", midiNumber);
     return;
   }
-  const line = pm.Line;
+  let accidental = pm.Accidental;
+  let line = pm.Line;
+  if (accidental === 1) {
+    if (accidentalString !== "#") {
+      line--;
+      accidental = -1;
+    }
+  }
   const newNote: NoteProps = {
     Beat: beat,
     Duration: duration,
@@ -64,9 +151,67 @@ function AddNote(score: Score, beat: number, duration: number, midiNumber: numbe
     Clef: "treble",
     Editable: false,
   }
-
-  score.Sheet.Measures[0].AddNote(new Note(newNote));
+  const note: Note = new Note(newNote);
+  note.Accidental = accidental;
+  score.Sheet.Measures[0].AddNote(note);
   score.ResizeMeasures(score.Sheet.Measures);
 }
 
-export { GenerateChord }
+function SharpsOrFlats(rootNote: number, chordQuality: string, score: Score): string {
+  let result = "";
+  const rNote = score.PitchMap.get(rootNote);
+  if (!rNote) {
+    console.error("Pitchmap error for midi Note: ", rootNote);
+    return "";
+  }
+  const noteString = rNote.Accidental === 1 ?
+    rNote.NoteString[0] + rNote.NoteString[1] : rNote.NoteString[0];
+  switch (chordQuality) {
+    case "MAJOR":
+      if (noteString === "C") {
+        result = "";
+      } else {
+        const sharpArray = MAJOR.get("#");
+        const flatArray = MAJOR.get("b");
+
+        if (!sharpArray || !flatArray) {
+          result = "";
+          break;
+        }
+        result = findInAccArray(sharpArray, flatArray, noteString);
+      }
+      break;
+    case "MINOR":
+      if (noteString === "A") {
+        result = "";
+      } else {
+        const sharpArray = MINOR.get("#");
+        const flatArray = MINOR.get("b");
+
+        if (!sharpArray || !flatArray) {
+          result = "";
+          break;
+        }
+        result = findInAccArray(sharpArray, flatArray, noteString);
+      }
+      break;
+    default:
+  }
+  return result;
+}
+
+function findInAccArray(sharpArray: string[], flatArray: string[], noteString: string): string {
+  let result: string = "";
+  if (sharpArray.find(s => s === noteString)) {
+    result = "#";
+  } else if (flatArray.find(s => s === noteString)) {
+    result = "b";
+  } else {
+    // I believe this means it is currently a sharp (acc = 1) but should be a flat
+    result = "b";
+  }
+  return result;
+}
+
+
+export { GenerateChord, ChordData }
