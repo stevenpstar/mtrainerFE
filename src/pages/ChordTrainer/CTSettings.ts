@@ -26,6 +26,10 @@ import { normalTheme } from "@/utils/Theme";
       UsePages: true,
       AutoSize: true,
     },
+    MeasureSettings: {
+      TopLine: 0,
+      BottomLine: 35,
+    },
     DefaultStaffType: 'single',
     Theme: normalTheme,
   }

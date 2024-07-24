@@ -27,13 +27,14 @@ const MINOR = new Map<string, string[]>(
 
 const CHORDS = new Map<string, Array<number[]>>(
   [
-    ["MAJOR", [[0, 4, 7], [-5, 0, 4], [-8, -5, 0]]],
-    ["MINOR", [[0, 3, 7], [-5, 0, 3], [-9, -5, 0]]],
+    ["MAJOR", [[0, 4, 7], [-8, -5, 0], [-8, 0, -5], [-5, 0, 4], [-5, 4, 0]]],
+    ["MAJOR 7", [[0, 4, 7, 11], [-8, -5, 0, -1]]],
+    ["MINOR", [[0, 3, 7], [-9, -5, 0], [-9, 0, -5], [-5, 0, 3], [-5, 3, 0] ]],
   ]
 )
 
 // Temporary, will be a part of settings that are passed to generate chord function eventually
-const chord_array = [ "MAJOR", "MINOR" ];
+const chord_array = [ "MAJOR", "MINOR", "MAJOR 7" ];
 
 function GenerateChord(score: Score | null): ChordData {
   const cData: ChordData = { SNotes: [], ChordStr: "" }
@@ -77,12 +78,15 @@ function GetInversionString(invIndex: number): string {
   let invString = '';
   switch (invIndex) {
     case 1:
+    case 2:
       invString = '1st Inv.';
       break;
-    case 2:
+    case 3:
+    case 4:
       invString = '2nd Inv.';
       break;
-    case 3:
+    case 5:
+    case 6:
       invString = '3rd Inv.';
       break;
     case 0:
@@ -168,6 +172,7 @@ function SharpsOrFlats(rootNote: number, chordQuality: string, score: Score): st
     rNote.NoteString[0] + rNote.NoteString[1] : rNote.NoteString[0];
   switch (chordQuality) {
     case "MAJOR":
+    case "MAJOR 7":
       if (noteString === "C") {
         result = "";
       } else {
@@ -214,4 +219,4 @@ function findInAccArray(sharpArray: string[], flatArray: string[], noteString: s
 }
 
 
-export { GenerateChord, ChordData }
+export { GenerateChord, type ChordData }

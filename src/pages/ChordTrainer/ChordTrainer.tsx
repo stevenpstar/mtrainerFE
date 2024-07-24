@@ -24,10 +24,14 @@ function ChordTrainer() {
   const aSample = useRef<AudioBuffer | null>(null);
   const aScore = useRef<Score | null>(null);
 
+  const correct = new Audio("/correct.mp3");
+  const incorrect = new Audio("/incorrect.mp3");
+
   const [scoreLoaded, setScoreLoaded] = useState<boolean>(false);
   const [notes, setNotes] = useState<SinthNote[]>([]);
   const [answerStr, setAnswerStr] = useState<string>("");
   const [bits, setBits] = useState<string[]>([]);
+  const [answered, setAnswered] = useState<boolean>(false);
 
   const BitString = (): string => {
     let str = '';
@@ -41,25 +45,46 @@ function ChordTrainer() {
   const GenChord = () => {
     const data = GenerateChord(aScore.current);
     const n: SinthNote[] = [...data.SNotes];
-    setNotes(n);
+    setNotes(_ => n);
     setAnswerStr(data.ChordStr);
+    if (aSample.current) {
+      Sinth.playFull(aContext.current, aSample.current, 120, n, () => {});
+    }
   }
 
   const CheckAnswer = (): void => {
+    if (answered) {
+      NextChord();
+      return;
+    }
     // clean up data by removing any whitespace
     const ans = answerStr.replace(/\s/g, "").toLowerCase();
     const guess = BitString().replace(/\s/g, "").toLowerCase();
     if (guess === ans) {
+      setAnswered(true);
+      correct.volume = 0.5;
+      correct.play();
       toast({
+        variant: "correct",
         title: "Correct!",
         description: "You got it right",
       })
     } else {
+      incorrect.volume = 0.5;
+      incorrect.play();
       toast({
+        variant: "incorrect",
         title: "Incorrect!",
         description: "You got it wrong",
       })
     }
+  }
+
+  const NextChord = (): void => {
+    GenChord();
+    setAnswered(false);
+    const emptyBits: string[] = [];
+    setBits(_ => emptyBits);
   }
 
   const callback = (msg: Message) => {
@@ -150,13 +175,29 @@ function ChordTrainer() {
           {
             BitString()
           }
-          <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
-            onClick={() => CheckAnswer()}
-          >Submit</Button>
         </div>
         </div>
           <div className='flex flex-row justify-center'>
-          <MultiInput SetBits={setBits}/>
+          <MultiInput 
+            bits={bits} 
+            setBits={setBits}
+            submit={CheckAnswer}
+            />
+        </div>
+        <div className='flex flex-row justify-center min-w-[600px]'>
+          <div className='flex flex-row justify-end w-[600px]'>
+          { !answered &&
+            <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
+              onClick={() => CheckAnswer()}
+            >Submit</Button>
+          }
+          { answered &&
+            <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
+              onClick={() => NextChord()}
+            >Next</Button>
+          }
+
+          </div>
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 class RVis {
   Play: boolean = false;
-  timeOut: ReturnType<typeof setTimeout> = 0;
+  timeOut: number = 0;
   timeOutTime: number = 25.0;
   Beats: number[] = [];
 
@@ -83,13 +83,12 @@ class RVis {
           } else {
             this.Beats.push(lastBeatTime - startTime - metronomeBuffer - mysteryLatency);
             callback(this.Beats);
-            console.log(this.Beats);
           }
         }
       }
       this.render(canvas, dataArray, inTimeout);
       if (this.Play) {
-        this.timeOut = setTimeout(() => inner(), this.timeOutTime);
+        this.timeOut = window.setTimeout(() => inner(), this.timeOutTime);
       } else {
         clearTimeout(this.timeOut);
         //callback(this.Beats);
