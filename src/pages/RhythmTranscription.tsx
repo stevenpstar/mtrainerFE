@@ -1,32 +1,31 @@
-import { Box, Button, Center, Flex, Icon, IconButton, ToastId, useToast } from "@chakra-ui/react";
-import { IoAddCircleOutline, IoMusicalNote, IoMusicalNotes, IoPlayCircleOutline } from "react-icons/io5";
-import { ConfigSettings, App as application } from '../lib/sheet/entry.mjs';
+import { ToastId, useToast } from "@chakra-ui/react";
+import { ConfigSettings, App as Score } from '../lib/sheet/entry.mjs';
 import { useEffect, useRef, useState } from "react";
 import { Sheet } from "./Sheet";
-import { CompareTranscription, GenerateHiddenRhythm, LoadEmptySheet } from "./rhythmreading/RGenerator";
-import { LuMousePointer2 } from "react-icons/lu";
-import { AiOutlineDelete } from "react-icons/ai";
+import { CompareTranscription, GenerateHiddenRhythm } from "./rhythmreading/RGenerator";
 import { normalTheme } from "../utils/Theme";
-import { MdOutlineMusicOff } from "react-icons/md";
 import { Sinth, Note as SinthNote} from "../lib/sinth/main.mjs";
-import { HiMiniArrowRight } from "react-icons/hi2";
-import { IoIosSettings } from "react-icons/io";
+import { AppTopBar } from "@/components/custom/AppTopBar";
+import { Button } from "@/components/ui/button";
 
 function RhythmTranscription() {
 
+  const aScore = useRef<Score | null>(null);
   const aSample = useRef<AudioBuffer | null>(null);
   const aContext = useRef<AudioContext>(new AudioContext());
   const toast = useToast();
   const toastIdRef = useRef<ToastId>();
 
-  const [score, setScore] = useState<application | null>(null);
-  const [inputting, setInputting] = useState<boolean>(true);
-  const [noteValue, setNoteValue] = useState<number>(0.25);
-  const [restInput, setRestInput] = useState<boolean>(false);
   const [notes, setNotes] = useState<SinthNote[]>([]);
+  const [scoreLoaded, setScoreLoaded] = useState<boolean>(false);
 
-  const GenerateRhythm = (score: application) => {
+  const GenerateRhythm = (score: Score) => {
     setNotes(GenerateHiddenRhythm(score));
+  }
+
+  const setScore = (score: Score) => {
+    aScore.current = score;
+    setScoreLoaded(true);
   }
 
   const rSettings: ConfigSettings = {
@@ -65,14 +64,6 @@ function RhythmTranscription() {
     .then (s => aSample.current = s);
   }, [])
 
-  useEffect(() => {
-    if (score) {
-      LoadEmptySheet(score, 4);
-    }
-  }, [score])
-
-  const topButtonColour = 'gray.200';
-
   const PlayRhythm = () => {
     if (notes.length > 0 && aSample.current) {
       Sinth.playMetronome(aContext.current, 4, 80);
@@ -81,8 +72,8 @@ function RhythmTranscription() {
   }
 
   const CheckAnswer = () => {
-    if (score) {
-      const ans = CompareTranscription(score, notes);
+    if (aScore.current) {
+      const ans = CompareTranscription(aScore.current, notes);
       toastIdRef.current = toast({
         title: ans ? 'Correct!' : 'Mistake.',
         description: ans ? 'You got it right!' : 'Incorrect',
@@ -94,150 +85,43 @@ function RhythmTranscription() {
   }
 
   return (
-  <Box w={'100%'}>
-    <Box h='40px' w='100%'>
-      <Flex justify={'space-between'} gap={4}>
-      <Box></Box>
-      <Box>
-      <Flex justify={'flex-start'}>
-      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          icon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score) {
-              score.NoteInput = true;
-              setInputting(true);
-            }}
-          }
-        ></IconButton>
+    <div className='flex flex-col justify-start h-full'>
+    { scoreLoaded &&
+      <AppTopBar 
+        score={aScore.current}
+        playFunc={() => PlayRhythm()}
+      />
+    }
+    <div className='flex flex-row justify-center'>
+      <div className='grow testbg'>
+        <Sheet
+          w='100%'
+          h='500px' f=''
+          setParentScore={setScore}
+          callback={() => {}}
+          config={rSettings} />
+      </div>
+    </div>
 
-      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          icon={<Icon as={LuMousePointer2} color={!inputting ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
+    <div className='min-h-[50%] grow bg-zinc-950'>
+      <div className='flex flex-row justify-center'>
+        <Button
           onClick={() => {
-            if (score) {
-              score.NoteInput = false;
-              setInputting(false);
-            }}
-          }
-        ></IconButton>
-
-        <IconButton aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          icon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => PlayRhythm()}
-        ></IconButton>
-
-        <Button aria-label='new rhythm' border={'0px solid transparent'} variant='ghost' size='sm' 
-          leftIcon={<Icon as={IoAddCircleOutline} boxSize={5} />}
-          color={'#caffbf'}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score)
-              GenerateRhythm(score);
+            if (aScore.current)
+            GenerateRhythm(aScore.current);
           }}
         >New Rhythm</Button>
-        </Flex>
-        </Box>
 
-        <IconButton aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          icon={<Icon as={IoIosSettings} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-        ></IconButton>
-
-       </Flex>
-    </Box>
-      <Box w={'100%'} >
-        <Center top={'0px'} h='550px' bgColor={'#16191f'}>
-          <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={() => {}} config={rSettings}/>
-        </Center>
-      </Box>
-    <Box left={'0px'} pos={'fixed'} h='40px' w='100%'>
-      <Center>
-      <Flex justify={'center'} gap={4}>
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoMusicalNote} color={noteValue === 0.125 ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score) {
-              score.SetNoteValue(0.125);
-              setNoteValue(0.125);
-            }}
-          }
-        >1/8</Button>
-
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoMusicalNote} color={noteValue === 0.25 ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score) {
-              score.SetNoteValue(0.25);
-              setNoteValue(0.25);
-            }}
-          }
-        >1/4</Button>
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoMusicalNote} color={noteValue === 0.5 ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score) {
-              score.SetNoteValue(0.5);
-              setNoteValue(0.5);
-            }}
-          }
-        >1/2</Button>
-
-      <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={MdOutlineMusicOff} color={restInput === true ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score) {
-              score.RestInput = !score.RestInput;
-              setRestInput(score.RestInput);
-            }}
-          }
-        >REST</Button>
-
-
-       <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={AiOutlineDelete} color={'#f08080'} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score) {
-              score.Delete();
-            }}
-          }
-        >DELETE</Button>
-
-       </Flex>
-       </Center>
-       <Center>
-       <Flex justify={'flex-end'} w='50%'>
-        <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={HiMiniArrowRight} color={'#caffbf'} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score) {
-              CheckAnswer();
-            }}
-          }
+        <Button
+          onClick={() => CheckAnswer()}
         >Submit</Button>
-       </Flex>
-       </Center>
-    </Box>
 
-  </Box>)
+      </div>
+    </div>
+
+    </div>
+
+  )
 }
 
 export { RhythmTranscription }

@@ -131,7 +131,8 @@ function ChordTrainer() {
         }
       <Separator orientation='vertical' className='bg-zinc-800'/>
         <PlayControls 
-          play={() => playChord()}/>
+          play={() => playChord()}
+          stop={() => {}}/>
       </div>
       <div className='flex flex-row justify-end gap-2'>
         <Button variant='ghost' className='rounded-none' size='icon'>

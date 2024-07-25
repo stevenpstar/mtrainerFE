@@ -3,6 +3,7 @@ import { Button } from "../ui/button"
 
 interface PCprops {
   play: () => void
+  stop: () => void
 }
 
 function PlayControls(props: PCprops) {
@@ -16,6 +17,7 @@ function PlayControls(props: PCprops) {
        </Button>
        <Button variant='ghost' size='icon'
         className=' h-9 rounded-none hover:text-blue-400 hover:bg-zinc-800 data-[state=on]:bg-zinc-300'
+        onClick={props.stop}
        >
         <StopIcon />
        </Button>

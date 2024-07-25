@@ -203,7 +203,8 @@ function IntervalTrainer() {
   }
 
   const PlayIntTogether = (n?: SinthNote[]) => {
-    if (aScore.current && aContext.current && aSample.current && notes.length > 0) {
+    const notesFound = notes.length > 0 || n && n.length > 0;
+    if (aScore.current && aContext.current && aSample.current && notesFound) {
       if (n) {
         Sinth.initplay(n);
       }
@@ -224,7 +225,8 @@ function IntervalTrainer() {
         }
         <Separator orientation='vertical' className='bg-zinc-800'/>
         <PlayControls
-          play={() => PlayIntTogether()} />
+          play={() => PlayIntTogether()} 
+          stop={() => {}}/>
         </div>
         <div className='flex flex-row justify-end gap-2'>
         </div>
@@ -267,19 +269,23 @@ function IntervalTrainer() {
             />
           </div>
         </div>
-        { !submitted &&
-        <Button disabled={!CanSubmit()}
-          className='ml-10 bg-zinc-900 text-[#caffbf]'
-         onClick={() => Submit()}> Submit </Button>
-      }
-      { submitted &&
-      <Button
-        className='ml-10 bg-zinc-900 text-[#caffbf]'
-        onClick={() => { 
-        if (aScore.current) {
-         newInterval(aScore.current);
-       }}}> Next </Button>
-      }
+          <div className='flex flex-row justify-center w-full'>
+            <div className='flex flex-row justify-end min-w-[500px]'>
+              { !submitted &&
+              <Button disabled={!CanSubmit()}
+                className='ml-10 bg-zinc-900 text-[#caffbf]'
+               onClick={() => Submit()}> Submit </Button>
+              }
+              { submitted &&
+              <Button
+                className='ml-10 bg-zinc-900 text-[#caffbf]'
+                onClick={() => { 
+                if (aScore.current) {
+                 newInterval(aScore.current);
+               }}}> Next </Button>
+              }
+            </div>
+          </div>
       </div>
     </div>
   )

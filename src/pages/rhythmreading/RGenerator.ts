@@ -22,8 +22,10 @@ function LoadEmptySheet(app: application, measureCount: number): void {
   app.ResizeMeasures(app.Sheet.Measures);
 }
 
-function GenerateHiddenRhythm(app: application): SinthNote[] {
+function GenerateHiddenRhythm(app: application, measureCount: number = 4): SinthNote[] {
   const sNoteArray: SinthNote[] = [];
+  
+  LoadEmptySheet(app, measureCount);
 
   app.Sheet.Measures.forEach((m, i) => {
     const beats = m.TimeSignature.bottom;
@@ -82,7 +84,8 @@ function CompareTranscription(app: application, sNoteArray: SinthNote[]): boolea
   return correct;
 }
 
-function GenerateRhythm(app: application, tempo: number = 100) {
+function GenerateRhythm(app: application, rhythmValues: number[], tempo: number = 100) {
+  console.log("rhythmValues: ", rhythmValues);
   const beatArray: number[] = [];
   const bps = 60 / tempo; /// beat === crotchet or 0.25
   app.LoadSheet(baseIntervalLoad);

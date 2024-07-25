@@ -1,15 +1,15 @@
-import { Box, Button, Center, Drawer, DrawerBody, DrawerCloseButton, DrawerContent, DrawerHeader, DrawerOverlay, Flex, Icon, IconButton } from "@chakra-ui/react";
 import { useEffect, useRef, useState } from "react";
 import { RVis } from "./RVisualiser";
 import { Sheet } from "./Sheet";
-import { ConfigSettings, App as application } from "../lib/sheet/entry.mjs";
+import { ConfigSettings, App as Score } from "../lib/sheet/entry.mjs";
 import { GenerateRhythm } from "./rhythmreading/RGenerator";
 import { Sinth } from "../lib/sinth/main.mjs";
-import { IoAddCircleOutline, IoPlayCircleOutline, IoStopCircleOutline } from "react-icons/io5";
 import { normalTheme } from "../utils/Theme";
-import { IoIosSettings } from "react-icons/io";
-import { HiMicrophone } from "react-icons/hi";
-import { FaKeyboard, FaMouse } from "react-icons/fa";
+import { MenuDropdown } from "@/components/custom/MenuDropdown";
+import { PlayControls } from "@/components/custom/PlayControls";
+import { RhythmSelect } from "@/components/custom/RhythmSelect";
+import { Separator } from "@radix-ui/react-separator";
+import { Button } from "@/components/ui/button";
 
 enum InputType {
   MICROPHONE = 0,
@@ -20,12 +20,11 @@ enum InputType {
 
 function RhythmReading () {
 
-  const [score, setScore] = useState<application | null>(null);
   const [perfectCount, setPerfectCount] = useState<number>(0);
   const [goodCount, setGoodCount] = useState<number>(0);
   const [closeCount, setCloseCount] = useState<number>(0);
   const [missCount, setMissCount] = useState<number>(0);
-  const [settingsOpen, setSettingsOpen] = useState<boolean>(false);
+  const [rhythmValues, setRhythmValues] = useState<number[]>([0.25]);
   // the rhythm test can take + a buffer of 1 beat
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -36,12 +35,24 @@ function RhythmReading () {
   const inputType = useRef<InputType>(InputType.KEYBOARD);
   const beatArray = useRef<number[]>([]);
   const startTime = useRef<number>(0);
+  const aScore = useRef<Score | null>(null);
 
   const aContext: AudioContext = new AudioContext({sampleRate: 8000});
   const analyser = aContext.createAnalyser();
   analyser.minDecibels = -90;
   analyser.maxDecibels = -10;
   analyser.smoothingTimeConstant = 0;
+
+  const setScore = (score: Score) => {
+    aScore.current = score;
+    beatArray.current = GenerateRhythm(score, rhythmValues);
+  }
+
+  const newRhythm = () => {
+    if (aScore.current) {
+      beatArray.current = GenerateRhythm(aScore.current, rhythmValues);
+    }
+  }
 
   const getBeats = (beats: number[]) => {
     // reset counts
@@ -160,12 +171,6 @@ function RhythmReading () {
     detectHit.current = false;
   }
 
-  useEffect(() => {
-    if (score) {
-    beatArray.current = GenerateRhythm(score);
-    }
-  }, [score])
-
   const handleKeyDown = () => {
     if (detectHit.current && inputType.current === InputType.KEYBOARD) {
       // TODO: 2400 is metronome buffer, needs to differe depending on tempo
@@ -192,116 +197,49 @@ function RhythmReading () {
     }
   }, [])
 
-  const topButtonColour = 'gray.200';
-
-  return (<Box w={'100%'}>
-    <Box h='40px' w='100%'>
-      <Flex w='100%' justify={'space-between'} gap={4}>
-      <Box></Box>
-      <Box>
-      <Flex justify={'center'}>
-        <Button aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => startRecording()}
-        >Begin Test</Button>
-        <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoStopCircleOutline} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => stopRecording()}
-        >Stop</Button>
-
-        <Button aria-label='new rhythm' border={'0px solid transparent'} variant='ghost' size='sm' color={'#caffbf'} 
-          leftIcon={<Icon as={IoAddCircleOutline} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (score)
-              GenerateRhythm(score);
-          }}
-        >New Rhythm</Button>
-      </Flex>
-      </Box>
-
-        <Flex justify={'flex-end'}>
-        <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoIosSettings} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => setSettingsOpen(true)}
-        ></Button>
-        </Flex>
-
-       </Flex>
-    </Box>
-      <Box w={'100%'} >
-        <Center h='550px' bgColor={'#16191f'}>
-          <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={() => {}} config={rSettings}/>
-        </Center>
-        <Flex gap={4} mt={6} w='100%' justify={'center'}>
-          <Box borderRadius={'5px'} color={'#a2d2ff'} 
-             fontWeight={600} fontSize={'0.9em'} p={2}>PERFECT: {perfectCount}</Box>
-          <Box borderRadius={'5px'} color={'#caffbf'} 
-             fontWeight={600} fontSize={'0.9em'} p={2}>GOOD: {goodCount}</Box>
-          <Box borderRadius={'5px'} color={'#ffd6a5'} 
-             fontWeight={600} fontSize={'0.9em'} p={2}>CLOSE: {closeCount}</Box>
-          <Box borderRadius={'5px'} color={'#f08080'} 
-             fontWeight={600} fontSize={'0.9em'} p={2}>MISS: {missCount}</Box>
-        </Flex>
-      </Box>
-      { true &&
-      <Center w='100%' h={'0px'} bgColor={'white'}>
-      <canvas width={'800px'} height={'100px'} ref={canvasRef}></canvas>
-      </Center>
-      }
-      <Drawer isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} size={'md'}>
-        <DrawerOverlay/>
-        <DrawerContent bgColor={'#0E1114'} color={'gray.300'}>
-          <DrawerCloseButton />
-          <DrawerHeader>Settings</DrawerHeader>
-          <DrawerBody>
-            <Flex justify={'center'}>
-              <IconButton
-                aria-label='Microphone Input'
-                borderRadius={'0px'}
-                outline={'0px'}
-                border={'0px'}
-                color={inputType.current === InputType.MICROPHONE ? '#f08080' : 'gray.100'}
-                bgColor={'transparent'}
-                _hover={{color: '#f08080', backgroundColor: 'transparent', outline: '0', border: '0'}}
-                _focus={{outline: '0', border: '0'}}
-                onClick={() => {inputType.current = InputType.MICROPHONE}}
-                icon={<Icon as={HiMicrophone} boxSize={6}/>}/>
-              <IconButton
-                aria-label='Keyboard Input'
-                borderRadius={'0px'}
-                outline={'0px'}
-                border={'0px'}
-                color={inputType.current === InputType.KEYBOARD ? '#f08080' : 'gray.100'}
-                bgColor={'transparent'}
-                _hover={{color: '#f08080', backgroundColor: 'transparent', outline: '0', border: '0'}}
-                _focus={{outline: '0', border: '0'}}
-                onClick={() => {inputType.current = InputType.KEYBOARD}}
-                icon={<Icon as={FaKeyboard} boxSize={6}/>}/>
-              <IconButton
-                borderRadius={'0px'}
-                aria-label='Mouse Input'
-                outline={'0px'}
-                border={'0px'}
-                color={inputType.current === InputType.MOUSE ? '#f08080' : 'gray.100'}
-                bgColor={'transparent'}
-                _hover={{color: '#f08080', backgroundColor: 'transparent', outline: '0', border: '0'}}
-                _focus={{outline: '0', border: '0'}}
-                onClick={() => {inputType.current = InputType.MOUSE}}
-                icon={<Icon as={FaMouse} boxSize={6}/>}/>
-            </Flex>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-
-  </Box>)
+  return (
+    <div className='flex flex-col justify-start h-full'>
+      <div className='flex flex-row justify-between min-h-[50px] bg-zinc-950 font-light text-zinc-100'>
+        <div className='flex flex-row justify-start gap-2'>
+          <MenuDropdown />
+          <PlayControls
+            play={() => startRecording()} 
+            stop={() => stopRecording()} />
+          <Separator orientation='vertical' />
+          <Button
+            onClick={() => newRhythm()}
+          >New Rhythm +</Button>
+        </div>
+      </div>
+      <div className='flex flex-row justify-between min-h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
+        <div className='flex flex-col justify-center h-full'>
+          <RhythmSelect
+            setToolRhythmValues={setRhythmValues}/>
+        </div>
+      </div>
+        <div className="flex flex-row justify-center">
+          <div className='grow testbg'>
+            <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={() => {}} config={rSettings}/>
+          </div>
+        </div>
+        <div className='min-h-[50%] grow bg-zinc-950'>
+          <div className='flex flex-row justify-center mt-4 gap-2'>
+          <div className='text-[#a2d2ff] font-medium'>
+            PERFECT: {perfectCount}
+          </div>
+           <div className='text-[#caffbf] font-medium'>
+            GOOD: {goodCount}
+          </div>
+           <div className='text-[#ffd6a5] font-medium'>
+            CLOSE: {closeCount}
+          </div>
+           <div className='text-[#f08080] font-medium'>
+            MISS: {missCount}
+          </div>
+          </div>
+        </div>
+    </div>
+  )
 }
 
 export { RhythmReading }

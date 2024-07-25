@@ -15,10 +15,7 @@ function InputSelectGroup(props: ISGProps) {
             onClick={() => {
               if (score) {
                 score.NoteInput = true;
-                console.log("score: ", score);
-                } else {
-                console.log("score: ", score);
-                }
+              }
             }}>
             <CursorTextIcon />
            </ToggleGroupItem>
