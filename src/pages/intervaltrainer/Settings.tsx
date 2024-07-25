@@ -1,10 +1,32 @@
 import { Box, Button, Checkbox, Flex, Switch } from "@chakra-ui/react"
 import { useEffect, useState } from "react";
-import { IntSettings } from "../IntervalTrainer";
 
 interface IntSettingProps {
   Settings: IntSettings;
   UpdateSettings: (settings: IntSettings) => void;
+}
+
+type IntSettings = {
+  Unison: boolean;
+  min2: boolean;
+  Maj2: boolean;
+  min3: boolean;
+  Maj3: boolean;
+  P4: boolean;
+  Aug4Dim5: boolean;
+  P5: boolean;
+  min6: boolean;
+  Maj6: boolean
+  min7: boolean;
+  Maj7: boolean;
+  Oct: boolean;
+  NeedNotate: boolean;
+  NotateCount: number;
+  Ascending: boolean;
+  Descending: boolean;
+  Together: boolean;
+  PlaySelect: boolean;
+  PlayInput: boolean;
 }
 
 function IntervalSettings(props: IntSettingProps) {
@@ -128,4 +150,4 @@ function IntervalSettings(props: IntSettingProps) {
   )
 }
 
-export { IntervalSettings }
+export { IntervalSettings, type IntSettings }
