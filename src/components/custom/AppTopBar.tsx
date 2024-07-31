@@ -7,24 +7,53 @@ import { Button } from '../ui/button';
 import { BarChartIcon, GearIcon } from '@radix-ui/react-icons';
 import { MusicNotes } from './MusicNotes';
 
+// For hiding and disabling certain functionality
+type ATBConfig = {
+  HideNav?: boolean;
+  HideInput?: boolean;
+  HideNotes?: boolean;
+  HideSettings?: boolean;
+}
+
 interface ATBProps {
   score: Score | null;
+  config?: ATBConfig;
   playFunc: () => void;
 }
 
 function AppTopBar(props: ATBProps) {
-  const { score, playFunc } = props;
+  
+  const IsEnabled = (key: keyof ATBConfig) => {
+    if (props.config === undefined) {
+      return true;
+    }
+    if (props.config[key] === undefined) {
+      return true;
+    }
+    if (props.config[key]) {
+      return false;
+    }
+  }
+
+  const { score, config, playFunc } = props;
   return (
   <div>
     <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
       <div className='flex flex-row justify-start gap-2'>
+      { IsEnabled('HideNav') && 
         <MenuDropdown />
-        <InputSelectGroup score={score} />
+      }
+      <InputSelectGroup 
+        HideInput={config?.HideInput ? config.HideInput : false}
+        HideSelect={false}
+        score={score} />
       <Separator orientation='vertical' className='bg-zinc-800'/>
         <PlayControls 
           play={() => playFunc()}
           stop={() => {}}/>
       </div>
+
+      { IsEnabled('HideSettings') &&
       <div className='flex flex-row justify-end gap-2'>
         <Button variant='ghost' className='rounded-none' size='icon'>
           <GearIcon className='h-4 w-4' />
@@ -33,8 +62,10 @@ function AppTopBar(props: ATBProps) {
           <BarChartIcon className='h-4 w-4' />
         </Button>
       </div>
+      }
       </div>
-    <div className='flex flex-row justify-between h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
+      { IsEnabled('HideNotes') &&
+      <div className='flex flex-row justify-between h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
         <div className='flex flex-col justify-center h-full'>
         <div className='flex flex-row justify-start gap-2'>
           <MusicNotes 
@@ -45,6 +76,7 @@ function AppTopBar(props: ATBProps) {
         </div>
         </div>
       </div>
+      }
     </div>
   )
 }

@@ -59,9 +59,6 @@ function CheckScaleAnswer(scale: string, score: application | null): boolean {
     })
   })
 
-  console.log(correctNotes);
-  console.log(inputNotes);
-
   if (correctNotes.length !== inputNotes.length) { answer = false; }
   else {
     correctNotes.forEach((n: number, i: number) => {
@@ -71,7 +68,6 @@ function CheckScaleAnswer(scale: string, score: application | null): boolean {
       }
     });
   }
-
   return answer;
 }
 

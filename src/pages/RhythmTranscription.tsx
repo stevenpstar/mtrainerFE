@@ -1,4 +1,3 @@
-import { ToastId, useToast } from "@chakra-ui/react";
 import { ConfigSettings, App as Score } from '../lib/sheet/entry.mjs';
 import { useEffect, useRef, useState } from "react";
 import { Sheet } from "./Sheet";
@@ -7,14 +6,14 @@ import { normalTheme } from "../utils/Theme";
 import { Sinth, Note as SinthNote} from "../lib/sinth/main.mjs";
 import { AppTopBar } from "@/components/custom/AppTopBar";
 import { Button } from "@/components/ui/button";
+import { useToast } from '@/components/ui/use-toast';
 
 function RhythmTranscription() {
 
   const aScore = useRef<Score | null>(null);
   const aSample = useRef<AudioBuffer | null>(null);
   const aContext = useRef<AudioContext>(new AudioContext());
-  const toast = useToast();
-  const toastIdRef = useRef<ToastId>();
+  const { toast } = useToast();
 
   const [notes, setNotes] = useState<SinthNote[]>([]);
   const [scoreLoaded, setScoreLoaded] = useState<boolean>(false);
@@ -74,12 +73,10 @@ function RhythmTranscription() {
   const CheckAnswer = () => {
     if (aScore.current) {
       const ans = CompareTranscription(aScore.current, notes);
-      toastIdRef.current = toast({
+      toast({
         title: ans ? 'Correct!' : 'Mistake.',
         description: ans ? 'You got it right!' : 'Incorrect',
-        status: ans ? 'success' : 'error',
-        duration: 9000,
-        isClosable: true,
+        variant: ans ? 'correct' : 'incorrect',
       })
     }
   }

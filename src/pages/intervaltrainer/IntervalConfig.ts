@@ -3,7 +3,7 @@ import { normalTheme } from "@/utils/Theme";
 
 const intervalConfig: ConfigSettings = {
   CameraSettings: {
-    DragEnabled: false,
+    DragEnabled: true,
     ZoomEnabled: false,
     Zoom: 2,
     StartingPosition: { x: 0, y: 0 },

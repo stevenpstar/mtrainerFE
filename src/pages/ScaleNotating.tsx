@@ -1,31 +1,31 @@
-import { Box, Button, Center, Flex, Icon, IconButton, Text, ToastId, useToast } from "@chakra-ui/react";
-import { IoAddCircleOutline, IoMusicalNotes, IoPlayCircleOutline } from "react-icons/io5";
-import { ConfigSettings, Message, MessageType, Note, ReturnMidiNumber, App as application } from '../lib/sheet/entry.mjs';
+import { ConfigSettings, Message, MessageType, Note, ReturnMidiNumber, App as Score } from '../lib/sheet/entry.mjs';
 import { useEffect, useRef, useState } from "react";
 import { Sheet } from "./Sheet";
 import { LoadEmptySheet } from "./rhythmreading/RGenerator";
-import { LuMousePointer } from "react-icons/lu";
 import { normalTheme } from "../utils/Theme";
 import { Sinth, Note as SinthNote} from "../lib/sinth/main.mjs";
-import { HiMiniArrowRight } from "react-icons/hi2";
 import { CheckScaleAnswer, GenerateScale, GenerateSinthNotes } from "../generators/ScaleGenerator";
-import { IoIosSettings } from "react-icons/io";
-import { HiChevronRight } from "react-icons/hi";
-import { AiOutlineDelete } from "react-icons/ai";
+import { AppTopBar } from "@/components/custom/AppTopBar";
+import { Button } from '@/components/ui/button';
+import { ChevronRightIcon } from '@radix-ui/react-icons';
 
 function ScaleNotate() {
 
   const aSample = useRef<AudioBuffer | null>(null);
   const aContext = useRef<AudioContext>(new AudioContext());
-  const aScore = useRef<application | null>(null);
+  const aScore = useRef<Score | null>(null);
 
-  const toast = useToast();
-  const toastIdRef = useRef<ToastId>();
 
-  const [score, setScore] = useState<application | null>(null);
-  const [inputting, setInputting] = useState<boolean>(true);
   const [scaleString, setScaleString] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
+  const [scoreLoaded, setScoreLoaded] = useState<boolean>(false);
+
+  const setScore = (score: Score): void => {
+    aScore.current = score;
+    LoadEmptySheet(aScore.current, 4);
+    setScaleString(GenerateScale(aScore.current));
+    setScoreLoaded(true);
+  }
 
   const scaleSettings: ConfigSettings = {
     CameraSettings: {
@@ -85,6 +85,12 @@ function ScaleNotate() {
     }
   }
 
+  const GenerateNewScale = (): void => {
+    if (aScore.current) {
+      setScaleString(GenerateScale(aScore.current));
+      setSubmitted(_ => false);
+    }
+  }
 
   useEffect(() => {
     fetch("/A4vH.flac")
@@ -93,207 +99,70 @@ function ScaleNotate() {
     .then (s => aSample.current = s);
   }, [])
 
-  useEffect(() => {
-    if (score) {
-      LoadEmptySheet(score, 4);
-      score.SetNoteValue(0.25);
-      aScore.current = score;
-      if (aScore.current) {
-        LoadEmptySheet(aScore.current, 4);
-        setScaleString(GenerateScale(aScore.current));
-      }
-    }
-  }, [score])
-
-  const topButtonColour = 'gray.200';
-
   const PlayRhythm = () => {
-   const sNotes = GenerateSinthNotes(scaleString);
-   if (sNotes.length > 0 && aSample.current) {
-    Sinth.initplay(sNotes);
-    Sinth.playFull(aContext.current, aSample.current, 100, sNotes, () => {});
-   }
-}
+    const sNotes = GenerateSinthNotes(scaleString);
+    if (sNotes.length > 0 && aSample.current) {
+     Sinth.initplay(sNotes);
+     Sinth.playFull(aContext.current, aSample.current, 100, sNotes, () => {});
+    }
+  }
 
   const CheckAnswer = (): boolean => {
     if (aScore.current) {
       const ans = CheckScaleAnswer(scaleString, aScore.current);
+      setSubmitted(_ => true);
       return ans;
     }
     return false;
   }
 
   return (
-  <Box w={'100%'}>
-    <Flex 
-      direction={'column'}
-      justify={{base: 'space-between', sm: 'space-between', md: 'flex-start'}}
-      w='100%'
-      h='100%' bgColor={'#0D0F12'}>
-    <Box h='40px' w='100%' bgColor={'blackAlpha.500'}>
-      <Flex justify={'space-between'} gap={4} >
-      <Box></Box>
-      <Box>
-      <Flex justify={'center'}>
-      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          icon={<Icon as={IoMusicalNotes} color={inputting ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.NoteInput = true;
-              setInputting(true);
-            }}
+  <div className='flex flex-col justify-start h-full'>
+    { scoreLoaded &&
+      <AppTopBar 
+        score={aScore.current}
+        playFunc={() => PlayRhythm()}
+      />
+    }
+  <div className='flex flex-row justify-center'>
+      <div className='grow testbg'>
+        <Sheet
+          w='100%'
+          h='500px' f=''
+          setParentScore={setScore}
+          callback={callback}
+          config={scaleSettings} />
+      </div>
+    </div>
+    <div className='min-h-[50%] grow bg-zinc-950'>
+      <div className='flex flex-row justify-center'>
+        <Button 
+        className='-top-[3.5rem] relative bg-zinc-900 text-[#caffbf]'
+        onClick={() => GenerateNewScale()}>Generate New Scale +</Button>
+      </div>
+      <div className='flex flex-row justify-center min-w-[500px] text-zinc-200 text-lg -top-[1.5rem] relative'>
+        <ChevronRightIcon className='text-[#a2d2ff] h-5 w-5 mt-1'/>
+        { scaleString }
+      </div>
+      <div className='flex flex-row justify-center min-w-[600px]'>
+          <div className='flex flex-row justify-end w-[600px]'>
+          { !submitted &&
+            <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
+              onClick={() => CheckAnswer()}
+            >Submit</Button>
           }
-        ></IconButton>
-
-      <IconButton aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          icon={<Icon as={LuMousePointer} color={!inputting ? '#f08080' : topButtonColour} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.NoteInput = false;
-              setInputting(false);
-            }}
+          { submitted &&
+            <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
+              onClick={() => GenerateNewScale()}
+            >Next</Button>
           }
-        ></IconButton>
+          </div>
+        </div>
 
-        <IconButton aria-label='begin test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          icon={<Icon as={IoPlayCircleOutline} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => PlayRhythm()}
-        ></IconButton>
+    </div>
 
-        <Button aria-label='new rhythm' border={'0px solid transparent'} variant='ghost' size='sm' color={'#caffbf'} 
-          leftIcon={<Icon as={IoAddCircleOutline} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (!aScore.current) {
-              return;
-            }
-            else {
-              LoadEmptySheet(aScore.current, 4);
-              setScaleString(GenerateScale(aScore.current));
-          }}}
-        >New Scale</Button>
-
-      <Button 
-        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.SetAccidental(-1);
-            }}
-          }
-        ><Box className='musicFont' mr={1}>{'\uE260'}</Box></Button>
-
-      <Button
-        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.SetAccidental(0);
-            }}
-          }
-        ><Box className='musicFont' mr={1}>{'\uE261'}</Box></Button>
-
-      <Button
-        aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              aScore.current.SetAccidental(1);
-            }}
-          }
-        ><Box className='musicFont' mr={1}>{'\uE262'}</Box></Button>
-
-       <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-        leftIcon={<Icon as={AiOutlineDelete} color={'#f08080'} boxSize={5} />}
-        _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-        _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-        onClick={() => {
-          if (aScore.current) {
-            aScore.current.Delete();
-          }}
-        }
-        ></Button>
-
-        </Flex>
-        </Box>
-
-        <Flex justify={'flex-end'}>
-        <Button aria-label='stop test' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={IoIosSettings} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-        ></Button>
-        </Flex>
-       </Flex>
-    </Box>
-      <Box w={'100%'} bgColor={'#0e1114'} >
-        <Center top={'0px'} h='550px'>
-          <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={callback} config={scaleSettings}/>
-        </Center>
-      </Box>
-    <Box h='100px' p={2} w='100%' bgColor={'#0D0F12'}>
-    <Box h='40px' w='100%'>
-      <Center>
-      <Flex justify={'center'} gap={4}>
-       </Flex>
-       </Center>
-       <Center>
-     <Box><Text color={'gray.300'} fontSize='lg'>
-       <Icon as={HiChevronRight} color={'#caffbf'} position={'relative'} top='1px' boxSize={4}/>
-       Notate the <span className='highlightColour'>{scaleString}</span> </Text>
-      </Box>
-       </Center>
-       <Center>
-       <Flex justify={'flex-end'} w='50%'>
-       { !submitted &&
-        <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={HiMiniArrowRight} color={'#caffbf'} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              const ans = CheckAnswer();
-              setSubmitted(true);
-              toastIdRef.current = toast({
-                title: ans ? 'Correct!' : 'Mistake.',
-                description: ans ? 'You got it right!' : 'Incorrect',
-                status: ans ? 'success' : 'error',
-                duration: 9000,
-                isClosable: true,
-              });
-            }}
-          }
-        >Submit</Button>
-      }
-      { submitted &&
-        <Button aria-label='note input mode' border={'0px solid transparent'} variant='ghost' size='sm' color={topButtonColour} 
-          leftIcon={<Icon as={HiMiniArrowRight} color={'#caffbf'} boxSize={5} />}
-          _hover={{ bgColor: 'transparent', color: 'white', border: '0px transparent'}}
-          _focus={{ bgColor: 'transparent', color: 'white', border: '0px transparent', outline: 'none'}}
-          onClick={() => {
-            if (aScore.current) {
-              setScaleString(GenerateScale(aScore.current));
-              setSubmitted(false);
-            }}
-          }
-        >New Scale</Button>
-      }
-       </Flex>
-       </Center>
-      </Box>
-    </Box>
-  </Flex>
-  </Box>)
+  </div>
+  )
 }
 
 export { ScaleNotate }
