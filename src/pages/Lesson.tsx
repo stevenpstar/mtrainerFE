@@ -1,13 +1,33 @@
-import { Elem, ElemType, Lesson as LessonType } from "@/utils/Lesson";
+import { Elem, ElemType, Lesson as LessonType, Page, PageType } from "@/utils/Lesson";
 import { useEffect, useState } from "react";
 import { intervalConfig } from "./intervaltrainer/IntervalConfig";
 import { LessonSheet } from "@/components/custom/lessons/LessonSheet";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import { AddHighlight, HighlightParagraph, UpdateHighlight, highlight, pText } from "./lesson/Highlighter";
-import { Pencil1Icon } from "@radix-ui/react-icons";
-import { Textarea } from "@/components/ui/textarea";
+import { AddHighlight, HighlightParagraph, UpdateHighlight, highlight } from "./lesson/Highlighter";
+import { ArrowLeftIcon, ArrowRightIcon, Pencil1Icon } from "@radix-ui/react-icons";
 import { Badge } from "@/components/ui/badge";
+import { MenuDropdown } from "@/components/custom/MenuDropdown";
+import { TestTextChoice } from "./lesson/TestTextChoice";
+import { ElemParagraph } from "./lesson/ElemParagraph";
+import { HighlightDisplay } from "./lesson/HighlightDisplay";
+import { TestScoreChoice } from "./lesson/TestScoreChoice";
+
+enum TestStatus {
+  INPROGRESS = 0,
+  PASSED
+}
+
+type Test = {
+  pageId: number;
+  status: TestStatus;
+  questions: TestQuestion[];
+}
+
+type TestQuestion = {
+  id: number;
+  answer: string;
+}
 
 function Lesson() {
 
@@ -27,58 +47,30 @@ function Lesson() {
       pages: [],
     }
   );
+  const [_test, setTests] = useState<Test[]>([]);
   
   const RenderElementContent = (elem: Elem) => {
     const elems = HighlightParagraph(elem.content,
       highlights.filter(h => h.paragraphId === elem.elementId &&
                               h.page === page));
     switch (elem.type) {
-      case ElemType.Paragraph: //paragraph
+      case ElemType.Paragraph:
         return ( 
-        <div className='w-full'
-          onMouseEnter={() => setDisplayId(elem.elementId)}
-          onMouseLeave={() => setDisplayId(-1)}
-        >
-        <div className='flex flex-row justify-end'>
-          <Button 
-            style={{'visibility': displayId === elem.elementId ? 'visible' : 'hidden'}}
-            size='sm' 
-            className='bg-transparent hover:bg-transparent hover:text-[#f08080]'
-            onClick={() => AddHighlight(page,
-              highlights,
-              setHighlights)}>
-            <Pencil1Icon className='w-4 h-4'/>
-          </Button>
-        </div>
-        <p className='p-1' id={`para-${elem.elementId}`}> {
-          elems.map((e: pText, i: number) => {
-            if (e.highlighted) {
-              return ( 
-                <span id={`elem-${elem.elementId}-${i}`} 
-                onClick={(event) => {
-                  const target = event.target as HTMLSpanElement;
-                  const bounds = target.getBoundingClientRect();
-                  let left = bounds.left;
-                  const top = bounds.top + bounds.height + 20;
-                  if (bounds.left + 330 > window.innerWidth) {
-                    left = window.innerWidth - (450);
-                  }
-                  setNoteWindowPos({x: left, y: top});
-                  if (e.highlight) {
-                    setNoteVal(e.highlight.note);
-                  }
-                  setSelHighlight(e.highlight)
-                }}
-                className={'hover:cursor-pointer text-zinc-900'}
-                style={{'backgroundColor': e.highlight ? e.highlight.colour : '#f08080'}}
-                >{e.text}</span>
-                )
-            } else {
-              return ( <span id={`elem-${elem.elementId}-${i}`} >{e.text}</span> )
-            }
-          })
-        } </p></div> );
-      case ElemType.Sheet: //sheet
+         <ElemParagraph 
+            elem={elem}
+            elems={elems}
+            page={page}
+            displayId={displayId}
+            highlights={highlights}
+            setHighlights={setHighlights}
+            AddHighlight={AddHighlight}
+            setDisplayId={setDisplayId}
+            setNoteVal={setNoteVal}
+            setNoteWindowPos={setNoteWindowPos}
+            setSelHighlight={setSelHighlight}
+          />
+        )
+      case ElemType.Sheet:
         return (
         <div className='overflow-hidden'>
           <Separator className='bg-zinc-900'/>
@@ -89,13 +81,25 @@ function Lesson() {
           <Separator className='bg-zinc-900'/>
         </div>
         )
-      case ElemType.List: //list
+      case ElemType.List: 
         return (
           <div>
-            <ul className='list-disc leading-8'>
+            <ul className='list-disc leading-8 mt-4 ml-4'>
               { elem.content.split(',').map(e => <li>{e}</li>) }
             </ul>
           </div>
+        )
+      case ElemType.TextQuestionChoice:
+        return (
+          <TestTextChoice
+            elem={elem}
+          />
+        )
+      case ElemType.SheetQuestionChoice:
+        return (
+          <TestScoreChoice
+            elem={elem}
+            />
         )
     }
   }
@@ -109,12 +113,84 @@ function Lesson() {
     return defaultClass;
   }
 
+  const RenderTopLink = () => {
+    if (page === 0) {
+      return (
+        <p className='underline flex flex-row gap-2 text-[#ffd6a5]'>
+        <ArrowLeftIcon className='mt-1 w-4 h-4'/> Back to Courses </p>
+      )
+    }
+    return (
+      <p className='underline flex flex-row gap-2 text-[#ffd6a5] hover:cursor-pointer hover:text-zinc-200'
+        onClick={() => setPage(page => page - 1)}
+      >
+      <ArrowLeftIcon className='mt-1 w-4 h-4'/> Back to {lessonData.pages[page-1].title} </p>
+    )
+  }
+
+  const RenderBottomLinks = () => {
+    if (page === 0) {
+      return (
+        <div className='mt-12 flex flex-row justify-between w-full'>
+          <p 
+          className='underline flex flex-row gap-2 text-[#ffd6a5]'>
+            <ArrowLeftIcon className='mt-1 w-4 h-4'/> Back to Courses
+          </p>
+          { page < lessonData.pages.length - 1 &&
+          <p 
+          onClick={() => setPage(page+1)}
+          className='underline flex flex-row gap-2 text-[#ffd6a5]'>
+            <ArrowRightIcon className='mt-1 w-4 h-4'/> Next: '{lessonData.pages[page+1].title}'
+          </p>
+          }
+        </div>
+      )
+    } 
+  return (
+    <div className='mt-12 flex flex-row justify-between w-full'>
+      <p 
+      onClick={() => setPage(page-1)}
+      className='underline flex flex-row gap-2 text-[#ffd6a5]'>
+        <ArrowLeftIcon className='mt-1 w-4 h-4'/> Back: '{lessonData.pages[page-1].title}`
+      </p>
+      { page < lessonData.pages.length - 1 &&
+      <p 
+      onClick={() => setPage(page+1)}
+      className='underline flex flex-row gap-2 text-[#ffd6a5]'>
+        <ArrowRightIcon className='mt-1 w-4 h-4'/> Next: '{lessonData.pages[page+1].title}'
+      </p>
+      }
+    </div>
+    )
+  }
+
+  const LoadTests = (lesson: LessonType) => {
+    const tests: Test[] = [];
+    const testPages = lesson.pages.filter((p: Page) => p.type === PageType.Test);
+    testPages.forEach((tp: Page) => {
+      const test: Test = {
+        pageId: tp.num,
+        status: TestStatus.INPROGRESS,
+        questions: tp.elements.filter((e: Elem) => e.type >= ElemType.TextQuestionChoice).map((elem: Elem) => {
+          const testQuestion: TestQuestion = {
+            id: elem.elementId,
+            answer: "",
+          };
+          return testQuestion;
+        }),
+      }
+      tests.push(test);
+    })
+    setTests(_ => tests);
+  }
+
   useEffect(() => {
     fetch("/ExampleLesson.json")
     .then(res => res.json())
     .then(lesson => {
       setLessonData(lesson as LessonType);
       setLessonLoaded(true);
+      LoadTests(lesson);
     });
   }, [])
 
@@ -122,68 +198,27 @@ function Lesson() {
     <div className='flex flex-row justify-start'>
       <div className='flex flex-col bg-zinc-950 text-zinc-200 grow'>
 
-        <div id='comments' className='absolute flex flex-col justify-start gap-2'
-          style={{'display': selHighlight ? 'block': 'none',
-            'left': noteWindowPos.x , 'top': noteWindowPos.y + 50
-          }}
-        >
-          <div className='w-96 min-h-48 bg-zinc-900 mr-4 mt-4 p-2 rounded shadow-md border-zinc-800 border-2'>
-          <h2> Add Note </h2>
-          <div className='flex flex-row justify-start gap-1'>
-            <div 
-              onClick={() => {
-                if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#caffbf', selHighlight?.note); 
-                }
-               }}
-              className='w-4 h-4 rounded bg-[#caffbf]'></div>
-            <div 
-              onClick={() => {
-                if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#f08080', selHighlight?.note); 
-                }
-               }}
-            className='w-4 h-4 rounded bg-[#f08080]'></div>
-            <div 
-              onClick={() => {
-                if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#a2d2ff', selHighlight?.note); 
-                }
-               }}
-            className='w-4 h-4 rounded bg-[#a2d2ff]'></div>
-            <div 
-              onClick={() => {
-                if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#ffd6a5', selHighlight?.note); 
-                }
-               }}
-            className='w-4 h-4 rounded bg-[#ffd6a5]'></div>
-          </div>
-          <div className='mt-2 mb-2'>
-          <Textarea 
-            value={noteVal}
-            onChange={(e) => setNoteVal(e.currentTarget.value)}
-            className='border-none bg-zinc-800' rows={4}></Textarea>
-          </div>
-          <div className='flex flex-row justify-end'>
-            <Button 
-              onClick={() => { 
-                if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, selHighlight?.colour, noteVal);
-                  setSelHighlight(null);
-                  setNoteVal('');
-                }
-              }}
-              className='bg-zinc-900 hover:bg-[#caffbf] hover:text-zinc-900' size='sm'>
-              Save</Button>
-          </div>
+        <HighlightDisplay 
+          selHighlight={selHighlight}
+          highlights={highlights}
+          noteVal={noteVal}
+          noteWindowPos={noteWindowPos}
+          UpdateHighlight={UpdateHighlight}
+          setHighlights={setHighlights}
+          setNoteVal={setNoteVal}
+          setSelHighlight={setSelHighlight}
+        />
+
+        <div className='flex flex-row justify-between bg-[#0d0d0f] h-12 w-full overflow-hidden'>
+          <MenuDropdown />
+          <div className='flex flex-col justify-center h-full pr-4'>
+            <div className='rounded-full w-6 h-6 bg-blue-100'></div>
           </div>
         </div>
-        <div className='flex flex-row justify-center bg-[#0d0d0f]'>
+        <div className='flex flex-row justify-center bg-[#0d0d0f] border-b-2 border-zinc-900'>
           <div className='font-bold bg-[#0d0d0f] max-w-[1480px] pt-8 pb-2 w-[1480px] grow'>
             <h1 className='text-5xl bg-[#0d0d0f] text-left'>{lessonData.title}</h1>
-            <h2 className='text-md bg-[#0d0d0f] font-light text-left mb-8'>Author: Steven Star</h2>
-            <div className='flex flex-row justify-start gap-2 mt-4'>
+            <div className='flex flex-row justify-start gap-2 mt-4 mb-4'>
               <Badge variant={'outline'} className="text-zinc-200" >Beginner</Badge>
               <Badge variant={'outline'} className="text-zinc-200">Fundamentals</Badge>
             </div>
@@ -200,7 +235,12 @@ function Lesson() {
             </ul>
           </div>
 
-        <div className='text-left p-12 max-w-[1000px]'>
+        <div className='text-left p-12 max-w-[1000px] w-[1000px] shrink'>
+          <div>
+            {
+              RenderTopLink()
+            }
+          </div>
           <div className='flex flex-row justify-end'>
             <Button 
              className='flex flex-row justify-between bg-transparent'
@@ -216,6 +256,7 @@ function Lesson() {
           { lessonData.pages.length > 0 &&
             lessonData.pages[page].elements.map(e => RenderElementContent(e))
           }
+          { RenderBottomLinks() }
         </div>
         <div className='shrink w-36'>
           <div className='flex flex-col gap-4 justify-start fixed right-2 w-80'>
