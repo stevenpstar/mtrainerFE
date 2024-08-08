@@ -261,7 +261,8 @@ function Lesson() {
         <div className='shrink w-36'>
           <div className='flex flex-col gap-4 justify-start fixed right-2 w-80'>
             { showNotes &&
-              highlights.filter(h => h.page === page).map(hl => <div className='text-zinc-200 border-2 p-4' style={{'borderColor': hl.colour}}>{hl.note}</div>)
+              highlights.filter(h => h.page === page).map(hl => 
+              <div className='text-zinc-200 bg-zinc-900 border-l-2 p-4' style={{'borderColor': hl.colour}}>{hl.note}</div>)
             }
           </div>
         </div>

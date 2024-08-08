@@ -30,5 +30,35 @@ const intervalConfig: ConfigSettings = {
   Theme: normalTheme,
 }
 
-export { intervalConfig };
+const landingConfig: ConfigSettings = {
+  CameraSettings: {
+    DragEnabled: false,
+    ZoomEnabled: false,
+    Zoom: 1.5,
+    StartingPosition: { x: 0, y: 0 },
+    CenterMeasures: false,
+    CenterPage: false,
+  },
+  FormatSettings: {
+    MeasureFormatSettings: {
+      Selectable: false,
+      MaxWidth: 200,
+    }
+  },
+  NoteSettings: {
+    InputValue: 0.5,
+  },
+  PageSettings: {
+    RenderPage: false,
+    RenderBackground: false,
+    ContainerWidth: false,
+    UsePages: false,
+    AutoSize: true,
+  },
+  DefaultStaffType: 'single',
+  Theme: normalTheme,
+}
+
+
+export { intervalConfig, landingConfig };
 

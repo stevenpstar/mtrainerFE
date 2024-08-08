@@ -27,7 +27,7 @@ function ProtectedComponent(props: ProtectedProps) {
     )
   }
   else if (!auth && hasChecked) {
-    return <Navigate to="/login" />
+    return <Navigate to="/app/login" />
   } else {
     return ( <Box h='100%' w='100%'>{props.children}</Box> )
   }

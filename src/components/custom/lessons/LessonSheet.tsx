@@ -7,6 +7,7 @@ interface LSProps {
   load?: string;
   w?: number;
   h?: number;
+  showTopBar?: boolean;
 }
 
 function LessonSheet(props: LSProps) {
@@ -37,8 +38,8 @@ function LessonSheet(props: LSProps) {
   }, [])
 
   return (
-     <div className='flex flex-col justify-start h-[500px]'>
-    { scoreLoaded &&
+     <div className='relative flex flex-col w-full justify-start h-full z-40'>
+    { scoreLoaded && props.showTopBar &&
       <AppTopBar 
         config={{
           HideNav: true,
@@ -51,7 +52,7 @@ function LessonSheet(props: LSProps) {
       />
     }
     <div ref={canvasWrapper} className='flex flex-row justify-center'>
-      <canvas className='w-full h-[500px]' ref={canvas}></canvas>
+      <canvas className='w-full h-[900px]' ref={canvas}></canvas>
     </div>
     </div>
   )

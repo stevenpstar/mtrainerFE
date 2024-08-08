@@ -1,52 +1,75 @@
-import { Note, NoteProps, App as Score } from '../../lib/sheet/entry.mjs'
-import { LoadEmptySheet } from '../rhythmreading/RGenerator'
-import { Note as SinthNote } from '../../lib/sinth/main.mjs';
+import { Note, NoteProps, App as Score } from "../../lib/sheet/entry.mjs";
+import { LoadEmptySheet } from "../rhythmreading/RGenerator";
+import { Note as SinthNote } from "../../lib/sinth/main.mjs";
 
 type ChordData = {
   SNotes: SinthNote[];
   ChordStr: string;
-}
+};
 
 // Key definitions
 
-const MAJOR = new Map<string, string[]>(
-  [
-    ["#", ["G", "D", "A", "E", "B", "F#"]],
-    ["b", ["Gb", "Db", "Ab", "Eb", "Bb", "F"]],
-  ]
-)
+const MAJOR = new Map<string, string[]>([
+  ["#", ["G", "D", "A", "E", "B", "F#"]],
+  ["b", ["Gb", "Db", "Ab", "Eb", "Bb", "F"]],
+]);
 
-const MINOR = new Map<string, string[]>(
-  [
-    ["#", ["E", "B", "F#", "C#", "G#", "D#"]],
-    ["b", ["Gb", "Db", "Ab", "Eb", "Bb", "F"]],
-  ]
-)
+const MINOR = new Map<string, string[]>([
+  ["#", ["E", "B", "F#", "C#", "G#", "D#"]],
+  ["b", ["Gb", "Db", "Ab", "Eb", "Bb", "F"]],
+]);
 
 // Define chords
 
-const CHORDS = new Map<string, Array<number[]>>(
+const CHORDS = new Map<string, Array<number[]>>([
   [
-    ["MAJOR", [[0, 4, 7], [-8, -5, 0], [-8, 0, -5], [-5, 0, 4], [-5, 4, 0]]],
-    ["MAJOR 7", [[0, 4, 7, 11], [-8, -5, 0, -1]]],
-    ["MINOR", [[0, 3, 7], [-9, -5, 0], [-9, 0, -5], [-5, 0, 3], [-5, 3, 0] ]],
-  ]
-)
+    "MAJOR",
+    [
+      [0, 4, 7],
+      [-8, -5, 0],
+      [-8, 0, -5],
+      [-5, 0, 4],
+      [-5, 4, 0],
+    ],
+  ],
+  [
+    "MAJOR 7",
+    [
+      [0, 4, 7, 11],
+      [-8, -5, 0, -1],
+    ],
+  ],
+  [
+    "MINOR",
+    [
+      [0, 3, 7],
+      [-9, -5, 0],
+      [-9, 0, -5],
+      [-5, 0, 3],
+      [-5, 3, 0],
+    ],
+  ],
+]);
 
 // Temporary, will be a part of settings that are passed to generate chord function eventually
-const chord_array = [ "MAJOR", "MINOR", "MAJOR 7" ];
+const chord_array = ["MAJOR", "MINOR", "MAJOR 7"];
 
 function GenerateChord(score: Score | null): ChordData {
-  const cData: ChordData = { SNotes: [], ChordStr: "" }
-  if (!score) { return cData }
+  const cData: ChordData = { SNotes: [], ChordStr: "" };
+  if (!score) {
+    return cData;
+  }
   // Clear the sheet before each chord is generated
   LoadEmptySheet(score, 1);
   const notes: SinthNote[] = [];
   const noteRangeHigh = 72;
   const noteRangeLow = 60;
   // get root note of chord randomly
-  const midiNote = Math.floor(Math.random() * (noteRangeHigh - noteRangeLow + 1)) + noteRangeLow;
-  const chordQuality = chord_array[Math.floor(Math.random() * chord_array.length)];
+  const midiNote =
+    Math.floor(Math.random() * (noteRangeHigh - noteRangeLow + 1)) +
+    noteRangeLow;
+  const chordQuality =
+    chord_array[Math.floor(Math.random() * chord_array.length)];
   const voicingArray = CHORDS.get(chordQuality);
   // If we need to change a sharp note to a flat note (to fit a key)
   const accidentalString: string = SharpsOrFlats(midiNote, chordQuality, score);
@@ -58,36 +81,36 @@ function GenerateChord(score: Score | null): ChordData {
   const inversionIndx = Math.floor(Math.random() * voicingArray.length);
   const inversion = voicingArray[inversionIndx];
   const invString = GetInversionString(inversionIndx);
-  cData.ChordStr = trueRoot + ' ' + chordQuality + ' ' + invString;
-  inversion.forEach(midiFromRoot => {
+  cData.ChordStr = trueRoot + " " + chordQuality + " " + invString;
+  inversion.forEach((midiFromRoot) => {
     const sNote: SinthNote = {
       Beat: 1, // this will change when chord progressions are implemented
       Duration: 2,
-      MidiNote: midiNote + midiFromRoot
+      MidiNote: midiNote + midiFromRoot,
     };
     notes.push(sNote);
-  })
-  notes.forEach(n => {
+  });
+  notes.forEach((n) => {
     AddNote(score, 1, 0.5, n.MidiNote, midiNote, accidentalString);
-  })
+  });
   cData.SNotes = notes;
   return cData;
 }
 
 function GetInversionString(invIndex: number): string {
-  let invString = '';
+  let invString = "";
   switch (invIndex) {
     case 1:
     case 2:
-      invString = '1st Inv.';
+      invString = "1st Inv.";
       break;
     case 3:
     case 4:
-      invString = '2nd Inv.';
+      invString = "2nd Inv.";
       break;
     case 5:
     case 6:
-      invString = '3rd Inv.';
+      invString = "3rd Inv.";
       break;
     case 0:
     default:
@@ -95,20 +118,24 @@ function GetInversionString(invIndex: number): string {
   return invString;
 }
 
-function GetTrueRoot(rootMidi: number, accString: string, score: Score): string {
+function GetTrueRoot(
+  rootMidi: number,
+  accString: string,
+  score: Score,
+): string {
   const rNote = score.PitchMap.get(rootMidi);
-  let rootString = '';
+  let rootString = "";
   if (rNote === undefined) {
     console.error("Note doesn't exist in pitch map");
     return "Error: Note doesn't exist in pitch map";
   }
-  if (rNote.Accidental === 0) { 
+  if (rNote.Accidental === 0) {
     // We do not want the 4 in A4 for example, just A
     rootString = rNote.NoteString[0];
-  } else if (rNote.Accidental === 1 && accString === '#') {
+  } else if (rNote.Accidental === 1 && accString === "#") {
     rootString = rNote.NoteString[0] + rNote.NoteString[1];
   } else {
-    // We need to get a higher midi note and manually add the flat 
+    // We need to get a higher midi note and manually add the flat
     // accidental to the root string
     const nextMidi = rootMidi + 1;
     const nNote = score.PitchMap.get(nextMidi);
@@ -119,17 +146,19 @@ function GetTrueRoot(rootMidi: number, accString: string, score: Score): string 
     // Because the accidental is only either 1 or 0, this next note will
     // have no accidental. Meaning we can grab the first character of the
     // NoteString array and append the flat accidental
-    rootString = nNote.NoteString[0] + 'b';
+    rootString = nNote.NoteString[0] + "b";
   }
   return rootString;
 }
 
-function AddNote(score: Score, 
-                 beat: number,
-                 duration: number,
-                 midiNumber: number,
-                 root: number,
-                 accidentalString: string): void {
+function AddNote(
+  score: Score,
+  beat: number,
+  duration: number,
+  midiNumber: number,
+  root: number,
+  accidentalString: string,
+): void {
   const pm = score.PitchMap.get(midiNumber);
   const rootNote = score.PitchMap.get(root);
   if (!pm || !rootNote) {
@@ -154,22 +183,28 @@ function AddNote(score: Score,
     Tuple: false,
     Clef: "treble",
     Editable: false,
-  }
+  };
   const note: Note = new Note(newNote);
   note.Accidental = accidental;
   score.Sheet.Measures[0].AddNote(note);
   score.ResizeMeasures(score.Sheet.Measures);
 }
 
-function SharpsOrFlats(rootNote: number, chordQuality: string, score: Score): string {
+function SharpsOrFlats(
+  rootNote: number,
+  chordQuality: string,
+  score: Score,
+): string {
   let result = "";
   const rNote = score.PitchMap.get(rootNote);
   if (!rNote) {
     console.error("Pitchmap error for midi Note: ", rootNote);
     return "";
   }
-  const noteString = rNote.Accidental === 1 ?
-    rNote.NoteString[0] + rNote.NoteString[1] : rNote.NoteString[0];
+  const noteString =
+    rNote.Accidental === 1
+      ? rNote.NoteString[0] + rNote.NoteString[1]
+      : rNote.NoteString[0];
   switch (chordQuality) {
     case "MAJOR":
     case "MAJOR 7":
@@ -205,11 +240,15 @@ function SharpsOrFlats(rootNote: number, chordQuality: string, score: Score): st
   return result;
 }
 
-function findInAccArray(sharpArray: string[], flatArray: string[], noteString: string): string {
+function findInAccArray(
+  sharpArray: string[],
+  flatArray: string[],
+  noteString: string,
+): string {
   let result: string = "";
-  if (sharpArray.find(s => s === noteString)) {
+  if (sharpArray.find((s) => s === noteString)) {
     result = "#";
-  } else if (flatArray.find(s => s === noteString)) {
+  } else if (flatArray.find((s) => s === noteString)) {
     result = "b";
   } else {
     // I believe this means it is currently a sharp (acc = 1) but should be a flat
@@ -218,5 +257,4 @@ function findInAccArray(sharpArray: string[], flatArray: string[], noteString: s
   return result;
 }
 
-
-export { GenerateChord, type ChordData }
+export { GenerateChord, type ChordData };

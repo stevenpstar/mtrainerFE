@@ -17,6 +17,7 @@ import { Landing } from './Landing.tsx'
 import { Practice } from './pages/Practice.tsx'
 import { ChordTrainer } from './pages/ChordTrainer/ChordTrainer.tsx'
 import { Toaster } from './components/ui/toaster.tsx'
+import { Analytics } from './pages/Analytics.tsx'
 
 const theme = extendTheme({
   config: {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
       {
         path: "practice",
         element: <Practice />
+      },
+      {
+        path: "analytics",
+        element: <Analytics />
       },
       {
         path: "dashboard",

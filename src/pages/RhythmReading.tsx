@@ -18,7 +18,7 @@ enum InputType {
   MIDI,
 }
 
-function RhythmReading () {
+function RhythmReading() {
 
   const [perfectCount, setPerfectCount] = useState<number>(0);
   const [goodCount, setGoodCount] = useState<number>(0);
@@ -37,7 +37,7 @@ function RhythmReading () {
   const startTime = useRef<number>(0);
   const aScore = useRef<Score | null>(null);
 
-  const aContext: AudioContext = new AudioContext({sampleRate: 8000});
+  const aContext: AudioContext = new AudioContext({ sampleRate: 8000 });
   const analyser = aContext.createAnalyser();
   analyser.minDecibels = -90;
   analyser.maxDecibels = -10;
@@ -68,13 +68,13 @@ function RhythmReading () {
     });
   }
 
-// TODO: Test function for being close
+  // TODO: Test function for being close
   const rScore = (time: number, desiredTime: number): void => {
     const perfect = 50;
     const good = 100;
     const closeO = 150;
     const dist = Math.abs(time - desiredTime);
-  
+
     if (dist <= perfect) {
       setPerfectCount(perfectCount => perfectCount + 1);
     } else if (dist <= good) {
@@ -121,7 +121,7 @@ function RhythmReading () {
         audio: true,
       })
       .then((stream) => {
-        mStream.current= stream;
+        mStream.current = stream;
         aContext.createMediaStreamSource(mStream.current);
         analyser.connect(aContext.destination);
         mediaRecorder.current = new MediaRecorder(mStream.current);
@@ -138,25 +138,25 @@ function RhythmReading () {
     if (inputType.current === InputType.MICROPHONE) {
       if (!canvasRef.current) { return; }
       if (!mediaRecorder.current) { console.log("no media recorder"); return; }
-     // mediaRecorder.current.start();
+      // mediaRecorder.current.start();
       const context = canvasRef.current.getContext("2d");
-  //    const bContext = bCanvasRef.current.getContext("2d");
+      //    const bContext = bCanvasRef.current.getContext("2d");
       if (!context) { return; }
       if (!mStream.current) { return; }
       detectHit.current = true;
       if (beatArray.current.length === 0) { return; }
-      RDetector.current.detect(analyser, mStream.current, aContext, canvasRef.current, getBeats, beatArray.current[beatArray.current.length-1] + 600);
+      RDetector.current.detect(analyser, mStream.current, aContext, canvasRef.current, getBeats, beatArray.current[beatArray.current.length - 1] + 600);
       Sinth.playMetronome(aContext, 4, 100);
     } else if (inputType.current === InputType.KEYBOARD) {
       detectHit.current = true;
       RDetector.current.Beats = [];
       Sinth.playMetronome(aContext, 4, 100);
-      RDetector.current.detectTimeEnd(stopDetecting, beatArray.current[beatArray.current.length-1] + 600);
+      RDetector.current.detectTimeEnd(stopDetecting, beatArray.current[beatArray.current.length - 1] + 600);
     } else if (inputType.current === InputType.MOUSE) {
       detectHit.current = true;
       Sinth.playMetronome(aContext, 4, 100);
       RDetector.current.Beats = [];
-      RDetector.current.detectTimeEnd(stopDetecting, beatArray.current[beatArray.current.length-1] + 600);
+      RDetector.current.detectTimeEnd(stopDetecting, beatArray.current[beatArray.current.length - 1] + 600);
     }
   }
 
@@ -181,7 +181,7 @@ function RhythmReading () {
 
   const handleMouseDown = () => {
     if (detectHit.current && inputType.current === InputType.MOUSE) {
-  // TODO: 2400 is metronome buffer, needs to differe depending on tempo
+      // TODO: 2400 is metronome buffer, needs to differe depending on tempo
       RDetector.current.Beats.push(new Date().getTime() - startTime.current - 2400);
       getBeats(RDetector.current.Beats);
     }
@@ -203,7 +203,7 @@ function RhythmReading () {
         <div className='flex flex-row justify-start gap-2'>
           <MenuDropdown />
           <PlayControls
-            play={() => startRecording()} 
+            play={() => startRecording()}
             stop={() => stopRecording()} />
           <Separator orientation='vertical' />
           <Button
@@ -214,30 +214,30 @@ function RhythmReading () {
       <div className='flex flex-row justify-between min-h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
         <div className='flex flex-col justify-center h-full'>
           <RhythmSelect
-            setToolRhythmValues={setRhythmValues}/>
+            setToolRhythmValues={setRhythmValues} />
         </div>
       </div>
-        <div className="flex flex-row justify-center">
-          <div className='grow testbg'>
-            <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={() => {}} config={rSettings}/>
-          </div>
+      <div className="flex flex-row justify-center">
+        <div className='grow testbg'>
+          <Sheet w='100%' h='600px' f='' setParentScore={setScore} callback={() => { }} config={rSettings} />
         </div>
-        <div className='min-h-[50%] grow bg-zinc-950'>
-          <div className='flex flex-row justify-center mt-4 gap-2'>
+      </div>
+      <div className='min-h-[50%] grow bg-zinc-950'>
+        <div className='flex flex-row justify-center mt-4 gap-2'>
           <div className='text-[#a2d2ff] font-medium'>
             PERFECT: {perfectCount}
           </div>
-           <div className='text-[#caffbf] font-medium'>
+          <div className='text-[#caffbf] font-medium'>
             GOOD: {goodCount}
           </div>
-           <div className='text-[#ffd6a5] font-medium'>
+          <div className='text-[#ffd6a5] font-medium'>
             CLOSE: {closeCount}
           </div>
-           <div className='text-[#f08080] font-medium'>
+          <div className='text-[#f08080] font-medium'>
             MISS: {missCount}
           </div>
-          </div>
         </div>
+      </div>
     </div>
   )
 }

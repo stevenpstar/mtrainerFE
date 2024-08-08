@@ -66,7 +66,7 @@ const AddHighlight = (page: number,
 // element id is being manually set to 0 we are just testing with
 // the initial paragraph element of the page for now.
   const s = window.getSelection();
-  const defaultColour = '#a2d2ff';
+  const defaultColour = 'rgba(202, 255, 191, 0.5)';
   if (s) {
     const ancOffset = s.anchorOffset;
     const focOffset = s.focusOffset;
@@ -95,7 +95,7 @@ const AddHighlight = (page: number,
       paragraphId: eId,
       indexStart: 0,
       indexEnd: 0,
-      note: "default text",
+      note: "",
       colour: defaultColour,
     };
     // This looks confusing but works as follows

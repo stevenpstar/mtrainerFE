@@ -30,43 +30,43 @@ function HighlightDisplay (props: HLDProps) {
             'left': noteWindowPos.x , 'top': noteWindowPos.y + 50
           }}
         >
-          <div className='w-96 min-h-48 bg-zinc-900 mr-4 mt-4 p-2 rounded shadow-md border-zinc-800 border-2'>
+          <div className='w-96 min-h-48 bg-[#0D0D0F] mr-4 mt-4 p-2 shadow-md border-zinc-900 border-2'>
           <h2> Add Note </h2>
           <div className='flex flex-row justify-start gap-1'>
             <div 
               onClick={() => {
                 if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#caffbf', selHighlight?.note); 
+                  UpdateHighlight(selHighlight, highlights, setHighlights, 'rgba(202, 255, 191, 0.5)', selHighlight?.note); 
                 }
                }}
-              className='w-4 h-4 rounded bg-[#caffbf]'></div>
+              className='w-4 h-4 rounded-full bg-[#caffbf] hover:cursor-pointer'></div>
             <div 
               onClick={() => {
                 if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#f08080', selHighlight?.note); 
+                  UpdateHighlight(selHighlight, highlights, setHighlights, 'rgba(240, 128, 128, 0.5)', selHighlight?.note); 
                 }
                }}
-            className='w-4 h-4 rounded bg-[#f08080]'></div>
+            className='w-4 h-4 rounded-full bg-[#f08080] hover:cursor-pointer'></div>
             <div 
               onClick={() => {
                 if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#a2d2ff', selHighlight?.note); 
+                  UpdateHighlight(selHighlight, highlights, setHighlights, 'rgba(162, 210, 255, 0.5)', selHighlight?.note); 
                 }
                }}
-            className='w-4 h-4 rounded bg-[#a2d2ff]'></div>
+            className='w-4 h-4 rounded-full bg-[#a2d2ff] hover:cursor-pointer'></div>
             <div 
               onClick={() => {
                 if (selHighlight) {
-                  UpdateHighlight(selHighlight, highlights, setHighlights, '#ffd6a5', selHighlight?.note); 
+                  UpdateHighlight(selHighlight, highlights, setHighlights, 'rgba(255, 214, 165, 0.5)', selHighlight?.note); 
                 }
                }}
-            className='w-4 h-4 rounded bg-[#ffd6a5]'></div>
+            className='w-4 h-4 rounded-full bg-[#ffd6a5] hover:cursor-pointer'></div>
           </div>
           <div className='mt-2 mb-2'>
           <Textarea 
             value={noteVal}
             onChange={(e) => setNoteVal(e.currentTarget.value)}
-            className='border-none bg-zinc-800' rows={4}></Textarea>
+            className='border-none bg-zinc-900' rows={4}></Textarea>
           </div>
           <div className='flex flex-row justify-end'>
             <Button 

@@ -55,7 +55,7 @@ function ElemParagraph (props: EPProps) {
               const target = event.target as HTMLSpanElement;
               const bounds = target.getBoundingClientRect();
               let left = bounds.left;
-              const top = bounds.top + bounds.height + 20;
+              const top = bounds.top + bounds.height;
               if (bounds.left + 330 > window.innerWidth) {
                 left = window.innerWidth - (450);
               }
@@ -65,7 +65,7 @@ function ElemParagraph (props: EPProps) {
                 setSelHighlight(e.highlight)
               }
             }}
-            className={'hover:cursor-pointer text-zinc-900'}
+            className={'hover:cursor-pointer text-zinc-200'}
             style={{'backgroundColor': e.highlight ? e.highlight.colour : '#f08080'}}
             >{e.text}</span>
             )

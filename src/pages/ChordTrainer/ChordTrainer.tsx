@@ -48,7 +48,7 @@ function ChordTrainer() {
     setNotes(_ => n);
     setAnswerStr(data.ChordStr);
     if (aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, n, () => {});
+      Sinth.playFull(aContext.current, aSample.current, 120, n, () => { });
     }
   }
 
@@ -104,54 +104,54 @@ function ChordTrainer() {
   const setScore = (score: Score) => {
     aScore.current = score;
     setScoreLoaded(true);
-   }
+  }
 
   const playChord = () => {
     if (notes.length > 1 && aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, notes, () => {});
+      Sinth.playFull(aContext.current, aSample.current, 120, notes, () => { });
     }
   }
-  
+
   useEffect(() => {
     if (!aSample.current) {
       fetch("/A4vH.flac")
-      .then (resp => resp.arrayBuffer())
-      .then (aBuffer => aContext.current.decodeAudioData(aBuffer))
-      .then (s => aSample.current = s);
+        .then(resp => resp.arrayBuffer())
+        .then(aBuffer => aContext.current.decodeAudioData(aBuffer))
+        .then(s => aSample.current = s);
     }
   }, [])
 
   return (
     <div className='flex flex-col justify-start h-full'>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
-      <div className='flex flex-row justify-start gap-2'>
-        <MenuDropdown />
-        { scoreLoaded &&
-        <InputSelectGroup score={aScore.current} />
-        }
-      <Separator orientation='vertical' className='bg-zinc-800'/>
-        <PlayControls 
-          play={() => playChord()}
-          stop={() => {}}/>
-      </div>
-      <div className='flex flex-row justify-end gap-2'>
-        <Button variant='ghost' className='rounded-none' size='icon'>
-          <GearIcon className='h-4 w-4' />
-        </Button>
-        <Button variant='ghost' className='rounded-none' size='icon'>
-          <BarChartIcon className='h-4 w-4' />
-        </Button>
-      </div>
+        <div className='flex flex-row justify-start gap-2'>
+          <MenuDropdown />
+          {scoreLoaded &&
+            <InputSelectGroup score={aScore.current} />
+          }
+          <Separator orientation='vertical' className='bg-zinc-800' />
+          <PlayControls
+            play={() => playChord()}
+            stop={() => { }} />
+        </div>
+        <div className='flex flex-row justify-end gap-2'>
+          <Button variant='ghost' className='rounded-none' size='icon'>
+            <GearIcon className='h-4 w-4' />
+          </Button>
+          <Button variant='ghost' className='rounded-none' size='icon'>
+            <BarChartIcon className='h-4 w-4' />
+          </Button>
+        </div>
       </div>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
         <div className='flex flex-col justify-center h-full'>
-        <div className='flex flex-row justify-start gap-2'>
-          <MusicNotes 
-            c='h-9 flex flex-row items-center justify-center gap-2'
-            score={aScore.current}
-            defaultVal='0.5'
-          />
-        </div>
+          <div className='flex flex-row justify-start gap-2'>
+            <MusicNotes
+              c='h-9 flex flex-row items-center justify-center gap-2'
+              score={aScore.current}
+              defaultVal='0.5'
+            />
+          </div>
         </div>
       </div>
       <div className='flex flex-row justify-center'>
@@ -166,37 +166,37 @@ function ChordTrainer() {
       </div>
       <div className='min-h-[50%] grow bg-zinc-950'>
         <div className='mt-4 h-10 w-full'>
-        <div className='flex flex-row justify-center'>
-          <Button 
-            className='-top-[3.5rem] relative bg-zinc-900 text-[#caffbf]'
-            onClick={() => GenChord()}>Generate New Chord +</Button>
-        </div>
-        <div className='flex flex-row justify-center min-w-[500px] text-zinc-200 text-lg -top-[2.5rem] relative'>
-          <ChevronRightIcon className='text-[#a2d2ff] h-5 w-5 mt-1'/>
-          {
-            BitString()
-          }
-        </div>
-        </div>
           <div className='flex flex-row justify-center'>
-          <MultiInput 
-            bits={bits} 
+            <Button
+              className='-top-[3.5rem] relative bg-zinc-900 text-[#caffbf]'
+              onClick={() => GenChord()}>Generate New Chord +</Button>
+          </div>
+          <div className='flex flex-row justify-center min-w-[500px] text-zinc-200 text-lg -top-[2.5rem] relative'>
+            <ChevronRightIcon className='text-[#a2d2ff] h-5 w-5 mt-1' />
+            {
+              BitString()
+            }
+          </div>
+        </div>
+        <div className='flex flex-row justify-center'>
+          <MultiInput
+            bits={bits}
             setBits={setBits}
             submit={CheckAnswer}
-            />
+          />
         </div>
         <div className='flex flex-row justify-center min-w-[600px]'>
           <div className='flex flex-row justify-end w-[600px]'>
-          { !answered &&
-            <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
-              onClick={() => CheckAnswer()}
-            >Submit</Button>
-          }
-          { answered &&
-            <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
-              onClick={() => NextChord()}
-            >Next</Button>
-          }
+            {!answered &&
+              <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
+                onClick={() => CheckAnswer()}
+              >Submit</Button>
+            }
+            {answered &&
+              <Button className='ml-10 bg-zinc-900 text-[#caffbf]'
+                onClick={() => NextChord()}
+              >Next</Button>
+            }
 
           </div>
         </div>
