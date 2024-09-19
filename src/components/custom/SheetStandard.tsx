@@ -41,7 +41,7 @@ function SheetStandard(props: SSProps) {
   return (
     <div className='relative flex flex-col w-full justify-start h-full z-40'>
       <div ref={canvasWrapper} className='flex flex-row justify-center'>
-        <canvas className='w-full h-[250px]' ref={canvas}></canvas>
+        <canvas className='w-[900px] h-[500px]' ref={canvas}></canvas>
       </div>
     </div>
   )

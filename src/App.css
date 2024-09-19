@@ -5,15 +5,40 @@
   src: local('Bravura'), url('/Bravura.otf') format('opentype');
 }
 :root * {
-   animation-play-state: paused;
+  /* animation-play-state: paused;
     animation-delay: calc(var(--scroll) * -1s);
     animation-iteration-count: 1;
-    animation-fill-mode: both;
-
+    animation-fill-mode: both; */
+}
+.coverGrad {
+  background: linear-gradient(to left, rgba(10,10,12,1), rgba(10,10,12,0));
 }
 .features {
   background-color: #F4F4F5;
   animation: progress 1s linear;
+}
+
+.whiteKey {
+  position: relative;
+  height: 300px;
+  width: 75px;
+  border: 1px solid #18181b;
+  transition: 0.2s;
+}
+
+.blackKey {
+  position: absolute;
+  top: 0px;
+  left: 50px;
+  height: 150px;
+  width: 50px;
+  border: 1px solid #18181b;
+  background-color: #0d0d0f;
+  z-index: 10;
+}
+
+.whiteKey:hover {
+  box-shadow: 0px 0px 24px 2px #f08080;
 }
 
 @keyframes progress {
@@ -23,6 +48,10 @@
 }
 
 .svg-1 {
+ animation-play-state: paused;
+ animation-delay: calc(var(--scroll) * -1s);
+ animation-iteration-count: 1;
+ animation-fill-mode: both;
   z-index: 0;
   position: absolute;
   top: 0px;
@@ -39,6 +68,11 @@
 }
 
 .svg-2 {
+ animation-play-state: paused;
+ animation-delay: calc(var(--scroll) * -1s);
+ animation-iteration-count: 1;
+ animation-fill-mode: both;
+
   z-index: 0;
   position: absolute;
   top: -200px;
@@ -50,6 +84,11 @@
   z-index: 10;
   top: 0px;
   animation: heroimg 1s ease-in;
+ animation-play-state: paused;
+ animation-delay: calc(var(--scroll) * -1s);
+ animation-iteration-count: 1;
+ animation-fill-mode: both;
+
 }
 
 @keyframes heroimg {

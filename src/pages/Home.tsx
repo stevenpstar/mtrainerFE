@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { landingConfig } from "./intervaltrainer/IntervalConfig";
 import { SheetStandard } from "@/components/custom/SheetStandard";
-import { App as Score } from '../lib/sheet/entry.mjs';
+import { sheet, App as Score } from '../lib/sheet/entry.mjs';
 import { AnimateInterval } from "./landing/LandingSheetAnimations";
 import { ArrowRightIcon, ArrowUpIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { Separator } from "@radix-ui/react-separator";
@@ -31,6 +31,10 @@ function Home() {
 
   const setScore = (s: Score) => {
     score.current = s;
+    score.current.AddStaff(0, "bass");
+    score.current.ResizeMeasures(score.current.Sheet.Measures);
+    //    score.current.Sheet.Measures[0].Staves.push()
+    //    score.current.Sheet.Measures[0].Clefs[1].Type = "bass";
     AnimateInterval(score.current);
   }
 
@@ -50,7 +54,7 @@ function Home() {
           <div>Sign in</div>
         </div>
       </div>
-      <div id="hero" className="flex flex-col justify-center w-full h-[800px] bg-gradient-to-b from-[#0d0d0f] to-zinc-950 z-10">
+      <div id="hero" className="flex flex-col justify-center w-full h-[800px] bg-[#0A0A0C] z-10">
         <div className="flex flex-row justify-evenly">
           <div id="hero_text" className="flex flex-row justify-center text-left w-[50%] text-zinc-200">
             <div className='flex flex-col gap-4 justify-center'>
@@ -64,8 +68,14 @@ function Home() {
               </div>
             </div>
           </div>
-          <div id="hero_img" className="hero_img flex flex-row justify-center w-[50%]">
-            <div className="w-36 h-36 bg-[#f08080]"></div>
+          <div id="hero_img" className="hero_img flex flex-row justify-center w-[50%] h-[500px]">
+            <div className="w-[900px]">
+              <SheetStandard
+                config={landingConfig}
+                setParentScore={setScore}
+              />
+              <div className="absolute right-0 top-0 z-40 coverGrad w-[50px] h-full"></div>
+            </div>
           </div>
         </div>
       </div>

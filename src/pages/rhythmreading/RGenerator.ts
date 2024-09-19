@@ -1,43 +1,53 @@
-import { Note, NoteProps, App as application } from "../../lib/sheet/entry.mjs"
-import { Note as SinthNote} from "../../lib/sinth/main.mjs";
+import { Note, NoteProps, App as application } from "../../lib/sheet/entry.mjs";
+import { Note as SinthNote } from "../../lib/sinth/main.mjs";
 
-const baseIntervalLoad = '{"Measures":[{"Clef":"treble","TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":{"x":35,"y":37.5},"BotPosition":{"x":35,"y":57.5},"GTopPosition":{"x":35,"y":132.5},"GBotPosition":{"x":35,"y":152.5},"Bounds":{"x":35,"y":27.5,"width":30,"height":50},"GBounds":{"x":35,"y":122.5,"width":30,"height":50}},"Notes":[],"Bounds":{"x":0,"y":-2.5,"width":150,"height":95},"ShowClef":false,"ShowTime":true}]}';
+const baseIntervalLoad =
+  '{"Measures":[{"Clef":"treble","TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":{"x":35,"y":37.5},"BotPosition":{"x":35,"y":57.5},"GTopPosition":{"x":35,"y":132.5},"GBotPosition":{"x":35,"y":152.5},"Bounds":{"x":35,"y":27.5,"width":30,"height":50},"GBounds":{"x":35,"y":122.5,"width":30,"height":50}},"Notes":[],"Bounds":{"x":0,"y":-2.5,"width":150,"height":95},"ShowClef":false,"ShowTime":true}]}';
+
+const EmptySheet =
+  '{"Measures":[{"Clefs":[{"ID":0,"Position":{"x":43,"y":87.5},"Staff":0,"Bounds":{"x":43,"y":27.5,"width":30,"height":85},"Type":"treble","SelType":2,"Beat":1,"Selected":false,"Editable":true}],"Staves":[{"Num":0,"Buffer":0,"TopLine":5,"BotLine":35,"MidLine":15}],"TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":[{"x":75,"y":67.5}],"BotPosition":[{"x":75,"y":87.5}],"Bounds":[{"x":75,"y":57.5,"width":30,"height":50}]},"Notes":[],"Bounds":{"x":40,"y":27.5,"width":350,"height":150},"ShowClef":true,"ShowTime":true}]}';
 
 // Prototyping beat combinations
 const combinations = [
   //[1],
   //[0.5],
   [0.25],
-//  [0.125, 0.125],
-//  [0.125, 0.0625, 0.0625],
-//  [0.0625, 0.0625, 0.125],
-//  [0.0625, 0.0625, 0.0625, 0.0625]
-]
+  //  [0.125, 0.125],
+  //  [0.125, 0.0625, 0.0625],
+  //  [0.0625, 0.0625, 0.125],
+  //  [0.0625, 0.0625, 0.0625, 0.0625]
+];
 
 function LoadEmptySheet(app: application, measureCount: number): void {
-  app.LoadSheet(baseIntervalLoad);
-  for (let m=0;m<measureCount-1;m++) {
+  app.LoadSheet(EmptySheet);
+  for (let m = 0; m < measureCount - 1; m++) {
     app.AddMeasure();
   }
   app.ResizeMeasures(app.Sheet.Measures);
 }
 
-function GenerateHiddenRhythm(app: application, measureCount: number = 4): SinthNote[] {
+function GenerateHiddenRhythm(
+  app: application,
+  measureCount: number = 4,
+): SinthNote[] {
   const sNoteArray: SinthNote[] = [];
-  
+
   LoadEmptySheet(app, measureCount);
 
   app.Sheet.Measures.forEach((m, i) => {
     const beats = m.TimeSignature.bottom;
     const chosenCombinations = [];
-    let beat = 1 + (m.TimeSignature.bottom * i); // starting at 5 as first four beats will be metronome count in
+    let beat = 1 + m.TimeSignature.bottom * i; // starting at 5 as first four beats will be metronome count in
     const restChance = 8;
-    for (let b=0;b<beats;b++) {
-      chosenCombinations.push(combinations[Math.floor(Math.random() * combinations.length)]);
+    for (let b = 0; b < beats; b++) {
+      chosenCombinations.push(
+        combinations[Math.floor(Math.random() * combinations.length)],
+      );
     }
-    chosenCombinations.forEach(combo => {
-      combo.forEach(c => {
-        const isRest = Math.floor(Math.random() * restChance) === 0 ? true : false;
+    chosenCombinations.forEach((combo) => {
+      combo.forEach((c) => {
+        const isRest =
+          Math.floor(Math.random() * restChance) === 0 ? true : false;
         const val = c * m.TimeSignature.bottom;
         if (!isRest) {
           const sNote: SinthNote = {
@@ -49,31 +59,40 @@ function GenerateHiddenRhythm(app: application, measureCount: number = 4): Sinth
         }
         beat += val;
       });
-    })
+    });
   });
 
   return sNoteArray;
 }
 
-function CompareTranscription(app: application, sNoteArray: SinthNote[]): boolean {
+function CompareTranscription(
+  app: application,
+  sNoteArray: SinthNote[],
+): boolean {
   let correct = true;
-  
+
   sNoteArray.forEach((n: SinthNote) => {
     // TODO: Currently hard coded to 4, assuming all transcriptions are in 4/4 for now
     const msrIndx = Math.floor((n.Beat - 5) / 4);
     // subtract four to account for the metronome
-    const beat = n.Beat - (msrIndx * 4) - 4;
-    if (app.Sheet.Measures[msrIndx] === null || app.Sheet.Measures[msrIndx] === undefined) {
+    const beat = n.Beat - msrIndx * 4 - 4;
+    if (
+      app.Sheet.Measures[msrIndx] === null ||
+      app.Sheet.Measures[msrIndx] === undefined
+    ) {
       correct = false;
       console.error("No measure found");
       return;
     }
     const findDivision = app.Sheet.Measures[msrIndx].Divisions.filter(
-      d => d.Beat === beat)
+      (d) => d.Beat === beat,
+    );
     if (findDivision.length === 0) {
       correct = false;
     }
-    const findNote = app.Sheet.Measures[msrIndx].Notes.filter((n: Note) => n.Beat === beat)
+    const findNote = app.Sheet.Measures[msrIndx].Notes.filter(
+      (n: Note) => n.Beat === beat,
+    );
     if (findNote.length === 0) {
       correct = false;
     } else if (findNote[0].Rest) {
@@ -84,7 +103,11 @@ function CompareTranscription(app: application, sNoteArray: SinthNote[]): boolea
   return correct;
 }
 
-function GenerateRhythm(app: application, rhythmValues: number[], tempo: number = 100) {
+function GenerateRhythm(
+  app: application,
+  rhythmValues: number[],
+  tempo: number = 100,
+) {
   console.log("rhythmValues: ", rhythmValues);
   const beatArray: number[] = [];
   const bps = 60 / tempo; /// beat === crotchet or 0.25
@@ -99,18 +122,21 @@ function GenerateRhythm(app: application, rhythmValues: number[], tempo: number 
 
   app.ResizeMeasures(app.Sheet.Measures);
   app.Sheet.Measures.forEach((m, i) => {
-    const startingVal = i * ((bps * m.TimeSignature.bottom) * 1000);
+    const startingVal = i * (bps * m.TimeSignature.bottom * 1000);
     let runningVal = startingVal;
     const beats = m.TimeSignature.bottom;
     const chosenCombinations = [];
     let beat = 1;
     const restChance = 8; //( 1 in x)
-    for (let b=0;b<beats;b++) {
-      chosenCombinations.push(combinations[Math.floor(Math.random() * combinations.length)]);
+    for (let b = 0; b < beats; b++) {
+      chosenCombinations.push(
+        combinations[Math.floor(Math.random() * combinations.length)],
+      );
     }
-    chosenCombinations.forEach(combo => {
-      combo.forEach(noteValue => {
-        const isRest = Math.floor(Math.random() * restChance) === 0 ? true : false;
+    chosenCombinations.forEach((combo) => {
+      combo.forEach((noteValue) => {
+        const isRest =
+          Math.floor(Math.random() * restChance) === 0 ? true : false;
         const note: NoteProps = {
           Beat: beat,
           Duration: noteValue,
@@ -121,8 +147,8 @@ function GenerateRhythm(app: application, rhythmValues: number[], tempo: number 
           Tuple: false,
           Clef: "treble",
           Editable: false,
-        }
-        const Divisions = m.Divisions.filter(d => d.Beat === beat);
+        };
+        const Divisions = m.Divisions.filter((d) => d.Beat === beat);
 
         if (Divisions.length === 0) {
           return;
@@ -130,19 +156,26 @@ function GenerateRhythm(app: application, rhythmValues: number[], tempo: number 
 
         if (noteValue > Divisions[0].Duration && Divisions[0].Beat % 1 !== 0) {
           noteValue = Divisions[0].Duration;
-          if (noteValue === 0) { console.error("Note value 0 at division check"); }
+          if (noteValue === 0) {
+            console.error("Note value 0 at division check");
+          }
         }
         app.AddNoteOnMeasure(m, note.Duration, 15, Divisions[0], note.Rest);
         if (!note.Rest) {
           beatArray.push(runningVal);
         }
-        beat += (noteValue * m.TimeSignature.bottom);
-        runningVal = startingVal + ((beat - 1) * bps * 1000);
-      })
-    })
+        beat += noteValue * m.TimeSignature.bottom;
+        runningVal = startingVal + (beat - 1) * bps * 1000;
+      });
+    });
   });
   app.ResizeMeasures(app.Sheet.Measures);
   return beatArray;
 }
 
-export { GenerateRhythm, LoadEmptySheet, GenerateHiddenRhythm, CompareTranscription }
+export {
+  GenerateRhythm,
+  LoadEmptySheet,
+  GenerateHiddenRhythm,
+  CompareTranscription,
+};

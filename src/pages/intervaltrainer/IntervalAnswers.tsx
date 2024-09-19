@@ -59,13 +59,13 @@ function IntervalAnswers(props: IAProps) {
           setInterval={setInterval}
           getButtonColour={getButtonColour}
         />
-         <ITButton
+        <ITButton
           d={'Perfect 5th'}
           a={'P5'}
           setInterval={setInterval}
           getButtonColour={getButtonColour}
         />
-     </Flex>
+      </Flex>
       <Flex direction={'column'} justify={'flex-start'} gap={2}>
         <ITButton
           d={'Minor 6th'}
@@ -95,7 +95,7 @@ function IntervalAnswers(props: IAProps) {
         />
       </Flex>
       <Flex direction={'column'} justify={'flex-start'} gap={2}>
-         <ITButton
+        <ITButton
           d={'Octave'}
           a={'Oct'}
           setInterval={setInterval}

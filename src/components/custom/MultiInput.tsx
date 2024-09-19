@@ -24,7 +24,7 @@ function MultiInput(props: MIProps) {
     "A", "Ab", "A#",
     "B", "Bb",
     "C", "Cb", "C#",
-    "D", "Db", "D#", 
+    "D", "Db", "D#",
     "E", "Eb",
     "F", "Fb", "F#",
     "G", "Gb", "G#",
@@ -40,28 +40,28 @@ function MultiInput(props: MIProps) {
 
   // Unfinished, add as more chords are actually supported
   const searchMap = new Map<string, string>([
-  ['a', 'A'], ['ab', 'Ab'], ['a#', 'A#'],
-  ['b', 'B'], ['bb', 'Bb'], ['b#', 'B#'],
-  ['c', 'C'], ['cb', 'Cb'], ['c#', 'C#'],
-  ['d', 'D'], ['db', 'Db'], ['d#', 'D#'],
-  ['e', 'E'], ['eb', 'Eb'], ['e#', 'E#'],
-  ['f', 'F'], ['fb', 'Fb'], ['f#', 'F#'],
-  ['g', 'G'], ['gb', 'Gb'], ['g#', 'G#'],
-  ['major', 'Major'], ['maj', 'Major'],
-  ['minor', 'Minor'], ['min', 'Minor'],
-  ['7', '7'],
-  ['first inv', '1st Inv.'], ['first inv.', '1st Inv.'], 
-  ['1st inv.', '1st Inv.'], ['first inversion', '1st Inv.'],
-  ['1st inversion', '1st Inv.'], ['1st inversion.', '1st Inv.'],
-  ['second inv', '2nd Inv.'], ['first inv.', '2nd Inv.'], 
-  ['2nd inv.', '2nd Inv.'], ['second inversion', '2nd Inv.'],
-  ['2nd inversion', '2nd Inv.'], ['2nd inversion.', '2nd Inv.'],
-  ['third inv', '3rd Inv.'], ['third inv.', '3rd Inv.'], 
-  ['3rd inv.', '3rd Inv.'], ['third inversion', '3rd Inv.'],
-  ['3rd inversion', '3rd Inv.'], ['3rd inversion.', '3rd Inv.'],
+    ['a', 'A'], ['ab', 'Ab'], ['a#', 'A#'],
+    ['b', 'B'], ['bb', 'Bb'], ['b#', 'B#'],
+    ['c', 'C'], ['cb', 'Cb'], ['c#', 'C#'],
+    ['d', 'D'], ['db', 'Db'], ['d#', 'D#'],
+    ['e', 'E'], ['eb', 'Eb'], ['e#', 'E#'],
+    ['f', 'F'], ['fb', 'Fb'], ['f#', 'F#'],
+    ['g', 'G'], ['gb', 'Gb'], ['g#', 'G#'],
+    ['major', 'Major'], ['maj', 'Major'],
+    ['minor', 'Minor'], ['min', 'Minor'],
+    ['7', '7'],
+    ['first inv', '1st Inv.'], ['first inv.', '1st Inv.'],
+    ['1st inv.', '1st Inv.'], ['first inversion', '1st Inv.'],
+    ['1st inversion', '1st Inv.'], ['1st inversion.', '1st Inv.'],
+    ['second inv', '2nd Inv.'], ['first inv.', '2nd Inv.'],
+    ['2nd inv.', '2nd Inv.'], ['second inversion', '2nd Inv.'],
+    ['2nd inversion', '2nd Inv.'], ['2nd inversion.', '2nd Inv.'],
+    ['third inv', '3rd Inv.'], ['third inv.', '3rd Inv.'],
+    ['3rd inv.', '3rd Inv.'], ['third inversion', '3rd Inv.'],
+    ['3rd inversion', '3rd Inv.'], ['3rd inversion.', '3rd Inv.'],
 
   ])
-  
+
   const InputChanges = (_e: React.ChangeEvent<HTMLInputElement>) => {
     const str = _e.currentTarget.value.replace(/\s/g, "");
     const iEvent = _e.nativeEvent as InputEvent;
@@ -101,7 +101,7 @@ function MultiInput(props: MIProps) {
     const inputLength = inputRef.current.value.length;
     if (e.key === 'ArrowRight') {
       e.preventDefault();
-      if (selSearchResult < searchResults.length-1) {
+      if (selSearchResult < searchResults.length - 1) {
         setSelSearchResult(selSearchResult => selSearchResult + 1);
       }
       inputRef.current.setSelectionRange(inputLength, inputLength);
@@ -129,7 +129,7 @@ function MultiInput(props: MIProps) {
         if (inputRef.current) {
           inputRef.current.focus();
         }
-     }
+      }
     } else if (e.key === 'Backspace') {
       if (backspaceCount === 1 && inputVal === '') {
         const newBits = [...bits];
@@ -157,7 +157,7 @@ function MultiInput(props: MIProps) {
   useEffect(() => {
     if (bitsRef.current) {
       const r = bitsRef.current;
-      const obs = new ResizeObserver(entries => 
+      const obs = new ResizeObserver(entries =>
         setInputPadding(_ => (entries[0].contentRect.width + 4).toString() + 'px'));
       obs.observe(bitsRef.current);
       return () => obs.unobserve(r);
@@ -167,38 +167,38 @@ function MultiInput(props: MIProps) {
 
   return (
     <div className="relative">
-      <input 
-        className={'relative top-o left-0 h-[46px] rounded bg-zinc-200 text-zinc-800'} 
-        placeholder={ bits.length === 0 ? "eg. C# Major 7" : ""}
+      <input
+        className={'relative top-o left-0 h-[46px] rounded bg-zinc-200 text-zinc-800'}
+        placeholder={bits.length === 0 ? "eg. C# Major 7" : ""}
         value={inputVal}
-        style={{'paddingLeft': inputPadding, 'minWidth': '400px'}}
+        style={{ 'paddingLeft': inputPadding, 'minWidth': '400px' }}
         onChange={InputChanges}
         onKeyDown={CycleSearchSel}
-        type='text' 
-        ref={inputRef}/>
+        type='text'
+        ref={inputRef} />
 
       <div ref={bitsRef} id='bitsContainer' className='absolute top-0 left-0 flex flex-col z-10 h-[46px] justify-center'>
         <div className='flex flex-row justify-start'>
-        {
-          bits.map((bit: string, i: number) => 
-            <div key={i + bit} className='bg-zinc-800 gap-2 text-zinc-200 rounded ml-1 p-1 flex flex-row'>
-              {bit}
-              <Button
-                onClick={() => {
-                  const nArray = [...bits];
-                  nArray.splice(i, 1);
-                  UpdateBits(nArray)
-                }}
-                className='p-0 m-0 h-3 w-3 bg-transparent'
-              >x</Button>
-            </div>
-          )
-        }
+          {
+            bits.map((bit: string, i: number) =>
+              <div key={i + bit} className='bg-zinc-800 gap-2 text-zinc-200 rounded ml-1 p-1 flex flex-row'>
+                {bit}
+                <Button
+                  onClick={() => {
+                    const nArray = [...bits];
+                    nArray.splice(i, 1);
+                    UpdateBits(nArray)
+                  }}
+                  className='p-0 m-0 h-3 w-3 bg-transparent'
+                >x</Button>
+              </div>
+            )
+          }
         </div>
       </div>
-        <div className='flex flex-row justify-start gap-4 flex-wrap max-w-[400px] mt-4'>
-          {
-            searchResults.map((res: string, i: number) => 
+      <div className='flex flex-row justify-start gap-4 flex-wrap max-w-[400px] mt-4'>
+        {
+          searchResults.map((res: string, i: number) =>
             <Button
               key={res}
               className={i === selSearchResult ? 'bg-[#caffbf] text-zinc-900 transition-none' :
@@ -217,10 +217,10 @@ function MultiInput(props: MIProps) {
                   }
                 }
               }}>
-            {res}
+              {res}
             </Button>)
-          }
-        </div>
+        }
+      </div>
 
     </div>
   )

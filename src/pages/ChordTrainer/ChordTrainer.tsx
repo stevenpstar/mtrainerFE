@@ -10,7 +10,7 @@ import { MusicNotes } from '@/components/custom/MusicNotes';
 import { MenuDropdown } from '@/components/custom/MenuDropdown';
 import { InputSelectGroup } from '@/components/custom/InputSelectGroup';
 import { PlayControls } from '@/components/custom/PlayControls';
-import { GenerateChord } from './ChordGenerator';
+import { CTEmptySheet, GenerateChord } from './ChordGenerator';
 import { Note as SinthNote, Sinth } from '../../lib/sinth/main.mjs';
 import { PlaySelectedNote } from '@/utils/OnSelected';
 import { MultiInput } from '@/components/custom/MultiInput';
@@ -29,9 +29,12 @@ function ChordTrainer() {
 
   const [scoreLoaded, setScoreLoaded] = useState<boolean>(false);
   const [notes, setNotes] = useState<SinthNote[]>([]);
-  const [answerStr, setAnswerStr] = useState<string>("");
-  const [bits, setBits] = useState<string[]>([]);
+  const [answerStrings, setAnswerStrings] = useState<string[]>([]);
+  const [bits, setBits] = useState<Array<string[]>>([]);
+  // For multi inputs
+  const [answeringIndex, setAnsweringIndex] = useState<number>(0);
   const [answered, setAnswered] = useState<boolean>(false);
+  const [chordCount, setChordCount] = useState<number>(4);
 
   const BitString = (): string => {
     let str = '';
@@ -43,12 +46,22 @@ function ChordTrainer() {
   }
 
   const GenChord = () => {
-    const data = GenerateChord(aScore.current);
-    const n: SinthNote[] = [...data.SNotes];
-    setNotes(_ => n);
-    setAnswerStr(data.ChordStr);
+    const msrCount = Math.ceil(chordCount / 2);
+    CTEmptySheet(aScore.current, msrCount);
+    const sinthNotes: SinthNote[] = [];
+    for (let i = 0; i < chordCount; i++) {
+      // we are having max 4 chords, 2 measures. TODO: Maybe expand
+      const msr = i > 1 ? 1 : 0;
+      const beat = i % 2 == 0 ? 1 : 3;
+      const cData = GenerateChord(aScore.current, msr, beat);
+      sinthNotes.push(...cData.SNotes);
+      const as = answerStrings;
+      as.push(cData.ChordStr);
+      setAnswerStrings(_ => as);
+    }
+    setNotes(_ => sinthNotes);
     if (aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, n, () => { });
+      Sinth.playFull(aContext.current, aSample.current, 120, sinthNotes, () => { });
     }
   }
 
@@ -57,10 +70,15 @@ function ChordTrainer() {
       NextChord();
       return;
     }
-    // clean up data by removing any whitespace
-    const ans = answerStr.replace(/\s/g, "").toLowerCase();
-    const guess = BitString().replace(/\s/g, "").toLowerCase();
-    if (guess === ans) {
+    let answerCorrect = true;
+    answerStrings.forEach((a: string) => {
+      const ans = a.replace(/\s/g, "").toLowerCase();
+      const guess = BitString().replace(/\s/g, "").toLowerCase();
+      if (guess !== ans) {
+        answerCorrect = false;
+      }
+    });
+    if (answerCorrect) {
       setAnswered(true);
       correct.volume = 0.5;
       correct.play();
@@ -83,7 +101,7 @@ function ChordTrainer() {
   const NextChord = (): void => {
     GenChord();
     setAnswered(false);
-    const emptyBits: string[] = [];
+    const emptyBits: Array<string[]> = [];
     setBits(_ => emptyBits);
   }
 
@@ -181,7 +199,7 @@ function ChordTrainer() {
         <div className='flex flex-row justify-center'>
           <MultiInput
             bits={bits}
-            setBits={setBits}
+            setBits={setBits[answeringIndex]}
             submit={CheckAnswer}
           />
         </div>

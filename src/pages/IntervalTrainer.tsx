@@ -19,6 +19,16 @@ type SessionRecord = {
   interval: string;
 }
 
+enum PlayOrder {
+  ASCENDING = 0,
+  DESCENDING,
+  TOGETHER,
+  ASC_DESC,
+  ASC_TOG_DESC,
+  ASC_TOG,
+  DESC_TOG,
+}
+
 function IntervalTrainer() {
 
   const [notes, setNotes] = useState<SinthNote[]>([]);
@@ -60,13 +70,13 @@ function IntervalTrainer() {
   const incorrect = new Audio("/incorrect.mp3");
 
   const getButtonColour = (intString: string) => {
-    let colour = "gray.300";
+    let colour = "gray-300";
     if (submitted && answer !== "" && interval === intString) {
-      colour = answer === intString ? 'green.300' : 'orange.300';
+      colour = answer === intString ? 'green-300' : 'orange-300';
     } else if (!submitted && answer !== "" && interval === intString) {
-      colour = 'blue.300';
+      colour = 'blue-300';
     } else if (submitted && answer !== "" && interval !== intString) {
-      colour = answer === intString ? 'green.300' : 'transparent';
+      colour = answer === intString ? 'green-300' : 'transparent';
     }
     return colour;
   }
@@ -102,7 +112,7 @@ function IntervalTrainer() {
     const newNotes: SinthNote[] = [...ans.notes];
     setNotes(_ => newNotes);
     setAnswer(ans.name);
-    PlayIntTogether(newNotes);
+    Play(newNotes);
   }
 
   const CanSubmit = (): boolean => {
@@ -126,9 +136,9 @@ function IntervalTrainer() {
   useEffect(() => {
     if (!aSample.current) {
       fetch("/A4vH.flac")
-      .then (resp => resp.arrayBuffer())
-      .then (aBuffer => aContext.current.decodeAudioData(aBuffer))
-      .then (s => aSample.current = s);
+        .then(resp => resp.arrayBuffer())
+        .then(aBuffer => aContext.current.decodeAudioData(aBuffer))
+        .then(s => aSample.current = s);
     }
   }, [])
 
@@ -162,19 +172,19 @@ function IntervalTrainer() {
     if (!aScore.current?.Sheet.Measures[0].Notes) {
       return;
     }
-      aScore.current?.Sheet.Measures[0].ClearMeasure([note]);
-   }
+    aScore.current?.Sheet.Measures[0].ClearMeasure([note]);
+  }
 
   const playSelectedNote = (note: Note) => {
-    const midi = ReturnMidiNumber("treble", 
+    const midi = ReturnMidiNumber("treble",
       note.Line, note.Accidental, 0);
-      const sNote: SinthNote = {
+    const sNote: SinthNote = {
       Beat: 1,
       Duration: 2,
       MidiNote: midi,
     }
     if (aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, [sNote], () => {});
+      Sinth.playFull(aContext.current, aSample.current, 120, [sNote], () => { });
     }
   }
 
@@ -202,16 +212,34 @@ function IntervalTrainer() {
     return answerCorrect && notesCorrect;
   }
 
-  const PlayIntTogether = (n?: SinthNote[]) => {
+  const Play = (n?: SinthNote[]) => {
     const notesFound = notes.length > 0 || n && n.length > 0;
     if (aScore.current && aContext.current && aSample.current && notesFound) {
       if (n) {
         Sinth.initplay(n);
       }
       else {
-        Sinth.initplay(notes);
+        Sinth.initplay([...notes]);
       }
-      Sinth.play(aContext.current, aSample.current, 120, () => {});
+      Sinth.play(aContext.current, aSample.current, 120, () => { });
+    }
+  }
+
+  const PlayIntOrder = (order: PlayOrder) => {
+    if (notes.length > 0) {
+      const ascNotes: SinthNote[] = JSON.parse(JSON.stringify(notes));
+      // TODO: Add more play order configuration / implementations
+      if (order === PlayOrder.DESCENDING) {
+        ascNotes.sort((a: SinthNote, b: SinthNote) => b.MidiNote - a.MidiNote);
+      } else {
+        ascNotes.sort((a: SinthNote, b: SinthNote) => a.MidiNote - b.MidiNote);
+      }
+      ascNotes.forEach((n: SinthNote, i: number) => {
+        if (i > 0) {
+          n.Beat += 1;
+        }
+      });
+      Play(ascNotes);
     }
   }
 
@@ -219,73 +247,74 @@ function IntervalTrainer() {
     <div className='flex flex-col justify-start h-full'>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
         <div className='flex flex-row justify-start gap-2'>
-        <MenuDropdown />
-        { scoreLoaded &&
-        <InputSelectGroup score={aScore.current} />
-        }
-        <Separator orientation='vertical' className='bg-zinc-800'/>
-        <PlayControls
-          play={() => PlayIntTogether()} 
-          stop={() => {}}/>
+          <MenuDropdown />
+          {scoreLoaded &&
+            <InputSelectGroup score={aScore.current} />
+          }
+          <Separator orientation='vertical' className='bg-zinc-800' />
+          <PlayControls
+            play={() => PlayIntOrder(PlayOrder.ASCENDING)}
+            stop={() => { }} />
         </div>
         <div className='flex flex-row justify-end gap-2'>
         </div>
       </div>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
-      <div className='flex flex-col justify-center h-full'>
-        <div className='flex flex-row justify-start gap-2'>
-          <MusicNotes
-            c='h-9 flex flex-row items-center justify-center gap-2'
-            score={aScore.current}
-            defaultVal="0.5" />
+        <div className='flex flex-col justify-center h-full'>
+          <div className='flex flex-row justify-start gap-2'>
+            <MusicNotes
+              c='h-9 flex flex-row items-center justify-center gap-2'
+              score={aScore.current}
+              defaultVal="0.5" />
+          </div>
         </div>
-      </div>
       </div>
       <div className='flex flex-row justify-center'>
         <div className='grow testbg'>
-          <Sheet 
-            w='100%' 
-            h='500px' 
-            f='' 
-            setParentScore={setScore} 
-            callback={callback} 
+          <Sheet
+            w='100%'
+            h='500px'
+            f=''
+            setParentScore={setScore}
+            callback={callback}
             config={intervalConfig} />
         </div>
       </div>
       <div className='min-h-[50%] grow bg-zinc-950'>
         <div className='flex flex-row justify-center'>
-          <Button 
+          <Button
             className='-top-[3.5rem] relative bg-zinc-900 text-[#caffbf]'
             onClick={() => {
-            if (aScore.current) 
-              newInterval(aScore.current);
+              if (aScore.current)
+                newInterval(aScore.current);
             }}>Generate New Interval +</Button>
         </div>
         <div className='flex mt-4 flex-row justify-center'>
           <div className='flex flex-row justify-center -top-[2.5rem] relative'>
-            <IntervalAnswers 
+            <IntervalAnswers
               setInterval={setInterval}
               getButtonColour={getButtonColour}
             />
           </div>
         </div>
-          <div className='flex flex-row justify-center w-full'>
-            <div className='flex flex-row justify-end min-w-[500px]'>
-              { !submitted &&
+        <div className='flex flex-row justify-center w-full'>
+          <div className='flex flex-row justify-end min-w-[500px]'>
+            {!submitted &&
               <Button disabled={!CanSubmit()}
                 className='ml-10 bg-zinc-900 text-[#caffbf]'
-               onClick={() => Submit()}> Submit </Button>
-              }
-              { submitted &&
+                onClick={() => Submit()}> Submit </Button>
+            }
+            {submitted &&
               <Button
                 className='ml-10 bg-zinc-900 text-[#caffbf]'
-                onClick={() => { 
-                if (aScore.current) {
-                 newInterval(aScore.current);
-               }}}> Next </Button>
-              }
-            </div>
+                onClick={() => {
+                  if (aScore.current) {
+                    newInterval(aScore.current);
+                  }
+                }}> Next </Button>
+            }
           </div>
+        </div>
       </div>
     </div>
   )

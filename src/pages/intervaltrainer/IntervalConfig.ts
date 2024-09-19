@@ -1,5 +1,5 @@
 import { ConfigSettings } from "@/lib/sheet/entry.mjs";
-import { normalTheme } from "@/utils/Theme";
+import { landingTheme, normalTheme } from "@/utils/Theme";
 
 const intervalConfig: ConfigSettings = {
   CameraSettings: {
@@ -14,7 +14,7 @@ const intervalConfig: ConfigSettings = {
     MeasureFormatSettings: {
       Selectable: false,
       MaxWidth: 200,
-    }
+    },
   },
   NoteSettings: {
     InputValue: 0.5,
@@ -26,24 +26,24 @@ const intervalConfig: ConfigSettings = {
     UsePages: true,
     AutoSize: true,
   },
-  DefaultStaffType: 'single',
+  DefaultStaffType: "single",
   Theme: normalTheme,
-}
+};
 
 const landingConfig: ConfigSettings = {
   CameraSettings: {
     DragEnabled: false,
     ZoomEnabled: false,
-    Zoom: 1.5,
-    StartingPosition: { x: 0, y: 0 },
+    Zoom: 1.25,
+    StartingPosition: { x: 0, y: 50 },
     CenterMeasures: false,
     CenterPage: false,
   },
   FormatSettings: {
     MeasureFormatSettings: {
       Selectable: false,
-      MaxWidth: 200,
-    }
+      MaxWidth: 250,
+    },
   },
   NoteSettings: {
     InputValue: 0.5,
@@ -55,10 +55,8 @@ const landingConfig: ConfigSettings = {
     UsePages: false,
     AutoSize: true,
   },
-  DefaultStaffType: 'single',
-  Theme: normalTheme,
-}
-
+  DefaultStaffType: "single",
+  Theme: landingTheme,
+};
 
 export { intervalConfig, landingConfig };
-

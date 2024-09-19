@@ -37,6 +37,7 @@ const CHORDS = new Map<string, Array<number[]>>([
     [
       [0, 4, 7, 11],
       [-8, -5, 0, -1],
+      [-5, -1, 0, 4],
     ],
   ],
   [
@@ -53,14 +54,23 @@ const CHORDS = new Map<string, Array<number[]>>([
 
 // Temporary, will be a part of settings that are passed to generate chord function eventually
 const chord_array = ["MAJOR", "MINOR", "MAJOR 7"];
-
-function GenerateChord(score: Score | null): ChordData {
+function CTEmptySheet(score: Score | null, measureCount: number): void {
+  if (!score) {
+    console.error("Score is null");
+    return;
+  }
+  LoadEmptySheet(score, measureCount);
+}
+function GenerateChord(
+  score: Score | null,
+  msrIndex: number = 0,
+  beat: number = 1,
+): ChordData {
   const cData: ChordData = { SNotes: [], ChordStr: "" };
   if (!score) {
     return cData;
   }
   // Clear the sheet before each chord is generated
-  LoadEmptySheet(score, 1);
   const notes: SinthNote[] = [];
   const noteRangeHigh = 72;
   const noteRangeLow = 60;
@@ -84,16 +94,17 @@ function GenerateChord(score: Score | null): ChordData {
   cData.ChordStr = trueRoot + " " + chordQuality + " " + invString;
   inversion.forEach((midiFromRoot) => {
     const sNote: SinthNote = {
-      Beat: 1, // this will change when chord progressions are implemented
+      Beat: beat + msrIndex * 4, // this will change when chord progressions are implemented
       Duration: 2,
       MidiNote: midiNote + midiFromRoot,
     };
     notes.push(sNote);
   });
   notes.forEach((n) => {
-    AddNote(score, 1, 0.5, n.MidiNote, midiNote, accidentalString);
+    AddNote(score, beat, 0.5, n.MidiNote, midiNote, accidentalString, msrIndex);
   });
   cData.SNotes = notes;
+  score.ResizeMeasures(score.Sheet.Measures);
   return cData;
 }
 
@@ -158,6 +169,7 @@ function AddNote(
   midiNumber: number,
   root: number,
   accidentalString: string,
+  msrIndex: number,
 ): void {
   const pm = score.PitchMap.get(midiNumber);
   const rootNote = score.PitchMap.get(root);
@@ -186,7 +198,7 @@ function AddNote(
   };
   const note: Note = new Note(newNote);
   note.Accidental = accidental;
-  score.Sheet.Measures[0].AddNote(note);
+  score.Sheet.Measures[msrIndex].AddNote(note);
   score.ResizeMeasures(score.Sheet.Measures);
 }
 
@@ -257,4 +269,4 @@ function findInAccArray(
   return result;
 }
 
-export { GenerateChord, type ChordData };
+export { GenerateChord, CTEmptySheet, type ChordData };
