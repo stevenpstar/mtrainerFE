@@ -17,6 +17,12 @@ function IntervalAnswers(props: IAProps) {
           setInterval={setInterval}
           getButtonColour={getButtonColour}
         />
+        <ITButton
+          d={'Octave'}
+          a={'Oct'}
+          setInterval={setInterval}
+          getButtonColour={getButtonColour}
+        />
       </Flex>
       <Flex direction={'column'} justify={'flex-start'} gap={1}>
         <ITButton
@@ -66,7 +72,7 @@ function IntervalAnswers(props: IAProps) {
           getButtonColour={getButtonColour}
         />
       </Flex>
-      <Flex direction={'column'} justify={'flex-start'} gap={2}>
+      <Flex direction={'column'} justify={'flex-start'} gap={1}>
         <ITButton
           d={'Minor 6th'}
           a={'min6'}
@@ -80,7 +86,7 @@ function IntervalAnswers(props: IAProps) {
           getButtonColour={getButtonColour}
         />
       </Flex>
-      <Flex direction={'column'} justify={'flex-start'} gap={2}>
+      <Flex direction={'column'} justify={'flex-start'} gap={1}>
         <ITButton
           d={'Minor 7th'}
           a={'min7'}
@@ -94,15 +100,36 @@ function IntervalAnswers(props: IAProps) {
           getButtonColour={getButtonColour}
         />
       </Flex>
-      <Flex direction={'column'} justify={'flex-start'} gap={2}>
+      <Flex direction={'column'} justify={'flex-start'} gap={1}>
         <ITButton
-          d={'Octave'}
-          a={'Oct'}
+          d={'Minor 9'}
+          a={'min9'}
+          setInterval={setInterval}
+          getButtonColour={getButtonColour}
+        />
+        <ITButton
+          d={'Major 9'}
+          a={'Maj9'}
           setInterval={setInterval}
           getButtonColour={getButtonColour}
         />
       </Flex>
-    </Flex>
+      <Flex direction={'column'} justify={'flex-start'} gap={1}>
+        <ITButton
+          d={'Minor 10'}
+          a={'min10'}
+          setInterval={setInterval}
+          getButtonColour={getButtonColour}
+        />
+        <ITButton
+          d={'Major 10'}
+          a={'Maj10'}
+          setInterval={setInterval}
+          getButtonColour={getButtonColour}
+        />
+      </Flex>
+    </Flex >
+
   )
 }
 

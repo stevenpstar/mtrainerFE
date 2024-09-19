@@ -29,6 +29,10 @@ const intMap = new Map<number, string>([
   [10, "min7"],
   [11, "Maj7"],
   [12, "Oct"],
+  [13, "min9"],
+  [14, "Maj9"],
+  [15, "min10"],
+  [16, "Maj10"],
 ]);
 
 function CreateIntervalArray(settings: IntSettings): number[] {
@@ -46,6 +50,10 @@ function CreateIntervalArray(settings: IntSettings): number[] {
   if (settings.min7) intArray.push(10);
   if (settings.Maj7) intArray.push(11);
   if (settings.Oct) intArray.push(12);
+  if (settings.min9) intArray.push(13);
+  if (settings.Maj9) intArray.push(14);
+  if (settings.min10) intArray.push(15);
+  if (settings.Maj10) intArray.push(16);
 
   return intArray;
 }
@@ -148,6 +156,8 @@ function GenerateNewIntervals(
     notes: sinthNotes,
     name: intName,
   };
+
+  console.log("intname: ", intName);
 
   return interval;
 }
