@@ -176,11 +176,20 @@ function IntervalTrainer() {
     if (!aScore.current?.Sheet.Measures[0].Notes) {
       return;
     }
+    console.log(aScore.current?.Sheet.Measures[0]);
     aScore.current?.Sheet.Measures[0].ClearMeasure([note]);
   }
 
   const playSelectedNote = (note: Note) => {
-    const midi = ReturnMidiNumber("treble",
+    const score = aScore?.current;
+    if (!score) {
+      return;
+    }
+    // If score exists there should be at least one measure with a clef
+    // Pretty shaky code though, should add functionality to sheet library to get 
+    // clef of measure if it exists, but this works for now
+    const clefString = score.Sheet.Measures[0].Clefs[0].Type;
+    const midi = ReturnMidiNumber(clefString,
       note.Line, note.Accidental, 0);
     const sNote: SinthNote = {
       Beat: 1,

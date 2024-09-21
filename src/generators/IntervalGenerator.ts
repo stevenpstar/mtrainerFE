@@ -9,6 +9,8 @@ import { IntSettings } from "../pages/IntervalTrainer";
 
 const baseIntervalLoad =
   '{"Measures":[{"Clefs":[{"ID":0,"Position":{"x":43,"y":87.5},"Staff":0,"Bounds":{"x":43,"y":27.5,"width":30,"height":85},"Type":"treble","SelType":2,"Beat":1,"Selected":false,"Editable":true}],"Staves":[{"Num":0,"Buffer":0,"TopLine":5,"BotLine":35,"MidLine":15}],"TimeSignature":{"Selected":false,"SelType":3,"top":2,"bottom":4,"Editable":true,"TopPosition":[{"x":75,"y":67.5}],"BotPosition":[{"x":75,"y":87.5}],"Bounds":[{"x":75,"y":57.5,"width":30,"height":50}]},"Notes":[],"Bounds":{"x":40,"y":27.5,"width":350,"height":150},"ShowClef":true,"ShowTime":true}]}';
+const bassClefIntervalLoad =
+  '{"Measures":[{"Clefs":[{"ID":0,"Position":{"x":43,"y":87.5},"Staff":0,"Bounds":{"x":43,"y":27.5,"width":30,"height":85},"Type":"bass","SelType":2,"Beat":1,"Selected":false,"Editable":true}],"Staves":[{"Num":0,"Buffer":0,"TopLine":5,"BotLine":35,"MidLine":15}],"TimeSignature":{"Selected":false,"SelType":3,"top":2,"bottom":4,"Editable":true,"TopPosition":[{"x":75,"y":67.5}],"BotPosition":[{"x":75,"y":87.5}],"Bounds":[{"x":75,"y":57.5,"width":30,"height":50}]},"Notes":[],"Bounds":{"x":40,"y":27.5,"width":350,"height":150},"ShowClef":true,"ShowTime":true}]}';
 
 type Interval = {
   notes: SinthNote[];
@@ -63,17 +65,24 @@ function GenerateNewIntervals(
   app: application,
   settings: IntSettings,
 ): Interval {
+  // Get our starting (midi) note
+  // const midiNote = Math.floor(Math.random() * (72 - 40 + 1)) + 40; // starting note
+  const midiNote = 60;
   // Using count to remove error!
   count++;
   //
-  const pitchMap = app.PitchMap;
   const noteDuration = 2;
   const sinthNotes: SinthNote[] = [];
+  // We should load depending on the starting note
+  // TODO: 70 is the wrong number I am currently hard coding midi note to 69 and checking bass clef
+  if (midiNote < 70) {
+    app.LoadSheet(bassClefIntervalLoad);
+  } else {
+    app.LoadSheet(baseIntervalLoad);
+  }
 
-  app.LoadSheet(baseIntervalLoad);
   const intArray = CreateIntervalArray(settings);
 
-  const midiNote = Math.floor(Math.random() * (72 - 60 + 1)) + 60; // starting note
   const midiDiff = intArray[Math.floor(Math.random() * intArray.length)];
   const midiNote2 =
     Math.floor(Math.random() * 2) === 0
@@ -86,8 +95,13 @@ function GenerateNewIntervals(
   let getLine1 = 0;
   let getLine2 = 0;
 
-  const map1 = pitchMap.get(midiNote);
-  const map2 = pitchMap.get(midiNote2);
+  //  const map1 = pitchMap.get(midiNote);
+  //  const map2 = pitchMap.get(midiNote2);
+  const map1 = app.FromPitchMap(midiNote, "bass");
+  console.log("map1?: ", map1);
+  const map2 = app.FromPitchMap(midiNote2, "bass");
+  // TODO:
+  // Add a modifier to the line returned from the pitch map depending on the clef
   if (map1) {
     getLine1 = map1.Line;
   }
@@ -150,14 +164,14 @@ function GenerateNewIntervals(
   let intName = "";
   if (intMap.get(diff)) {
     intName = intMap.get(diff) as string;
+    console.log("diff: ", diff);
+    console.log("intname: ", intName);
   }
 
   const interval: Interval = {
     notes: sinthNotes,
     name: intName,
   };
-
-  console.log("intname: ", intName);
 
   return interval;
 }
