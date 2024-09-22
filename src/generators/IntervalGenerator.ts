@@ -66,20 +66,13 @@ function GenerateNewIntervals(
   settings: IntSettings,
 ): Interval {
   // Get our starting (midi) note
-  // const midiNote = Math.floor(Math.random() * (72 - 40 + 1)) + 40; // starting note
-  const midiNote = 60;
+  const midiNote = Math.floor(Math.random() * (72 - 40 + 1)) + 40; // starting note
+  let clef = "treble";
   // Using count to remove error!
   count++;
   //
   const noteDuration = 2;
   const sinthNotes: SinthNote[] = [];
-  // We should load depending on the starting note
-  // TODO: 70 is the wrong number I am currently hard coding midi note to 69 and checking bass clef
-  if (midiNote < 70) {
-    app.LoadSheet(bassClefIntervalLoad);
-  } else {
-    app.LoadSheet(baseIntervalLoad);
-  }
 
   const intArray = CreateIntervalArray(settings);
 
@@ -92,16 +85,19 @@ function GenerateNewIntervals(
   const diff =
     midiNote > midiNote2 ? midiNote - midiNote2 : midiNote2 - midiNote;
 
+  const lowestNote = Math.min(midiNote, midiNote2);
+  if (lowestNote < 58) {
+    app.LoadSheet(bassClefIntervalLoad);
+    clef = "bass";
+  } else {
+    app.LoadSheet(baseIntervalLoad);
+  }
+
   let getLine1 = 0;
   let getLine2 = 0;
 
-  //  const map1 = pitchMap.get(midiNote);
-  //  const map2 = pitchMap.get(midiNote2);
-  const map1 = app.FromPitchMap(midiNote, "bass");
-  console.log("map1?: ", map1);
-  const map2 = app.FromPitchMap(midiNote2, "bass");
-  // TODO:
-  // Add a modifier to the line returned from the pitch map depending on the clef
+  const map1 = app.FromPitchMap(midiNote, clef);
+  const map2 = app.FromPitchMap(midiNote2, clef);
   if (map1) {
     getLine1 = map1.Line;
   }
@@ -164,8 +160,6 @@ function GenerateNewIntervals(
   let intName = "";
   if (intMap.get(diff)) {
     intName = intMap.get(diff) as string;
-    console.log("diff: ", diff);
-    console.log("intname: ", intName);
   }
 
   const interval: Interval = {

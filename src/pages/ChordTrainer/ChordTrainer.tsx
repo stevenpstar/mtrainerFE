@@ -30,11 +30,12 @@ function ChordTrainer() {
   const [scoreLoaded, setScoreLoaded] = useState<boolean>(false);
   const [notes, setNotes] = useState<SinthNote[]>([]);
   const [answerStrings, setAnswerStrings] = useState<string[]>([]);
-  const [bits, setBits] = useState<Array<string[]>>([]);
+  const [bits, setBits] = useState<string[]>([]);
   // For multi inputs
-  const [answeringIndex, setAnsweringIndex] = useState<number>(0);
   const [answered, setAnswered] = useState<boolean>(false);
-  const [chordCount, setChordCount] = useState<number>(4);
+  const [chordCount, setChordCount] = useState<number>(1);
+
+  setChordCount(1); // Temporary until we implement progressions
 
   const BitString = (): string => {
     let str = '';
@@ -49,16 +50,17 @@ function ChordTrainer() {
     const msrCount = Math.ceil(chordCount / 2);
     CTEmptySheet(aScore.current, msrCount);
     const sinthNotes: SinthNote[] = [];
+    // TODO: Expand chords to have progressions later. Some work here.
+    const as: string[] = [];
     for (let i = 0; i < chordCount; i++) {
       // we are having max 4 chords, 2 measures. TODO: Maybe expand
       const msr = i > 1 ? 1 : 0;
       const beat = i % 2 == 0 ? 1 : 3;
       const cData = GenerateChord(aScore.current, msr, beat);
       sinthNotes.push(...cData.SNotes);
-      const as = answerStrings;
       as.push(cData.ChordStr);
-      setAnswerStrings(_ => as);
     }
+    setAnswerStrings(_ => [...as]);
     setNotes(_ => sinthNotes);
     if (aSample.current) {
       Sinth.playFull(aContext.current, aSample.current, 120, sinthNotes, () => { });
@@ -73,7 +75,9 @@ function ChordTrainer() {
     let answerCorrect = true;
     answerStrings.forEach((a: string) => {
       const ans = a.replace(/\s/g, "").toLowerCase();
+      console.log("ans: ", ans);
       const guess = BitString().replace(/\s/g, "").toLowerCase();
+      console.log("guess: ", guess);
       if (guess !== ans) {
         answerCorrect = false;
       }
@@ -101,7 +105,7 @@ function ChordTrainer() {
   const NextChord = (): void => {
     GenChord();
     setAnswered(false);
-    const emptyBits: Array<string[]> = [];
+    const emptyBits: string[] = [];
     setBits(_ => emptyBits);
   }
 
@@ -199,7 +203,7 @@ function ChordTrainer() {
         <div className='flex flex-row justify-center'>
           <MultiInput
             bits={bits}
-            setBits={setBits[answeringIndex]}
+            setBits={setBits}
             submit={CheckAnswer}
           />
         </div>

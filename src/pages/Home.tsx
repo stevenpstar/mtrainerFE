@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { landingConfig } from "./intervaltrainer/IntervalConfig";
 import { SheetStandard } from "@/components/custom/SheetStandard";
-import { sheet, App as Score } from '../lib/sheet/entry.mjs';
+import { App as Score } from '../lib/sheet/entry.mjs';
 import { AnimateInterval } from "./landing/LandingSheetAnimations";
 import { ArrowRightIcon, ArrowUpIcon, ChevronRightIcon } from "@radix-ui/react-icons";
 import { Separator } from "@radix-ui/react-separator";

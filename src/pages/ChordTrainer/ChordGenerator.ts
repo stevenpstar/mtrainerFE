@@ -105,6 +105,7 @@ function GenerateChord(
   });
   cData.SNotes = notes;
   score.ResizeMeasures(score.Sheet.Measures);
+  console.log("cData: ", cData);
   return cData;
 }
 
