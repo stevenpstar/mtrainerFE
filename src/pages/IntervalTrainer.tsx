@@ -4,7 +4,7 @@ import { Message, MessageType, Note, ReturnMidiNumber, App as Score } from "../l
 import { Note as SinthNote, Sinth } from "../lib/sinth/main.mjs";
 import { useEffect, useRef, useState } from "react";
 import { GenerateNewIntervals } from "../generators/IntervalGenerator";
-import { IntSettings } from "./intervaltrainer/Settings";
+import { IntSettings, IntervalSettings } from "./intervaltrainer/Settings";
 import { IntervalAnswers } from "./intervaltrainer/IntervalAnswers";
 import { MenuDropdown } from "@/components/custom/MenuDropdown";
 import { InputSelectGroup } from "@/components/custom/InputSelectGroup";
@@ -13,6 +13,8 @@ import { PlayControls } from "@/components/custom/PlayControls";
 import { MusicNotes } from "@/components/custom/MusicNotes";
 import { intervalConfig } from "./intervaltrainer/IntervalConfig";
 import { Button } from "@/components/ui/button";
+import { PlusIcon } from '@radix-ui/react-icons';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 type SessionRecord = {
   correct: boolean;
@@ -36,6 +38,7 @@ function IntervalTrainer() {
   const [answer, setAnswer] = useState<string>("");
   const [submitted, setSubmitted] = useState<boolean>(false);
   const [scoreLoaded, setScoreLoaded] = useState<boolean>(false);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   const settings = useRef<IntSettings>({
     Unison: true,
@@ -72,6 +75,11 @@ function IntervalTrainer() {
 
   const correct = new Audio("/correct.mp3");
   const incorrect = new Audio("/incorrect.mp3");
+
+  const UpdateSettings = (set: IntSettings) => {
+    settings.current = set;
+    setShowSettings(false);
+  }
 
   const getButtonColour = (intString: string) => {
     let colour = "gray-300";
@@ -267,7 +275,11 @@ function IntervalTrainer() {
           <Separator orientation='vertical' className='bg-zinc-800' />
           <PlayControls
             play={() => PlayIntOrder(PlayOrder.ASCENDING)}
-            stop={() => { }} />
+            stop={() => { }}
+            setShowSettings={() => setShowSettings(!showSettings)}
+          />
+          <div>
+          </div>
         </div>
         <div className='flex flex-row justify-end gap-2'>
         </div>
@@ -300,7 +312,7 @@ function IntervalTrainer() {
             onClick={() => {
               if (aScore.current)
                 newInterval(aScore.current);
-            }}>Generate New Interval +</Button>
+            }}>New Interval <PlusIcon className="h-4 w-4 ml-2" /></Button>
         </div>
         <div className='flex mt-4 flex-row justify-center'>
           <div className='flex flex-row justify-center -top-[2.5rem] relative'>
@@ -329,6 +341,18 @@ function IntervalTrainer() {
           </div>
         </div>
       </div>
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Interval Settings</DialogTitle>
+            <DialogDescription> Change Interval Trainer Settings </DialogDescription>
+          </DialogHeader>
+          <IntervalSettings
+            Settings={settings.current}
+            UpdateSettings={UpdateSettings}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

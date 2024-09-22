@@ -204,7 +204,9 @@ function RhythmReading() {
           <MenuDropdown />
           <PlayControls
             play={() => startRecording()}
-            stop={() => stopRecording()} />
+            stop={() => stopRecording()}
+            setShowSettings={() => { }}
+          />
           <Separator orientation='vertical' />
           <Button
             onClick={() => newRhythm()}

@@ -22,7 +22,7 @@ interface ATBProps {
 }
 
 function AppTopBar(props: ATBProps) {
-  
+
   const IsEnabled = (key: keyof ATBConfig) => {
     if (props.config === undefined) {
       return true;
@@ -37,45 +37,47 @@ function AppTopBar(props: ATBProps) {
 
   const { score, config, playFunc } = props;
   return (
-  <div>
-    <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
-      <div className='flex flex-row justify-start gap-2'>
-      { IsEnabled('HideNav') && 
-        <MenuDropdown />
-      }
-      <InputSelectGroup 
-        HideInput={config?.HideInput ? config.HideInput : false}
-        HideSelect={false}
-        score={score} />
-      <Separator orientation='vertical' className='bg-zinc-800'/>
-        <PlayControls 
-          play={() => playFunc()}
-          stop={() => {}}/>
-      </div>
-
-      { IsEnabled('HideSettings') &&
-      <div className='flex flex-row justify-end gap-2'>
-        <Button variant='ghost' className='rounded-none' size='icon'>
-          <GearIcon className='h-4 w-4' />
-        </Button>
-        <Button variant='ghost' className='rounded-none' size='icon'>
-          <BarChartIcon className='h-4 w-4' />
-        </Button>
-      </div>
-      }
-      </div>
-      { IsEnabled('HideNotes') &&
-      <div className='flex flex-row justify-between h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
-        <div className='flex flex-col justify-center h-full'>
+    <div>
+      <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
         <div className='flex flex-row justify-start gap-2'>
-          <MusicNotes 
-            c='h-9 flex flex-row items-center justify-center gap-2'
-            score={score}
-            defaultVal='0.5'
+          {IsEnabled('HideNav') &&
+            <MenuDropdown />
+          }
+          <InputSelectGroup
+            HideInput={config?.HideInput ? config.HideInput : false}
+            HideSelect={false}
+            score={score} />
+          <Separator orientation='vertical' className='bg-zinc-800' />
+          <PlayControls
+            play={() => playFunc()}
+            stop={() => { }}
+            setShowSettings={() => { }}
           />
         </div>
-        </div>
+
+        {IsEnabled('HideSettings') &&
+          <div className='flex flex-row justify-end gap-2'>
+            <Button variant='ghost' className='rounded-none' size='icon'>
+              <GearIcon className='h-4 w-4' />
+            </Button>
+            <Button variant='ghost' className='rounded-none' size='icon'>
+              <BarChartIcon className='h-4 w-4' />
+            </Button>
+          </div>
+        }
       </div>
+      {IsEnabled('HideNotes') &&
+        <div className='flex flex-row justify-between h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
+          <div className='flex flex-col justify-center h-full'>
+            <div className='flex flex-row justify-start gap-2'>
+              <MusicNotes
+                c='h-9 flex flex-row items-center justify-center gap-2'
+                score={score}
+                defaultVal='0.5'
+              />
+            </div>
+          </div>
+        </div>
       }
     </div>
   )

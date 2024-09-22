@@ -1,7 +1,9 @@
+import { Button } from '@chakra-ui/react';
 import { App as Score } from '../../lib/sheet/entry.mjs'
 import { Separator } from '../ui/separator';
 import { Toggle } from '../ui/toggle';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
+import { TrashIcon } from '@radix-ui/react-icons';
 interface IMNProps {
   c: string;
   score: Score | null;
@@ -21,119 +23,133 @@ function MusicNotes(props: IMNProps) {
   }
 
   const setAccidental = (acc: number): void => {
-    if (score) 
+    if (score)
       score.SetAccidental(acc);
+  }
+
+  const deleteNotes = (): void => {
+    if (score) {
+      score.Delete();
+    }
+
   }
   return (
     <div className={c}>
-    <ToggleGroup defaultValue={defaultVal} type='single'>
-      <ToggleGroupItem
-         value='0.0078125'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(0.0078125)}>
-         <span className={musicFontClass}>{'\ud834' + '\udd64'}</span>
-       </ToggleGroupItem>
+      <ToggleGroup defaultValue={defaultVal} type='single'>
+        <ToggleGroupItem
+          value='0.0078125'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(0.0078125)}>
+          <span className={musicFontClass}>{'\ud834' + '\udd64'}</span>
+        </ToggleGroupItem>
 
-      <ToggleGroupItem 
-         value='0.015625'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(0.015625)}>
-         <span className={musicFontClass}>{'\ud834' + '\udd63'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='0.015625'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(0.015625)}>
+          <span className={musicFontClass}>{'\ud834' + '\udd63'}</span>
+        </ToggleGroupItem>
 
-      <ToggleGroupItem 
-        value='0.03125'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(0.03125)}>
-         <span className={musicFontClass}>{'\ud834' + '\udd62'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='0.03125'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(0.03125)}>
+          <span className={musicFontClass}>{'\ud834' + '\udd62'}</span>
+        </ToggleGroupItem>
 
-       <ToggleGroupItem 
-         value='0.0625'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(0.0625)}>
-         <span className={musicFontClass}>{'\ud834' + '\udd61'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='0.0625'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(0.0625)}>
+          <span className={musicFontClass}>{'\ud834' + '\udd61'}</span>
+        </ToggleGroupItem>
 
-       <ToggleGroupItem 
-         value='0.125'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(0.125)}>
-         <span className={musicFontClass}>{'\ud834' + '\udd60'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='0.125'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(0.125)}>
+          <span className={musicFontClass}>{'\ud834' + '\udd60'}</span>
+        </ToggleGroupItem>
 
-      <ToggleGroupItem 
-         value='0.25'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(0.25)}>
-         <span className={musicFontClass}>{'\ud834' + '\udd5f'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='0.25'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(0.25)}>
+          <span className={musicFontClass}>{'\ud834' + '\udd5f'}</span>
+        </ToggleGroupItem>
 
-       <ToggleGroupItem 
-         value='0.5'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(0.5)}>
-         <span className={musicFontClass}>{'\ud834' + '\udd5e'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='0.5'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(0.5)}>
+          <span className={musicFontClass}>{'\ud834' + '\udd5e'}</span>
+        </ToggleGroupItem>
 
-      <ToggleGroupItem 
-         value='1'
-         variant='default' 
-         className={buttonClass}
-         onClick={() => setNoteValue(1)}>
-         <span className={musicFontClass}>{'\uE0A2'}</span>
-       </ToggleGroupItem>
-    </ToggleGroup>
+        <ToggleGroupItem
+          value='1'
+          variant='default'
+          className={buttonClass}
+          onClick={() => setNoteValue(1)}>
+          <span className={musicFontClass}>{'\uE0A2'}</span>
+        </ToggleGroupItem>
+      </ToggleGroup>
 
-    <Separator orientation='vertical' className='bg-zinc-800' />
+      <Separator orientation='vertical' className='bg-zinc-800' />
 
-    <Toggle aria-label='Toggle Rest Input'
-      variant='default'
-      className={buttonClassNoPadding}
-      onClick={() => {
-        if (score)
-          score.RestInput = !score.RestInput;
-      }}
-    >
-      <span className={'musicFont'}>{'\uE4E5'}</span>
-    </Toggle>
+      <Toggle aria-label='Toggle Rest Input'
+        variant='default'
+        className={buttonClassNoPadding}
+        onClick={() => {
+          if (score)
+            score.RestInput = !score.RestInput;
+        }}
+      >
+        <span className={'musicFont'}>{'\uE4E5'}</span>
+      </Toggle>
 
-    <ToggleGroup type='single'>
+      <ToggleGroup type='single'>
 
-       <ToggleGroupItem 
-         value='flat'
-         variant='default' 
-         className={buttonClassNoPadding}
-         onClick={() => setAccidental(-1)}>
-         <span className={'musicFont'}>{'\uE260'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='flat'
+          variant='default'
+          className={buttonClassNoPadding}
+          onClick={() => setAccidental(-1)}>
+          <span className={'musicFont'}>{'\uE260'}</span>
+        </ToggleGroupItem>
 
-       <ToggleGroupItem 
-         value='natural'
-         variant='default' 
-         className={buttonClassNoPadding}
-         onClick={() => setAccidental(0)}>
-         <span className={'musicFont'}>{'\uE261'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='natural'
+          variant='default'
+          className={buttonClassNoPadding}
+          onClick={() => setAccidental(0)}>
+          <span className={'musicFont'}>{'\uE261'}</span>
+        </ToggleGroupItem>
 
-       <ToggleGroupItem 
-         value='sharp'
-         variant='default' 
-         className={buttonClassNoPadding}
-         onClick={() => setAccidental(1)}>
-         <span className={'musicFont'}>{'\uE262'}</span>
-       </ToggleGroupItem>
+        <ToggleGroupItem
+          value='sharp'
+          variant='default'
+          className={buttonClassNoPadding}
+          onClick={() => setAccidental(1)}>
+          <span className={'musicFont'}>{'\uE262'}</span>
+        </ToggleGroupItem>
 
-    </ToggleGroup>
-    <Separator orientation='vertical' className='bg-zinc-800' />
-    </div>
+      </ToggleGroup>
+      <Separator orientation='vertical' className='bg-zinc-800' />
+      <Button
+        value='delete'
+        variant='default'
+        className={buttonClassNoPadding}
+        onClick={() => deleteNotes()}>
+        <TrashIcon className='text-[#f08080] h-4 w-4' />
+      </Button>
+    </div >
   )
 }
 

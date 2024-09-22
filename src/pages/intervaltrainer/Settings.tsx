@@ -1,4 +1,7 @@
-import { Box, Button, Checkbox, Flex, Switch } from "@chakra-ui/react"
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { useEffect, useState } from "react";
 
 interface IntSettingProps {
@@ -116,6 +119,7 @@ function IntervalSettings(props: IntSettingProps) {
       PlaySelect: playSelect,
       PlayInput: playInput,
     }
+    console.log("saved Settings: ", savedSettings);
     props.UpdateSettings(savedSettings);
   }
 
@@ -124,45 +128,82 @@ function IntervalSettings(props: IntSettingProps) {
   }
 
   return (
-    <Flex direction={'column'} justify={'flex-start'} gap={4} w='100%'>
-      <Flex gap={6} direction={'column'} justify={'space-between'} w='100%'>
-        <Box w='100%'>
-          <Flex direction={'row'} width='100%' justify={'space-between'} wrap={'wrap'} gap={4}>
-            <Box w='100px'>
-              <Checkbox size={'sm'} defaultChecked={unison} onChange={() => setUnison(!unison)}>Unison</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={min2} onChange={() => setMin2(!min2)}>min2</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={Maj2} onChange={() => setMaj2(!Maj2)}>Maj2</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={min3} onChange={() => setMin3(!min3)}>min3</Checkbox>
-            </Box>
-            <Box w='100px'>
-              <Checkbox size={'sm'} defaultChecked={Maj3} onChange={() => setMaj3(!Maj3)}>Maj3</Checkbox><p></p>
-              <Checkbox size={'sm'} defaultChecked={P4} onChange={() => setP4(!P4)}>P4</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={Aug4Dim5} onChange={() => setAug4Dim5(!Aug4Dim5)}>Aug4/Dim5</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={P5} onChange={() => setP5(!P5)}>P5</Checkbox>
-            </Box>
-            <Box w='100px'>
-              <Checkbox size={'sm'} defaultChecked={min6} onChange={() => setMin6(!min6)}>min6</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={Maj6} onChange={() => setMaj6(!Maj6)}>Maj6</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={min7} onChange={() => setMin7(!min7)}>min3</Checkbox>
-              <Checkbox size={'sm'} defaultChecked={Maj7} onChange={() => setMaj7(!Maj7)}>Maj3</Checkbox>
-            </Box>
-            <Box w='100px'>
-              <Checkbox size={'sm'} defaultChecked={Oct} onChange={() => setOct(!Oct)}>Oct</Checkbox>
-            </Box>
-          </Flex>
-        </Box>
-        <Box>
-          <Flex direction={'column'} justify={'flex-start'} gap={6}>
-            <Switch defaultChecked={notate} size={'sm'} onChange={() => setNotate(notate => !notate)}>Notate Answer</Switch>
-            <Switch defaultChecked={playSelect} size={'sm'} onChange={() => setPlaySelect(playSelect => !playSelect)}>Play Note on Select</Switch>
-            <Switch defaultChecked={playInput} size={'sm'} onChange={() => setPlayInput(playInput => !playInput)}>Play Note on Input</Switch>
-          </Flex>
-        </Box>
-        <Box>
-          <Button onClick={() => Save()}>Save</Button>
-        </Box>
-      </Flex>
-    </Flex>
+    <div className="flex flex-col justify-evenly gap-4">
+      <div className="flex flex-row justify-evenly">
+        <div className="flex flex-col justify-start">
+          <div>
+            <Checkbox id="unison" defaultChecked={unison} onCheckedChange={() => setUnison(!unison)} /> Unison
+          </div>
+          <div>
+            <Checkbox defaultChecked={min2} onCheckedChange={() => setMin2(!min2)} /> Minor 2nd
+          </div>
+          <div>
+            <Checkbox defaultChecked={Maj2} onCheckedChange={() => setMaj2(!Maj2)} /> Major 2nd
+          </div>
+          <div>
+            <Checkbox defaultChecked={min3} onCheckedChange={() => setMin3(!min3)} /> Minor 3rd
+          </div>
+          <div>
+            <Checkbox defaultChecked={Maj3} onCheckedChange={() => setMaj3(!Maj3)} /> Major 3rd
+          </div>
+        </div>
+        <div className="flex flex-col justify-start">
+          <div>
+            <Checkbox defaultChecked={P4} onCheckedChange={() => setP4(!P4)} /> Perfect 4th
+          </div>
+          <div>
+            <Checkbox defaultChecked={Aug4Dim5} onCheckedChange={() => setAug4Dim5(!Aug4Dim5)} /> Aug4/Dim5
+          </div>
+          <div>
+            <Checkbox defaultChecked={P5} onCheckedChange={() => setP5(!P5)} /> Perfect 5th
+          </div>
+          <div>
+            <Checkbox id="min6" defaultChecked={min6} onCheckedChange={() => setMin6(!min6)} /> Minor 6th
+          </div>
+          <div>
+            <Checkbox defaultChecked={Maj6} onCheckedChange={() => setMaj6(!Maj6)} /> Major 6th
+          </div>
+        </div>
+        <div className="flex flex-col justify-start">
+          <div>
+            <Checkbox defaultChecked={min7} onCheckedChange={() => setMin7(!min7)} /> Minor 7th
+          </div>
+          <div>
+            <Checkbox defaultChecked={Maj7} onCheckedChange={() => setMaj7(!Maj7)} /> Major 7th
+          </div>
+          <div>
+            <Checkbox defaultChecked={Oct} onCheckedChange={() => setOct(!Oct)} /> Octave
+          </div>
+          <div>
+            <Checkbox defaultChecked={min9} onCheckedChange={() => setMin9(!min9)} /> Minor 9th
+          </div>
+          <div>
+            <Checkbox defaultChecked={Maj9} onCheckedChange={() => setMaj9(!Maj9)} /> Major 9th
+          </div>
+        </div>
+        <div className="flex flex-col justify-start">
+          <div>
+            <Checkbox defaultChecked={min10} onCheckedChange={() => setMin10(!min9)} /> Minor 10th
+          </div>
+          <div>
+            <Checkbox defaultChecked={Maj10} onCheckedChange={() => setMaj10(!Maj9)} /> Major 10th
+          </div>
+        </div>
+      </div>
+      <Separator />
+      <div>
+        <Switch defaultChecked={notate} onCheckedChange={() => setNotate(notate => !notate)} /> Notate Answer
+      </div>
+      <div>
+        <Switch defaultChecked={playSelect} onCheckedChange={() => setPlaySelect(playSelect => !playSelect)} /> Play Note on Select
+      </div>
+      <div>
+        <Switch defaultChecked={playInput} onCheckedChange={() => setPlayInput(playInput => !playInput)} /> Play Note on Input
+      </div>
+      <div className="flex w-full justify-end">
+        <Button onClick={() => Save()}>Save</Button>
+      </div>
+    </div>
   )
 }
 
