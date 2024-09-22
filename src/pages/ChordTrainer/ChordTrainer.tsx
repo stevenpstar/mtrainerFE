@@ -23,6 +23,7 @@ function ChordTrainer() {
   const aContext = useRef<AudioContext>(new AudioContext());
   const aSample = useRef<AudioBuffer | null>(null);
   const aScore = useRef<Score | null>(null);
+  const aVolume = useRef<number>(50);
 
   const correct = new Audio("/correct.mp3");
   const incorrect = new Audio("/incorrect.mp3");
@@ -62,7 +63,7 @@ function ChordTrainer() {
     setAnswerStrings(_ => [...as]);
     setNotes(_ => sinthNotes);
     if (aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, sinthNotes, () => { });
+      Sinth.playFull(aContext.current, aSample.current, 120, aVolume.current, sinthNotes, () => { });
     }
   }
 
@@ -114,7 +115,7 @@ function ChordTrainer() {
         if (!aSample.current || !aContext.current) {
           return;
         }
-        PlaySelectedNote(msg.messageData.Message.obj as Note, aSample.current, aContext.current);
+        PlaySelectedNote(msg.messageData.Message.obj as Note, aVolume.current, aSample.current, aContext.current);
         break;
       case MessageType.AddNote:
         break;
@@ -129,7 +130,7 @@ function ChordTrainer() {
 
   const playChord = () => {
     if (notes.length > 1 && aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, notes, () => { });
+      Sinth.playFull(aContext.current, aSample.current, 120, aVolume.current, notes, () => { });
     }
   }
 
@@ -154,7 +155,8 @@ function ChordTrainer() {
           <PlayControls
             play={() => playChord()}
             stop={() => { }}
-            setShowSettings={() => { }} />
+            setShowSettings={() => { }}
+            setParentVolume={(v: number) => aVolume.current = v} />
         </div>
         <div className='flex flex-row justify-end gap-2'>
           <Button variant='ghost' className='rounded-none' size='icon'>

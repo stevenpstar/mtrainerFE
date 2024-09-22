@@ -52,6 +52,7 @@ function AppTopBar(props: ATBProps) {
             play={() => playFunc()}
             stop={() => { }}
             setShowSettings={() => { }}
+            setParentVolume={() => { }}
           />
         </div>
 

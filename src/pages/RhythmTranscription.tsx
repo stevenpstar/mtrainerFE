@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { Sheet } from "./Sheet";
 import { CompareTranscription, GenerateHiddenRhythm } from "./rhythmreading/RGenerator";
 import { normalTheme } from "../utils/Theme";
-import { Sinth, Note as SinthNote} from "../lib/sinth/main.mjs";
+import { Sinth, Note as SinthNote } from "../lib/sinth/main.mjs";
 import { AppTopBar } from "@/components/custom/AppTopBar";
 import { Button } from "@/components/ui/button";
 import { useToast } from '@/components/ui/use-toast';
@@ -58,15 +58,16 @@ function RhythmTranscription() {
 
   useEffect(() => {
     fetch("/A4vH.flac")
-    .then (resp => resp.arrayBuffer())
-    .then (aBuffer => aContext.current.decodeAudioData(aBuffer))
-    .then (s => aSample.current = s);
+      .then(resp => resp.arrayBuffer())
+      .then(aBuffer => aContext.current.decodeAudioData(aBuffer))
+      .then(s => aSample.current = s);
   }, [])
 
   const PlayRhythm = () => {
     if (notes.length > 0 && aSample.current) {
       Sinth.playMetronome(aContext.current, 4, 80);
-      Sinth.playFull(aContext.current, aSample.current, 80, notes, () => {});
+      // TODO: 100 is full volume as default, add volume controls to AppTopBar and this component etc.
+      Sinth.playFull(aContext.current, aSample.current, 80, 100, notes, () => { });
     }
   }
 
@@ -83,38 +84,38 @@ function RhythmTranscription() {
 
   return (
     <div className='flex flex-col justify-start h-full'>
-    { scoreLoaded &&
-      <AppTopBar 
-        score={aScore.current}
-        playFunc={() => PlayRhythm()}
-      />
-    }
-    <div className='flex flex-row justify-center'>
-      <div className='grow testbg'>
-        <Sheet
-          w='100%'
-          h='500px' f=''
-          setParentScore={setScore}
-          callback={() => {}}
-          config={rSettings} />
-      </div>
-    </div>
-
-    <div className='min-h-[50%] grow bg-zinc-950'>
+      {scoreLoaded &&
+        <AppTopBar
+          score={aScore.current}
+          playFunc={() => PlayRhythm()}
+        />
+      }
       <div className='flex flex-row justify-center'>
-        <Button
-          onClick={() => {
-            if (aScore.current)
-            GenerateRhythm(aScore.current);
-          }}
-        >New Rhythm</Button>
-
-        <Button
-          onClick={() => CheckAnswer()}
-        >Submit</Button>
-
+        <div className='grow testbg'>
+          <Sheet
+            w='100%'
+            h='500px' f=''
+            setParentScore={setScore}
+            callback={() => { }}
+            config={rSettings} />
+        </div>
       </div>
-    </div>
+
+      <div className='min-h-[50%] grow bg-zinc-950'>
+        <div className='flex flex-row justify-center'>
+          <Button
+            onClick={() => {
+              if (aScore.current)
+                GenerateRhythm(aScore.current);
+            }}
+          >New Rhythm</Button>
+
+          <Button
+            onClick={() => CheckAnswer()}
+          >Submit</Button>
+
+        </div>
+      </div>
 
     </div>
 

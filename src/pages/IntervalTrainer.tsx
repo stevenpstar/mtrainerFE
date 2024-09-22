@@ -72,6 +72,7 @@ function IntervalTrainer() {
   const aSample = useRef<AudioBuffer | null>(null);
   const aScore = useRef<Score | null>(null);
   const aContext = useRef<AudioContext>(new AudioContext());
+  const aVolume = useRef<number>(50);
 
   const correct = new Audio("/correct.mp3");
   const incorrect = new Audio("/incorrect.mp3");
@@ -205,7 +206,8 @@ function IntervalTrainer() {
       MidiNote: midi,
     }
     if (aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, [sNote], () => { });
+      console.log("volume: ", aVolume.current);
+      Sinth.playFull(aContext.current, aSample.current, 120, aVolume.current, [sNote], () => { });
     }
   }
 
@@ -242,7 +244,7 @@ function IntervalTrainer() {
       else {
         Sinth.initplay([...notes]);
       }
-      Sinth.play(aContext.current, aSample.current, 120, () => { });
+      Sinth.play(aContext.current, aSample.current, 120, aVolume.current, () => { });
     }
   }
 
@@ -267,7 +269,7 @@ function IntervalTrainer() {
   return (
     <div className='flex flex-col justify-start h-full'>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
-        <div className='flex flex-row justify-start gap-2'>
+        <div className='flex flex-row justify-start gap-2 grow'>
           <MenuDropdown />
           {scoreLoaded &&
             <InputSelectGroup score={aScore.current} />
@@ -277,6 +279,7 @@ function IntervalTrainer() {
             play={() => PlayIntOrder(PlayOrder.ASCENDING)}
             stop={() => { }}
             setShowSettings={() => setShowSettings(!showSettings)}
+            setParentVolume={(v: number) => aVolume.current = v}
           />
           <div>
           </div>
@@ -295,7 +298,7 @@ function IntervalTrainer() {
         </div>
       </div>
       <div className='flex flex-row justify-center'>
-        <div className='grow testbg'>
+        <div className='grow bg-zinc-200'>
           <Sheet
             w='100%'
             h='500px'

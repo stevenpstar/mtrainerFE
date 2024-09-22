@@ -59,6 +59,9 @@ function IntervalSettings(props: IntSettingProps) {
   const [notate, setNotate] = useState<boolean>(true);
   const [playSelect, setPlaySelect] = useState<boolean>(true);
   const [playInput, setPlayInput] = useState<boolean>(true);
+  const [ascending, setAscending] = useState<boolean>(true);
+  const [descending, setDescending] = useState<boolean>(true);
+  const [together, setTogether] = useState<boolean>(true);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -84,6 +87,10 @@ function IntervalSettings(props: IntSettingProps) {
     setNotate(settings.NeedNotate);
     setPlaySelect(settings.PlaySelect);
     setPlayInput(settings.PlayInput);
+
+    setAscending(settings.Ascending);
+    setDescending(settings.Descending);
+    setTogether(settings.Together);
 
     setLoading(false);
   }
@@ -113,13 +120,12 @@ function IntervalSettings(props: IntSettingProps) {
       Maj10: Maj10,
       NeedNotate: notate,
       NotateCount: 1,
-      Ascending: false,
-      Descending: false,
-      Together: true,
+      Ascending: ascending,
+      Descending: descending,
+      Together: together,
       PlaySelect: playSelect,
       PlayInput: playInput,
     }
-    console.log("saved Settings: ", savedSettings);
     props.UpdateSettings(savedSettings);
   }
 
@@ -183,10 +189,10 @@ function IntervalSettings(props: IntSettingProps) {
         </div>
         <div className="flex flex-col justify-start">
           <div>
-            <Checkbox defaultChecked={min10} onCheckedChange={() => setMin10(!min9)} /> Minor 10th
+            <Checkbox defaultChecked={min10} onCheckedChange={() => setMin10(!min10)} /> Minor 10th
           </div>
           <div>
-            <Checkbox defaultChecked={Maj10} onCheckedChange={() => setMaj10(!Maj9)} /> Major 10th
+            <Checkbox defaultChecked={Maj10} onCheckedChange={() => setMaj10(!Maj10)} /> Major 10th
           </div>
         </div>
       </div>
@@ -200,6 +206,16 @@ function IntervalSettings(props: IntSettingProps) {
       <div>
         <Switch defaultChecked={playInput} onCheckedChange={() => setPlayInput(playInput => !playInput)} /> Play Note on Input
       </div>
+      <div>
+        <Switch defaultChecked={ascending} onCheckedChange={() => setAscending(ascending => !ascending)} /> Play Notes Ascending
+      </div>
+      <div>
+        <Switch defaultChecked={descending} onCheckedChange={() => setDescending(descending => !descending)} /> Play Notes Descending
+      </div>
+      <div>
+        <Switch defaultChecked={together} onCheckedChange={() => setTogether(together => !together)} /> Play Notes Together
+      </div>
+
       <div className="flex w-full justify-end">
         <Button onClick={() => Save()}>Save</Button>
       </div>

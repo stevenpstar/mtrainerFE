@@ -81,7 +81,7 @@ function ScaleNotate() {
       MidiNote: midi,
     }
     if (aSample.current) {
-      Sinth.playFull(aContext.current, aSample.current, 120, [sNote], () => { });
+      Sinth.playFull(aContext.current, aSample.current, 120, 100, [sNote], () => { });
     }
   }
 
@@ -103,7 +103,7 @@ function ScaleNotate() {
     const sNotes = GenerateSinthNotes(scaleString);
     if (sNotes.length > 0 && aSample.current) {
       Sinth.initplay(sNotes);
-      Sinth.playFull(aContext.current, aSample.current, 100, sNotes, () => { });
+      Sinth.playFull(aContext.current, aSample.current, 100, 100, sNotes, () => { });
     }
   }
 

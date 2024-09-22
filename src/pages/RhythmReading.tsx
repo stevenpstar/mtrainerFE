@@ -36,6 +36,7 @@ function RhythmReading() {
   const beatArray = useRef<number[]>([]);
   const startTime = useRef<number>(0);
   const aScore = useRef<Score | null>(null);
+  const aVolume = useRef<number>(50);
 
   const aContext: AudioContext = new AudioContext({ sampleRate: 8000 });
   const analyser = aContext.createAnalyser();
@@ -206,6 +207,7 @@ function RhythmReading() {
             play={() => startRecording()}
             stop={() => stopRecording()}
             setShowSettings={() => { }}
+            setParentVolume={(v: number) => aVolume.current = v}
           />
           <Separator orientation='vertical' />
           <Button
