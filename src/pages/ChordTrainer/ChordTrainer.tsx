@@ -35,8 +35,6 @@ function ChordTrainer() {
   const [answered, setAnswered] = useState<boolean>(false);
   const [chordCount, setChordCount] = useState<number>(1);
 
-  setChordCount(1); // Temporary until we implement progressions
-
   const BitString = (): string => {
     let str = '';
     bits.forEach(b => {
@@ -47,6 +45,7 @@ function ChordTrainer() {
   }
 
   const GenChord = () => {
+    setChordCount(1);
     const msrCount = Math.ceil(chordCount / 2);
     CTEmptySheet(aScore.current, msrCount);
     const sinthNotes: SinthNote[] = [];
