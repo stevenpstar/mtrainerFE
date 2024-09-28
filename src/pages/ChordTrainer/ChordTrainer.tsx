@@ -15,6 +15,8 @@ import { Note as SinthNote, Sinth } from '../../lib/sinth/main.mjs';
 import { PlaySelectedNote } from '@/utils/OnSelected';
 import { MultiInput } from '@/components/custom/MultiInput';
 import { useToast } from '@/components/ui/use-toast';
+import { ChordSettings, ChrdSettings } from './Settings';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 function ChordTrainer() {
 
@@ -35,6 +37,23 @@ function ChordTrainer() {
   // For multi inputs
   const [answered, setAnswered] = useState<boolean>(false);
   const [chordCount, setChordCount] = useState<number>(1);
+
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+
+  const settings = useRef<ChrdSettings>({
+    Major: true,
+    Minor: true,
+    Maj7: true,
+    Min7: true,
+    Root: true,
+    Inv1: true,
+    Inv2: true,
+  });
+
+  const UpdateSettings = (set: ChrdSettings) => {
+    settings.current = set;
+    setShowSettings(false);
+  }
 
   const BitString = (): string => {
     let str = '';
@@ -146,7 +165,7 @@ function ChordTrainer() {
   return (
     <div className='flex flex-col justify-start h-full'>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
-        <div className='flex flex-row justify-start gap-2'>
+        <div className='flex flex-row justify-start gap-2 grow'>
           <MenuDropdown />
           {scoreLoaded &&
             <InputSelectGroup score={aScore.current} />
@@ -155,7 +174,7 @@ function ChordTrainer() {
           <PlayControls
             play={() => playChord()}
             stop={() => { }}
-            setShowSettings={() => { }}
+            setShowSettings={() => setShowSettings(!showSettings)}
             setParentVolume={(v: number) => aVolume.current = v} />
         </div>
         <div className='flex flex-row justify-end gap-2'>
@@ -225,6 +244,18 @@ function ChordTrainer() {
           </div>
         </div>
       </div>
+      <Dialog open={showSettings} onOpenChange={setShowSettings}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle> Chord Settings </DialogTitle>
+            <DialogDescription> Change Chord Trainer Settings </DialogDescription>
+          </DialogHeader>
+          <ChordSettings
+            Settings={settings.current}
+            UpdateSettings={UpdateSettings}
+          />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
