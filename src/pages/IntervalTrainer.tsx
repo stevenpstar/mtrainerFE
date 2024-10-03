@@ -148,7 +148,7 @@ function IntervalTrainer() {
 
   useEffect(() => {
     if (!aSample.current) {
-      fetch("/A4vH.flac")
+      fetch("/a4.flac")
         .then(resp => resp.arrayBuffer())
         .then(aBuffer => aContext.current.decodeAudioData(aBuffer))
         .then(s => aSample.current = s);

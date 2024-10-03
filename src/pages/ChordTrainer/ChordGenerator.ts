@@ -10,7 +10,7 @@ type ChordData = {
 // Key definitions
 
 const MAJOR = new Map<string, string[]>([
-  ["#", ["G", "D", "A", "E", "B", "F#"]],
+  ["#", ["C", "G", "D", "A", "E", "B", "F#"]],
   ["b", ["Gb", "Db", "Ab", "Eb", "Bb", "F"]],
 ]);
 
@@ -50,10 +50,41 @@ const CHORDS = new Map<string, Array<number[]>>([
       [-5, 3, 0],
     ],
   ],
+  [
+    "MINOR 7",
+    [
+      [0, 3, 7, 10],
+      [-9, -5, 0, -2],
+      [-5, -2, 0, 3],
+    ],
+  ],
+  [
+    "DIMINISHED",
+    [
+      [0, 3, 6],
+      [-9, -6, 0],
+      [-6, 0, 3],
+    ],
+  ],
+  [
+    "AUGMENTED",
+    [
+      [0, 4, 8],
+      [-8, -4, 0],
+      [-4, 0, 4],
+    ],
+  ],
 ]);
 
 // Temporary, will be a part of settings that are passed to generate chord function eventually
-const chord_array = ["MAJOR", "MINOR", "MAJOR 7"];
+const chord_array = [
+  "MAJOR",
+  "MAJOR 7",
+  "MINOR",
+  "MINOR 7",
+  "DIMINISHED",
+  "AUGMENTED",
+];
 function CTEmptySheet(score: Score | null, measureCount: number): void {
   if (!score) {
     console.error("Score is null");
@@ -221,6 +252,7 @@ function SharpsOrFlats(
   switch (chordQuality) {
     case "MAJOR":
     case "MAJOR 7":
+    case "AUGMENTED":
       if (noteString === "C") {
         result = "";
       } else {
@@ -235,6 +267,8 @@ function SharpsOrFlats(
       }
       break;
     case "MINOR":
+    case "MINOR 7":
+    case "DIMINISHED":
       if (noteString === "A") {
         result = "";
       } else {

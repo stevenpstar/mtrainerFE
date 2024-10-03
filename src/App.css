@@ -10,6 +10,7 @@
     animation-iteration-count: 1;
     animation-fill-mode: both; */
 }
+
 .coverGrad {
   background: linear-gradient(to left, rgba(10,10,12,1), rgba(10,10,12,0));
 }
@@ -41,41 +42,16 @@
   box-shadow: 0px 0px 24px 2px #f08080;
 }
 
-@keyframes progress {
-  to {
-    background-color: #F4F4F5;
-  }
-}
-
 .svg-1 {
- animation-play-state: paused;
- animation-delay: calc(var(--scroll) * -1s);
- animation-iteration-count: 1;
- animation-fill-mode: both;
   z-index: 0;
   position: absolute;
-  top: 0px;
-  animation: sc 1s linear;
-}
-
-@keyframes sc {
-  30% {
-    top: -100px;
-  }
-  100% {
-    top: -100px;
-  }
+  top: -100px;
 }
 
 .svg-2 {
- animation-play-state: paused;
- animation-delay: calc(var(--scroll) * -1s);
- animation-iteration-count: 1;
- animation-fill-mode: both;
-
   z-index: 0;
   position: absolute;
-  top: -200px;
+  top: 0px;
   animation: sc2 1s linear;
 }
 
@@ -83,56 +59,12 @@
   position: relative;
   z-index: 10;
   top: 0px;
-  animation: heroimg 1s ease-in;
- animation-play-state: paused;
- animation-delay: calc(var(--scroll) * -1s);
- animation-iteration-count: 1;
- animation-fill-mode: both;
-
-}
-
-@keyframes heroimg {
-  to {
-    top: 200px;
-  }
-}
-
-@keyframes sc2 {
-  30% {
-    top: 0px;
-  }
-  100% {
-    top: 0px;
-  }
-}
-
-.features_anim {
-  opacity: 0.0;
-  animation: featuresanim 1s linear;
-}
-
-@keyframes featuresanim {
-  30% {
-    opacity: 1.0;
-  }
-  100% {
-    opacity: 1.0;
-  }
 }
 
 .landing_nav {
   color: #f0f0f0;
   background-color: transparent;
   animation: landing_nav_anim 1s linear;
-}
-
-@keyframes landing_nav_anim {
-  30% {
-    background-color :#0d0d0f;
-  }
-   100% {
-    background-color: #0d0d0f;
-  }
 }
           
 html, body {

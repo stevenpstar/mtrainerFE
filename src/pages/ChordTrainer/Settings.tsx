@@ -13,6 +13,7 @@ type ChrdSettings = {
   Minor: boolean;
   Maj7: boolean;
   Min7: boolean;
+  Notate: boolean;
   Root: boolean;
   Inv1: boolean;
   Inv2: boolean;
@@ -29,6 +30,8 @@ function ChordSettings(props: ChordSettingsProps) {
   const [root, setRoot] = useState<boolean>(true);
   const [inv1, setInv1] = useState<boolean>(true);
   const [inv2, setInv2] = useState<boolean>(true);
+  // Other
+  const [notate, setNotate] = useState<boolean>(true);
 
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -40,6 +43,7 @@ function ChordSettings(props: ChordSettingsProps) {
     setRoot(settings.Root);
     setInv1(settings.Inv1);
     setInv2(settings.Inv2);
+    setNotate(settings.Notate);
     setLoading(false);
   }
 
@@ -49,6 +53,7 @@ function ChordSettings(props: ChordSettingsProps) {
       Minor: minor,
       Maj7: maj7,
       Min7: min7,
+      Notate: notate,
       Root: root,
       Inv1: inv1,
       Inv2: inv2,
@@ -92,6 +97,9 @@ function ChordSettings(props: ChordSettingsProps) {
         </div>
         <div className="flex flex-col justify-start">
           <div>
+            <Switch defaultChecked={notate} onCheckedChange={() => setNotate(notate => !notate)} /> Notate
+          </div>
+          <div>
             <Switch defaultChecked={root} onCheckedChange={() => setRoot(root => !root)} /> No Inversion
           </div>
           <div>
@@ -101,10 +109,11 @@ function ChordSettings(props: ChordSettingsProps) {
             <Switch defaultChecked={inv2} onCheckedChange={() => setInv2(inv2 => !inv2)} /> Second Inversion
           </div>
         </div>
-        <div className="flex w-full justify-end">
-          <Button onClick={() => Save()}>Save</Button>
-        </div>
       </div>
+      <div className="flex w-full justify-end">
+        <Button onClick={() => Save()}>Save</Button>
+      </div>
+
     </div>
   )
 }

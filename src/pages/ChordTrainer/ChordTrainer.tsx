@@ -4,7 +4,7 @@ import { Message, MessageType, Note, App as Score } from '../../lib/sheet/entry.
 import { Sheet } from '../Sheet';
 import { CTSettings } from './CTSettings';
 import { Button } from '@/components/ui/button';
-import { BarChartIcon, ChevronRightIcon, GearIcon } from '@radix-ui/react-icons';
+import { ChevronRightIcon } from '@radix-ui/react-icons';
 import { Separator } from '@/components/ui/separator';
 import { MusicNotes } from '@/components/custom/MusicNotes';
 import { MenuDropdown } from '@/components/custom/MenuDropdown';
@@ -45,6 +45,7 @@ function ChordTrainer() {
     Minor: true,
     Maj7: true,
     Min7: true,
+    Notate: true,
     Root: true,
     Inv1: true,
     Inv2: true,
@@ -155,7 +156,7 @@ function ChordTrainer() {
 
   useEffect(() => {
     if (!aSample.current) {
-      fetch("/A4vH.flac")
+      fetch("/a4.flac")
         .then(resp => resp.arrayBuffer())
         .then(aBuffer => aContext.current.decodeAudioData(aBuffer))
         .then(s => aSample.current = s);
@@ -178,12 +179,6 @@ function ChordTrainer() {
             setParentVolume={(v: number) => aVolume.current = v} />
         </div>
         <div className='flex flex-row justify-end gap-2'>
-          <Button variant='ghost' className='rounded-none' size='icon'>
-            <GearIcon className='h-4 w-4' />
-          </Button>
-          <Button variant='ghost' className='rounded-none' size='icon'>
-            <BarChartIcon className='h-4 w-4' />
-          </Button>
         </div>
       </div>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-900 font-light text-zinc-300 shadow-md z-50'>
@@ -212,7 +207,7 @@ function ChordTrainer() {
           <div className='flex flex-row justify-center'>
             <Button
               className='-top-[3.5rem] relative bg-zinc-900 text-[#caffbf]'
-              onClick={() => GenChord()}>Generate New Chord +</Button>
+              onClick={() => GenChord()}>New Chord +</Button>
           </div>
           <div className='flex flex-row justify-center min-w-[500px] text-zinc-200 text-lg -top-[2.5rem] relative'>
             <ChevronRightIcon className='text-[#a2d2ff] h-5 w-5 mt-1' />

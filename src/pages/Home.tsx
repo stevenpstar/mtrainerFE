@@ -1,33 +1,15 @@
 import { Button } from "@/components/ui/button";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { landingConfig } from "./intervaltrainer/IntervalConfig";
 import { SheetStandard } from "@/components/custom/SheetStandard";
 import { App as Score } from '../lib/sheet/entry.mjs';
 import { AnimateInterval } from "./landing/LandingSheetAnimations";
-import { ArrowRightIcon, ArrowUpIcon, ChevronRightIcon } from "@radix-ui/react-icons";
-import { Separator } from "@radix-ui/react-separator";
+import { ArrowRightIcon, BookmarkIcon } from "@radix-ui/react-icons";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
 function Home() {
 
-  const [selFeature, setSelectedFeature] = useState<number>(0);
   const score = useRef<Score | null>(null);
-
-  const practiceTools = [
-    "Chord Practice Tool",
-    "Interval Practice Tool",
-    "Rhythmic and Melodic Transcription",
-    "Rhythmic and Melodic Sight Reading",
-    "Scale and Modes Practice Tool",
-    "Relative and Perfect Pitch"
-  ]
-
-  const pToolClass = "p-3 border-l-4 shadow-md hover:cursor-pointer hover:bg-zinc-900 hover:text-zinc-200 flex flex-row justify-between";
-
-  const addScrollCSS = () => {
-    const maxScrollHeight = document.body.scrollHeight - window.innerHeight;
-    document.body.style.setProperty('--scroll',
-      (window.scrollY / maxScrollHeight).toString())
-  }
 
   const setScore = (s: Score) => {
     score.current = s;
@@ -38,19 +20,17 @@ function Home() {
     AnimateInterval(score.current);
   }
 
-  useEffect(() => {
-    window.addEventListener('scroll', addScrollCSS, false);
-    return () => window.removeEventListener('scroll', addScrollCSS);
-  }, [])
-
   return (
-    <div className="flex flex-col bg-[#0d0d0f] justify-between w-full ">
-      <div className="fixed landing_nav w-full h-14 flex flex-row justify-between z-20">
-        <div className="p-4">Icon</div>
+    <div className="landing-page flex flex-col bg-[#0d0d0f] justify-between w-full ">
+      <div className="fixed landing_nav w-full h-14 flex flex-row justify-between z-20 bg-zinc-900">
+        <div className="flex flex-row justify-start">
+          <div className="p-4 mr-12 text-[#f08080]">Icon</div>
+          <div className="p-4">About</div>
+          <div className="p-4">How it works</div>
+          <div className="p-4">Pricing</div>
+        </div>
+
         <div className="p-4 flex flex-row justify-end gap-6">
-          <div>About</div>
-          <div>How it works</div>
-          <div>Pricing</div>
           <div>Sign in</div>
         </div>
       </div>
@@ -79,79 +59,120 @@ function Home() {
           </div>
         </div>
       </div>
-      <div id="features" className="features relative flex flex-col bg-zinc-100 justify-center w-full h-svh max-h-[1080px] text-zinc-900">
-        <svg viewBox="0 0 1440 170" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%"
+      <div id="features" className="features relative flex flex-col bg-zinc-100 justify-center w-full h-full text-zinc-900">
+        {false && <svg viewBox="0 0 1440 170" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%"
           className="svg-1 absolute transparent">
           <path d="M 0 0 C 480 29 960 29 1440 0" fill="#09090B"></path></svg>
+        }
 
         <svg viewBox="0 0 1440 30" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%"
           className="svg-2 absolute transparent z-10">
           <path d="M 0 0 L 1440 0 V 30 C 960 4 480 4 0 30" fill="#09090B"></path></svg>
 
         <div className="features_anim flex flex-row justify-center h-full">
-          <div className="flex flex-row justify-center w-[50%] h-full">
-            <div className="flex flex-col justify-start h-full w-[80%] mt-12 ">
-              <div
-                className="min-w-128 max-w-164 min-h-24 text-left p-4">
-                <h2 className="border-l-4 border-[#f08080] text-3xl text-zinc-100 bg-zinc-900 shadow-md font-bold mt-12 p-4 flex flex-row">
-                  Powerful Practice Tools</h2>
-                <p className="border-l-4 border-[#f08080] font-medium bg-zinc-800 shadow-md text-zinc-100 p-4">Highly configurable practice tools designed to test and improve your aural, theory and transcription skills through daily repetition and logical progression.</p>
-                <div className="flex flex-col justify-start mt-8">
-                  <ul className="flex flex-col gap-2">
-                    {
-                      practiceTools.map((t: string, i: number) =>
-                        <li
-                          onClick={() => setSelectedFeature(i)}
-                          style={{ "borderColor": selFeature === i ? "#f08080" : "transparent" }}
-                          className={selFeature === i ? "bg-zinc-900 text-zinc-100 " + pToolClass :
-                            i % 2 === 0 ? "bg-white " + pToolClass : "bg-zinc-100 " + pToolClass}>
-                          {t}
-                          <ChevronRightIcon className='w-6 h-6' />
-                        </li>)
-                    }
-                    <li className="bg-zinc-900 p-3 text-zinc-100 border-b-2 shadow-md flex flex-row justify-center gap-2">
-                      Click a tool for more information <ArrowUpIcon className="w-4 h-4" />
-                    </li>
-                  </ul>
-                </div>
+          <div className="w-[100%] bg-[#fff] flex flex-row justify-center">
+            <div className="flex flex-col justify-start h-full w-[80%] mt-12 gap-8">
+              <h2 className="text-4xl mb-12">What is __name__?</h2>
+              <div className="w-[100%] flex flex-row justify-center">
+                <Card className="text-left w-[50%] outline-0 shadow-none border-0 text-zinc-900">
+                  <CardHeader className="bg-zinc-900 text-zinc-200">
+                    <CardTitle className="text-2xl flex flex-row gap-2"><BookmarkIcon className="w-8 h-8" />Structured Learning</CardTitle>
+                    <CardDescription>Covering all the topics you need</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2 justify-start mt-4">
+                    <ul className="flex flex-col gap-2">
+                      <li>
+                        Interactive short form courses covering all the topics you will need to use this app to its full potential, and to become the best musician you can be.
+                      </li>
+                      <li>
+                        From the basics like reading music and recognising intervals, to understanding how to notate and hear extended chords in any inversion and more!
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="flex flex-row justify-end">
+                    <a href="">Click here for more info</a>
+                  </CardFooter>
+                </Card>
+              </div>
+              <div className="w-[100%] flex flex-row justify-center">
+                <Card className="text-left w-[50%] outline-0 shadow-none border-0">
+                  <CardHeader className="bg-zinc-900 text-zinc-200">
+                    <CardTitle className="text-2xl flex flex-row gap-2"><BookmarkIcon className="w-8 h-8" />Practice Tools</CardTitle>
+                    <CardDescription>Covering all the topics you need</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2 justify-start mt-4">
+                    <ul className="flex flex-col gap-2">
+                      <li>
+                        Highly customisable practice tooling to perfect your musical theory and aural skills.
+                      </li>
+                      <li>
+                        Practice all the skills you need, from hearing intervals and chords, to transcribing complex rhythms and melodies - these tools represent your daily musical workout.
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="flex flex-row justify-end">
+                    Click here for a full list of practice tools
+                  </CardFooter>
+                </Card>
+              </div>
+              <div className="w-[100%] flex flex-row justify-center">
+                <Card className="text-left w-[50%] outline-0 border-0 shadow-none">
+                  <CardHeader className="bg-zinc-900 text-zinc-200">
+                    <CardTitle className="text-2xl flex flex-row gap-2"><BookmarkIcon className="w-8 h-8" />Practice Analytics</CardTitle>
+                    <CardDescription>Covering all the topics you need</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2 justify-start">
+                    <ul className="flex flex-col gap-2">
+                      <li>
+                        Interactive short form courses covering all the topics you will need to use this app to its full potential, and to become the best musician you can be.
+                      </li>
+                      <li>
+                        From the basics like reading music and recognising intervals, to understanding how to notate and hear extended chords in any inversion and more!
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter>
+                    Click here for more info
+                  </CardFooter>
+                </Card>
               </div>
             </div>
           </div>
-          <div className="w-[50%] bg-[#fff] flex flex-row justify-center">
-            {selFeature === 1 &&
-              <div className="h-[30%] w-[85%]">
-                <h2 className="text-xl font-bold text-left ml-8 mt-28 text-zinc-100 bg-zinc-900 mr-8 p-4 shadow-md">Interval Practice Tool</h2>
-                <div className="z-40 text-left ml-8 mr-8 bg-zinc-800 text-zinc-200 p-4 shadow-md">
-                  In music, an interval is the distance between two notes.
-                  Intervals are the fundamental building blocks for chords and scales.
-                  Our tool will help you identify and notate intervals from a unison interval to an octave.
-                </div>
-
-                <SheetStandard
-                  config={landingConfig}
-                  setParentScore={setScore}
-                />
-                <div className="flex flex-row justify-center mb-4">
-                  <Separator className="w-[90%] h-[1px] bg-zinc-200" />
-                </div>
-                <div className="z-40 text-left ml-8 mt-2 bg-zinc-900 text-zinc-100 mr-8 p-4 shadow-md">
-                  <p>Our tool covers...</p>
-                  <ul className="list-disc ml-8 mt-2">
-                    <li>Unison to Octave intervals</li>
-                    <li>Configurable progression of difficulty</li>
-                    <li>Variety of ways to practice</li>
-                    <li>Tracks your results for targeted high quality practice</li>
-                  </ul>
-                </div>
-
-              </div>
-            }
-          </div>
         </div>
-
       </div>
-      <div className="flex flex-col h-[1080px] bg-[#0d0d0f] w-full">
-        heyeye
+      <div className="flex flex-col justify-start gap-12 h-[1080px] bg-[#0d0d0f] w-full text-zinc-200">
+        <h2 className="text-3xl mt-12">Practice Tools in action</h2>
+        <div className="flex flex-row justify-center">
+          <video controls className="w-[80%]" src="./public/example.mp4"></video>
+        </div>
+      </div>
+      <div className="flex flex-col justify-center h-[1080px] min-h-[1080px] bg-zinc-200 w-full text-zinc-900">
+        <div className="flex flex-row justify-center w-full gap-8">
+
+          <Card className="text-left w-[150px] outline-0 border-0 shadow-none">
+            <CardHeader className="bg-zinc-900 text-zinc-200">
+              <CardTitle className="text-2xl flex flex-row gap-2">$6.99 Billed Monthly</CardTitle>
+              <CardDescription>All prices are in USD</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2 justify-start">
+            </CardContent>
+            <CardFooter>
+              Click here for more info
+            </CardFooter>
+          </Card>
+
+          <Card className="text-left w-[300px] max-w-[300px] outline-0 border-0 shadow-none">
+            <CardHeader className="bg-zinc-900 text-zinc-200">
+              <CardTitle className="text-2xl flex flex-row gap-2">$60.00 Billed Annually</CardTitle>
+              <CardDescription>All prices are in USD</CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-2 justify-start">
+            </CardContent>
+            <CardFooter>
+              Click here for more info
+            </CardFooter>
+          </Card>
+        </div>
       </div>
     </div>
   )
