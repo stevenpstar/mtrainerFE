@@ -4,8 +4,9 @@ import { landingConfig } from "./intervaltrainer/IntervalConfig";
 import { SheetStandard } from "@/components/custom/SheetStandard";
 import { App as Score } from '../lib/sheet/entry.mjs';
 import { AnimateInterval } from "./landing/LandingSheetAnimations";
-import { ArrowRightIcon, BookmarkIcon } from "@radix-ui/react-icons";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { GiWeightLiftingUp } from "react-icons/gi";
 
 function Home() {
 
@@ -22,7 +23,7 @@ function Home() {
 
   return (
     <div className="landing-page flex flex-col bg-[#0d0d0f] justify-between w-full ">
-      <div className="fixed landing_nav w-full h-14 flex flex-row justify-between z-20 bg-zinc-900">
+      <div className="fixed landing_nav w-full h-14 flex flex-row justify-between z-20 bg-[#0A0A0C]">
         <div className="flex flex-row justify-start">
           <div className="p-4 mr-12 text-[#f08080]">Icon</div>
           <div className="p-4">About</div>
@@ -59,7 +60,7 @@ function Home() {
           </div>
         </div>
       </div>
-      <div id="features" className="features relative flex flex-col bg-zinc-100 justify-center w-full h-full text-zinc-900">
+      <div id="features" className="features relative flex flex-col bg-white justify-center w-full text-zinc-900">
         {false && <svg viewBox="0 0 1440 170" fill="none" xmlns="http://www.w3.org/2000/svg" width="100%"
           className="svg-1 absolute transparent">
           <path d="M 0 0 C 480 29 960 29 1440 0" fill="#09090B"></path></svg>
@@ -69,81 +70,79 @@ function Home() {
           className="svg-2 absolute transparent z-10">
           <path d="M 0 0 L 1440 0 V 30 C 960 4 480 4 0 30" fill="#09090B"></path></svg>
 
-        <div className="features_anim flex flex-row justify-center h-full">
-          <div className="w-[100%] bg-[#fff] flex flex-row justify-center">
-            <div className="flex flex-col justify-start h-full w-[80%] mt-12 gap-8">
-              <h2 className="text-4xl mb-12">What is __name__?</h2>
-              <div className="w-[100%] flex flex-row justify-center">
-                <Card className="text-left w-[50%] outline-0 shadow-none border-0 text-zinc-900">
-                  <CardHeader className="bg-zinc-900 text-zinc-200">
-                    <CardTitle className="text-2xl flex flex-row gap-2"><BookmarkIcon className="w-8 h-8" />Structured Learning</CardTitle>
-                    <CardDescription>Covering all the topics you need</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2 justify-start mt-4">
-                    <ul className="flex flex-col gap-2">
-                      <li>
-                        Interactive short form courses covering all the topics you will need to use this app to its full potential, and to become the best musician you can be.
-                      </li>
-                      <li>
-                        From the basics like reading music and recognising intervals, to understanding how to notate and hear extended chords in any inversion and more!
-                      </li>
-                    </ul>
-                  </CardContent>
-                  <CardFooter className="flex flex-row justify-end">
-                    <a href="">Click here for more info</a>
-                  </CardFooter>
-                </Card>
+        <div className="features_anim flex flex-row justify-center">
+          <div className="flex flex-row justify-center w-full">
+            <div className="w-[50%] bg-white h-[1080px]">
+              <div className="relative flex h-full flex-col justify-start mt-16">
+                <div className="flex flex-row justify-center w-[100%] mt-12">
+                  <Card className="text-left w-[80%] outline-0 shadow-none border-0 mt-12">
+                    <CardHeader className="">
+                      <CardTitle className="text-5xl flex flex-row gap-2 text-zinc-800"><GiWeightLiftingUp className="w-8 h-8 color-[#f08080]" />Practice Tooling</CardTitle>
+                      <CardDescription className="border-b-4 border-[#f08080]">Your daily musical workout</CardDescription>
+                    </CardHeader>
+                    <CardContent className="flex flex-col gap-2 justify-start">
+                      <ul className="text-xl flex flex-col gap-6">
+                        <li className="p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:ml-2">
+                          Highly customisable practice tooling to perfect your musical theory and aural skills.
+                        </li>
+                        <li className="p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:ml-2">
+                          Practice all the skills you need, from hearing intervals and chords, to transcribing complex rhythms and melodies - these tools represent your daily musical workout.
+                        </li>
+                        <li className="p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:ml-2">
+                          Results are tracked, giving you powerful insight into both your strengths and weaknesses. Allowing you to practice with greater efficiency.
+                        </li>
+                      </ul>
+                    </CardContent>
+                    <CardFooter className="flex flex-row justify-end">
+                    </CardFooter>
+                  </Card>
+                </div>
               </div>
-              <div className="w-[100%] flex flex-row justify-center">
-                <Card className="text-left w-[50%] outline-0 shadow-none border-0">
-                  <CardHeader className="bg-zinc-900 text-zinc-200">
-                    <CardTitle className="text-2xl flex flex-row gap-2"><BookmarkIcon className="w-8 h-8" />Practice Tools</CardTitle>
-                    <CardDescription>Covering all the topics you need</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2 justify-start mt-4">
-                    <ul className="flex flex-col gap-2">
-                      <li>
-                        Highly customisable practice tooling to perfect your musical theory and aural skills.
-                      </li>
-                      <li>
-                        Practice all the skills you need, from hearing intervals and chords, to transcribing complex rhythms and melodies - these tools represent your daily musical workout.
-                      </li>
-                    </ul>
-                  </CardContent>
-                  <CardFooter className="flex flex-row justify-end">
-                    Click here for a full list of practice tools
-                  </CardFooter>
-                </Card>
-              </div>
-              <div className="w-[100%] flex flex-row justify-center">
-                <Card className="text-left w-[50%] outline-0 border-0 shadow-none">
-                  <CardHeader className="bg-zinc-900 text-zinc-200">
-                    <CardTitle className="text-2xl flex flex-row gap-2"><BookmarkIcon className="w-8 h-8" />Practice Analytics</CardTitle>
-                    <CardDescription>Covering all the topics you need</CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex flex-col gap-2 justify-start">
-                    <ul className="flex flex-col gap-2">
-                      <li>
-                        Interactive short form courses covering all the topics you will need to use this app to its full potential, and to become the best musician you can be.
-                      </li>
-                      <li>
-                        From the basics like reading music and recognising intervals, to understanding how to notate and hear extended chords in any inversion and more!
-                      </li>
-                    </ul>
-                  </CardContent>
-                  <CardFooter>
-                    Click here for more info
-                  </CardFooter>
-                </Card>
+            </div>
+            <div className="relative w-[50%] flex flex-col justify-center">
+              <div className="flex flex-row justify-center">
+                <img className="skew-y-2 w-[90%] hover:mb-6 transition-all duration-300" src="/ptframed.png" />
               </div>
             </div>
           </div>
         </div>
       </div>
       <div className="flex flex-col justify-start gap-12 h-[1080px] bg-[#0d0d0f] w-full text-zinc-200">
-        <h2 className="text-3xl mt-12">Practice Tools in action</h2>
-        <div className="flex flex-row justify-center">
-          <video controls className="w-[80%]" src="./public/example.mp4"></video>
+
+        <div className="flex flex-row justify-center w-full">
+          <div className="relative w-[50%] flex flex-col justify-center">
+            <div className="flex flex-row justify-center">
+              <img className="-skew-y-2 w-[90%] hover:mb-6 transition-all duration-300" src="/ptframed.png" />
+            </div>
+          </div>
+
+          <div className="w-[50%] h-[1080px]">
+            <div className="relative flex h-full flex-col justify-start mt-16">
+              <div className="flex flex-row justify-center w-[100%] mt-12">
+                <Card className="bg-transparent text-left w-[80%] outline-0 shadow-none border-0 mt-12">
+                  <CardHeader className="">
+                    <CardTitle className="text-5xl flex flex-row gap-2 text-zinc-200 text-right"><GiWeightLiftingUp className="w-8 h-8 color-[#f08080]" />Structured Learning Paths</CardTitle>
+                    <CardDescription className="border-b-4 border-[#f08080]">Your daily musical workout</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex flex-col gap-2 justify-start">
+                    <ul className="text-xl flex flex-col gap-6">
+                      <li className="bg-[#0D0D0F] text-zinc-200 p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:ml-2">
+                        Highly customisable practice tooling to perfect your musical theory and aural skills.
+                      </li>
+                      <li className="bg-[#0D0D0F] text-zinc-200 p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:ml-2">
+                        Practice all the skills you need, from hearing intervals and chords, to transcribing complex rhythms and melodies - these tools represent your daily musical workout.
+                      </li>
+                      <li className="bg-[#0D0D0F] text-zinc-200 p-8 shadow-md hover:shadow-xl transition-all duration-300 hover:ml-2">
+                        Results are tracked, giving you powerful insight into both your strengths and weaknesses. Allowing you to practice with greater efficiency.
+                      </li>
+                    </ul>
+                  </CardContent>
+                  <CardFooter className="flex flex-row justify-end">
+                  </CardFooter>
+                </Card>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div className="flex flex-col justify-center h-[1080px] min-h-[1080px] bg-zinc-200 w-full text-zinc-900">

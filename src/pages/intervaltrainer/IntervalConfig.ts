@@ -34,7 +34,7 @@ const landingConfig: ConfigSettings = {
   CameraSettings: {
     DragEnabled: false,
     ZoomEnabled: false,
-    Zoom: 1.25,
+    Zoom: 0.8,
     StartingPosition: { x: 0, y: 50 },
     CenterMeasures: false,
     CenterPage: false,

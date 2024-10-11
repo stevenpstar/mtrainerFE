@@ -1,0 +1,41 @@
+{
+  "Columns": 2,
+  "Rows": 3,
+  "PathNodes": [
+    {
+      "ID": "FUND_001",
+      "Column": 1,
+      "Row": 0,
+      "Label": "Anatomy of A Score",
+      "Link": "readmusic",
+      "Spacer": false
+    },
+    {
+      "ID": "FUND_002",
+      "Column": 1,
+      "Row": 1,
+      "Label": "Clefs",
+      "Link": "readrhyhtm",
+      "Spacer": false,
+      "Branch": false
+    },
+    {
+      "ID": "FUND_003",
+      "Column": 1,
+      "Row": 2,
+      "Label": "Time Signatures",
+      "Link": "readrhyhtm",
+      "Spacer": false,
+      "Branch": false
+    },
+    {
+      "ID": "FUND_004",
+      "Column": 0,
+      "Row": 1,
+      "Label": "Reading Pitch: C-E",
+      "Link": "readrhyhtm",
+      "Spacer": false,
+      "Branch": false
+    }
+  ]
+}

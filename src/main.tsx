@@ -18,6 +18,8 @@ import { Practice } from './pages/Practice.tsx'
 import { ChordTrainer } from './pages/ChordTrainer/ChordTrainer.tsx'
 import { Toaster } from './components/ui/toaster.tsx'
 import { Analytics } from './pages/Analytics.tsx'
+import { Paths } from './pages/paths/Paths.tsx'
+import { FundamentalsTree } from './pages/paths/FundamentalsTree.tsx'
 
 const theme = extendTheme({
   config: {
@@ -56,6 +58,14 @@ const router = createBrowserRouter([
         element: <Login />
       },
       {
+        path: "pathways",
+        element: <Paths />
+      },
+      {
+        path: "pathways/fundamentals",
+        element: <FundamentalsTree />
+      },
+      {
         path: "courses/:lesson/:id",
         element: <Lesson />
       },
@@ -79,17 +89,18 @@ const router = createBrowserRouter([
         path: "practice/chords",
         element: <ChordTrainer />,
       },
-    ]},
-  ])
+    ]
+  },
+])
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <GoogleOAuthProvider clientId="579128989771-goqn01qifeiqi3014etchrhspp177u2c.apps.googleusercontent.com">
       <ChakraProvider theme={theme}>
-      <ColorModeScript initialColorMode={'light'} />
-      <RouterProvider router={router}>
-      </RouterProvider>
-      <Toaster />
+        <ColorModeScript initialColorMode={'light'} />
+        <RouterProvider router={router}>
+        </RouterProvider>
+        <Toaster />
       </ChakraProvider>
     </GoogleOAuthProvider>
   </React.StrictMode>,
