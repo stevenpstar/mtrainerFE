@@ -49,6 +49,8 @@ function MultiInput(props: MIProps) {
     ['g', 'G'], ['gb', 'Gb'], ['g#', 'G#'],
     ['major', 'Major'], ['maj', 'Major'],
     ['minor', 'Minor'], ['min', 'Minor'],
+    ['diminished', 'Diminished'], ['dim', 'Diminished'],
+    ['aug', 'Augmented'], ['augmented', 'Augmented'],
     ['7', '7'],
     ['first inv', '1st Inv.'], ['first inv.', '1st Inv.'],
     ['1st inv.', '1st Inv.'], ['first inversion', '1st Inv.'],

@@ -67,11 +67,27 @@ const CHORDS = new Map<string, Array<number[]>>([
     ],
   ],
   [
+    "DIMINISHED 7", // NOT PROPERLY ADDED/TESTED
+    [
+      [0, 3, 6, 9],
+      [-9, -6, -3, 0],
+      [-6, -3, 0, 3],
+    ],
+  ],
+  [
     "AUGMENTED",
     [
       [0, 4, 8],
       [-8, -4, 0],
       [-4, 0, 4],
+    ],
+  ],
+  [
+    "AUGMENTED 7", // NOT PROPERLY ADDED/TESTED
+    [
+      [0, 4, 8, 11],
+      [-8, -4, 0, 11],
+      [-4, 0, 4, 11],
     ],
   ],
 ]);
@@ -83,6 +99,7 @@ const chord_array = [
   "MINOR",
   "MINOR 7",
   "DIMINISHED",
+  "DIMINISHED 7",
   "AUGMENTED",
 ];
 function CTEmptySheet(score: Score | null, measureCount: number): void {

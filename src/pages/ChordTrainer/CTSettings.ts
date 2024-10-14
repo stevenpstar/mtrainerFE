@@ -20,10 +20,10 @@ export const CTSettings: ConfigSettings = {
     InputValue: 0.5,
   },
   PageSettings: {
-    RenderPage: true,
+    RenderPage: false,
     RenderBackground: false,
     ContainerWidth: false,
-    UsePages: true,
+    UsePages: false,
     AutoSize: true,
   },
   MeasureSettings: {

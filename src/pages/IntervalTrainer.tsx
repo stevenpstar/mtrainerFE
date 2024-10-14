@@ -267,7 +267,7 @@ function IntervalTrainer() {
   }
 
   return (
-    <div className='flex flex-col justify-start h-full'>
+    <div className='flex flex-col justify-start h-full w-full'>
       <div className='flex flex-row justify-between h-[50px] bg-zinc-950 font-light text-zinc-100'>
         <div className='flex flex-row justify-start gap-2 grow'>
           <MenuDropdown />

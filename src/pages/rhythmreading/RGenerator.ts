@@ -1,8 +1,8 @@
 import { Note, NoteProps, App as application } from "../../lib/sheet/entry.mjs";
 import { Note as SinthNote } from "../../lib/sinth/main.mjs";
 
-const baseIntervalLoad =
-  '{"Measures":[{"Clef":"treble","TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":{"x":35,"y":37.5},"BotPosition":{"x":35,"y":57.5},"GTopPosition":{"x":35,"y":132.5},"GBotPosition":{"x":35,"y":152.5},"Bounds":{"x":35,"y":27.5,"width":30,"height":50},"GBounds":{"x":35,"y":122.5,"width":30,"height":50}},"Notes":[],"Bounds":{"x":0,"y":-2.5,"width":150,"height":95},"ShowClef":false,"ShowTime":true}]}';
+//const baseIntervalLoad =
+//  '{"Measures":[{"Clef":"treble","TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":{"x":35,"y":37.5},"BotPosition":{"x":35,"y":57.5},"GTopPosition":{"x":35,"y":132.5},"GBotPosition":{"x":35,"y":152.5},"Bounds":{"x":35,"y":27.5,"width":30,"height":50},"GBounds":{"x":35,"y":122.5,"width":30,"height":50}},"Notes":[],"Bounds":{"x":0,"y":-2.5,"width":150,"height":95},"ShowClef":false,"ShowTime":true}]}';
 
 const EmptySheet =
   '{"Measures":[{"Clefs":[{"ID":0,"Position":{"x":43,"y":87.5},"Staff":0,"Bounds":{"x":43,"y":27.5,"width":30,"height":85},"Type":"treble","SelType":2,"Beat":1,"Selected":false,"Editable":true}],"Staves":[{"Num":0,"Buffer":0,"TopLine":5,"BotLine":35,"MidLine":15}],"TimeSignature":{"Selected":false,"SelType":3,"top":4,"bottom":4,"Editable":true,"TopPosition":[{"x":75,"y":67.5}],"BotPosition":[{"x":75,"y":87.5}],"Bounds":[{"x":75,"y":57.5,"width":30,"height":50}]},"Notes":[],"Bounds":{"x":40,"y":27.5,"width":350,"height":150},"ShowClef":true,"ShowTime":true}]}';
@@ -111,7 +111,8 @@ function GenerateRhythm(
   console.log("rhythmValues: ", rhythmValues);
   const beatArray: number[] = [];
   const bps = 60 / tempo; /// beat === crotchet or 0.25
-  app.LoadSheet(baseIntervalLoad);
+  LoadEmptySheet(app, 1);
+  //  app.LoadSheet(baseIntervalLoad);
   app.AddMeasure();
   app.AddMeasure();
   app.AddMeasure();

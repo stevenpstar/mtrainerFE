@@ -4,7 +4,7 @@ import { Message, MessageType, Note, App as Score } from '../../lib/sheet/entry.
 import { Sheet } from '../Sheet';
 import { CTSettings } from './CTSettings';
 import { Button } from '@/components/ui/button';
-import { ChevronRightIcon } from '@radix-ui/react-icons';
+import { BarChartIcon, ChevronRightIcon, GearIcon } from '@radix-ui/react-icons';
 import { Separator } from '@/components/ui/separator';
 import { MusicNotes } from '@/components/custom/MusicNotes';
 import { MenuDropdown } from '@/components/custom/MenuDropdown';
@@ -193,7 +193,11 @@ function ChordTrainer() {
         </div>
       </div>
       <div className='flex flex-row justify-center'>
-        <div className='grow testbg'>
+        <div className='grow flex flex-col justify-start'>
+          <div className="flex flex-row justify-end w-full gap-4 pl-1 pr-1 pt-1">
+            <BarChartIcon className="w-5 h-5" />
+            <GearIcon className="w-5 h-5" />
+          </div>
           <Sheet
             w='100%'
             h='500px' f=''
